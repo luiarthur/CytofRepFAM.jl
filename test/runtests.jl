@@ -1,3 +1,7 @@
+#= Load these if running these tests in terminal
+import Pkg; Pkg.activate("../")  # CytofRepFAM
+include("runtests.jl")
+=#
 println("Testing...")
 
 using Test
@@ -6,6 +10,7 @@ import CytofRepFAM.MCMC
 using BSON
 using Random
 using Distributions
+using Flux
 
 # tests for MCMC
 include("MCMC_tests.jl")

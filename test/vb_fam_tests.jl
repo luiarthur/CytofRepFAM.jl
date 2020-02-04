@@ -15,7 +15,7 @@ printstyled("Test VB FAM on simulated data ...\n", color=:yellow)
   K = 5
 
   println("Simulate Data...")
-  N = [8, 1, 2] * 5000
+  N = [8, 1, 2] * 1000
 
   I = length(N)
   mus=Dict(0 => -[1.0, 2.3, 3.5], 
@@ -53,14 +53,14 @@ printstyled("Test VB FAM on simulated data ...\n", color=:yellow)
   # niters = 20000
   # batchsize = 2000
   # to test compilation
-  niters =50 
+  niters = 20 
   batchsize = 200
   opt = ADAM(1e-2)
   out = CytofRepFAM.VB.fit(y=y, niters=niters, batchsize=batchsize, c=c, opt=opt,
                       seed=0, nsave=30)
 
   # Save results
-  outdir = "result/vb" 
+  outdir = "results/vb" 
   mkpath(outdir)
   @time BSON.bson("$(outdir)/vb-out.bson", out)
 
