@@ -104,7 +104,7 @@ end
 
 
 log1m(x::T) where {T <: Real} = log1p(-x)
-sf_lgamma(x::T) where T = Distributions.SpecialFunctions.lgamma(x)
+sf_loggamma(x::T) where T = Distributions.SpecialFunctions.loggamma(x)
 # FIXME: spitting out NaN's for W!
 #        pretty sure this is wrong!
 function update_r!(i::Integer, k::Integer,
@@ -116,11 +116,11 @@ function update_r!(i::Integer, k::Integer,
   u = aw_ri_sum - aw_ri[k]
   log_numer = log1m(p_xi)
   if u > 0
-    log_numer += sf_lgamma(u) + sf_lgamma(aw)
+    log_numer += sf_loggamma(u) + sf_loggamma(aw)
   else
     log_numer = -Inf
   end
-  log_denom = log(p_xi) + sf_lgamma(aw + u)
+  log_denom = log(p_xi) + sf_loggamma(aw + u)
   if s.theta.W[i, k] > 0
     log_denom += aw * log(s.theta.W[i, k])
   end
