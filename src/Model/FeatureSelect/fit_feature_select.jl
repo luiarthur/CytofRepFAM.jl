@@ -14,7 +14,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                  fix::Vector{Symbol}=Symbol[],
                  thins::Vector{Int}=[1],
                  thin_dden::Int=1,
-                 printFreq::Int=0, flushOutput::Bool=false,
+                 printFreq::Int=0, 
                  computeDIC::Bool=false, computeLPML::Bool=false,
                  computedden::Bool=false,
                  sb_ibp::Bool=false,
@@ -39,6 +39,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     # Set eps == 0
     init.theta.eps .= 0
   end
+  flush(stdout)
 
   @assert 0 <= _r_marg_lam_freq <= 1
 
@@ -58,6 +59,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     println("use_repulsive: $(use_repulsive)")
     println("Z_thin: $(Z_thin)")
     println("joint_update_r: $(joint_update_r)")
+    flush(stdout)
   end
 
   @assert printFreq >= -1
@@ -193,9 +195,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     end
 
     printMsg(iter, "\n")
-    if flushOutput
-      flush(stdout)
-    end
+    flush(stdout)
   end
 
   if isinf(compute_loglike(init.theta, c.constants, d.data, normalize=true))
@@ -214,7 +214,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
   out, lastState = MCMC.gibbs(init, update!, monitors=monitors,
                               thins=thins, nmcmc=nmcmc, nburn=nburn,
                               printFreq=printFreq,
-                              loglike=loglike, flushOutput=flushOutput,
+                              loglike=loglike, 
                               printlnAfterMsg=false)
 
   mega_out = Dict{Symbol, Any}(:samples => out,
@@ -240,6 +240,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
       println("$k => $v")
     end
   end
+  flush(stdout)
 
   if computedden
     mega_out[:dden] = dden
