@@ -1,7 +1,10 @@
+#=
 using DelimiteFiles
+=#
 
 # Simulation Name
-simname = basename("$(@__DIR__)"[1:end-1])
+simname = basename("$(@__DIR__)")
+println(simname); flush(stdout)
 
 # NOTE: write to scratchdir
 function outdir_suffix(scale, kmcmc, seed_data)
@@ -11,8 +14,8 @@ end
 
 # NOTE: modify
 settings = let
-  Z = Matrix{Bool}(readdlm("Z.txt", Int, comments=true))
-  W = readdlm("W.txt", comments=true)
+  Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
+  W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
   [Dict(:simname => simname,
         :repfam_dist_scale => scale,
         :N => [1000, 1000],
