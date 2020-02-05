@@ -4,7 +4,8 @@ SHELL:=/bin/bash
 
 
 # Simulation experiment name
-SIM_EXP_NAME = test-sim-6-3
+# SIM_EXP_NAME = test-sim-6-3
+SIM_EXP_NAME = test-sim-6-5
 
 # Simulation settings dir
 SIM_CONFIG_DIR = configs/$(SIM_EXP_NAME)

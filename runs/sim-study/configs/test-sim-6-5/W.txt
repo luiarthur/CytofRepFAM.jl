@@ -1,0 +1,10 @@
+.25 .05 .00 .10 .42 .15 .03
+.00 .00 .25 .05 .03 .40 .27
+# Comments:
+# In conjunction with Z.txt,
+# this W, makes the first two (similar) 
+# features in sample 1 (first row) absent
+# in the other sample. The 3rd and 4th
+# features are rare, with the 3rd feature
+# being absent in the first sample. The
+# remaining features make up the majority.
