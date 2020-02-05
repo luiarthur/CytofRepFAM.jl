@@ -1,6 +1,6 @@
 SHELL:=/bin/bash
 
-.PHONY: cleansim sim retrieveallsim retrievesim postprocsim metrics killsim
+.PHONY: clean getoutput getalloutput killsim metrics postproc run sendoutput
 
 
 # Simulation experiment name
@@ -21,32 +21,29 @@ SIM_AWS_BUCKET = s3://cytof-repfam/$(SIM_EXP_NAME)
 
 
 ### Sim Make cmds ###
-sim:
+run:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
 	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) \
 		&> results/$(SIM_EXP_NAME)-master-log.txt &
 
-cleansim:
+clean:
 	rm -rf $(SIM_RESULTS_DIR)/*
 
-retrievesim:
+getoutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR) \
 		--exclude "*/output.bson" --exclude "*/simdat.bson"
 
-retrieveallsim:
+getalloutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR)
 
-postprocsim:
+postproc:
 	julia post_process.jl $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET)
 
-sendsim:
+sendoutput:
 	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
 
 metrics:
 	julia metrics.jl
-
-notebook:
-	jupyter notebook
 
 killsim:
 	pids=`grep -r pid $(SIM_RESULTS_DIR) | grep -oP '(?<=pid).*' | grep -oP '\d+'`; \
