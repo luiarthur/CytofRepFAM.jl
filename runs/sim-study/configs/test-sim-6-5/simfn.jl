@@ -105,7 +105,6 @@ function simfn(settings::Dict{Symbol, Any})
                                    computeDIC=true, computeLPML=true,
                                    use_repulsive=use_repulsive,
                                    Z_thin=1,
-                                   flushOutput=true, 
                                    seed=settings[:seed_mcmc])
 
   # Dump output
