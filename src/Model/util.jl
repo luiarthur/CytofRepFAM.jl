@@ -128,3 +128,5 @@ function redirect_stdout_to_file(f::Function, path::String)
     end
   end
 end
+
+s3sync(; from, to, tags=``) = run(`aws s3 sync $(from) $(to) $(tags)`)
