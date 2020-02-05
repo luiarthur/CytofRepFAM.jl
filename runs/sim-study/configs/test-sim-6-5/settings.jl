@@ -22,10 +22,10 @@ settings = let
         :Z => Z,
         :W => W,
         :thin_samps => 2,
-        # :nburn => 10000,
-        # :nsamps => 2000,
-        :nburn => 10, # NOTE: test
-        :nsamps => 20, # NOTE: test
+        :nburn => 10000,
+        :nsamps => 2000,
+        # :nburn => 10, # NOTE: test
+        # :nsamps => 20, # NOTE: test
         :Lmcmc => Dict(0 => 2, 1 => 2),
         :Kmcmc => kmcmc,
         :seed_data => seed_data,
