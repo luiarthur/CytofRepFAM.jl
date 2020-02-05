@@ -17,6 +17,12 @@ rcParams["ytick.labelsize"] = 15
 rcParams["figure.figsize"] = (6, 6)
 
 
+function quantiles(X, q; dims, drop=false)
+  Q = mapslices(x -> quantile(x, q), X, dims=dims)
+  out = drop ? dropdims(Q, dims=dims) : Q
+  return out
+end
+
 extract(s, out) = [o[s] for o in out]
 
 function boxplot(x; showmeans=true, whis=[2.5, 97.5], showfliers=false, kw...)
@@ -132,15 +138,39 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
         # Append metrics to metrics dictionary
         metrics[Kmcmc] = output[:metrics]
 
+        # Posterior samples of W
+        Ws = extract(:W, output[:out][1])
+ 
         # Calibration metric
         cmetric = let
-          Wmean = mean(extract(:W, output[:out][1]))
+          Wmean = mean(Ws)
           num_wik_lt_thresh = sum(Wmean .< thresh)
         end
 
         # Append calibration metric to metrics dictionary
         metrics[Kmcmc][:cmetric] = cmetric
+       
+        # Posterior samples of R (I x K) -- number of active features / sample
+        # Rs (I x num_samples)
+        Rs = hcat([vec(sum(W .> 0, dims=2)) for W in Ws]...)
 
+        # Mean of R, by sample (vector of length I)
+        Rmean = vec(mean(Rs, dims=2))
+
+        # Mean of R, by sample (vector of length I)
+        R_025 = quantiles(Rs, .025, dims=2, drop=true)
+
+        # Mean of R, by sample (vector of length I)
+        R_975 = quantiles(Rs, .975, dims=2, drop=true)
+
+        # Append Rmean to metrics dictionary
+        metrics[Kmcmc][:Rmean] = Rmean
+
+        # Append Rmean to metrics dictionary
+        metrics[Kmcmc][:R_025] = R_025
+
+        # Append Rmean to metrics dictionary
+        metrics[Kmcmc][:R_975] = R_975
       end
     end
   end
