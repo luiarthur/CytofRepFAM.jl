@@ -21,5 +21,8 @@ include("fam_tests.jl")
 # tests for repulsive FAM with feature selection
 include("repfamFS_tests.jl")
 
+# tests for timing threading for R updates
+include("update_r_tests.jl")
+
 # tests for variational inference with FAM
 include("vb_fam_tests.jl")
