@@ -6,7 +6,7 @@ using CytofRepFAM, Random, BSON, Test, Distributions
 @testset "time update of r" begin
   Random.seed!(0)
 
-  config = init_state_const_data(N=[3, 2, 1] * 10000)
+  config = init_state_const_data(N=[3, 2, 1] * 100)
 
   cfs = CytofRepFAM.Model.ConstantsFS(config[:c])
   dfs = CytofRepFAM.Model.DataFS(config[:d], config[:X])
@@ -22,7 +22,11 @@ using CytofRepFAM, Random, BSON, Test, Distributions
 
   # time these:
   for i in 1:5
-    @time CytofRepFAM.Model.update_r!(sfs, cfs, dfs)
+    @time CytofRepFAM.Model.update_r!(sfs, cfs, dfs, joint_update=false)
   end
   println("checksum: $(sum(sfs.theta.lam[2]))")
+
+  # NOTE:
+  # Using two threads cuts time in half. Any more threads than that, and
+  # runtime get longer.
 end
