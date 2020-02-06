@@ -3,6 +3,7 @@ import Pkg; Pkg.activate("../")  # CytofRepFAM
 using CytofRepFAM, Random, BSON, Test, Distributions
 =#
 
+printstyled("Test update times for r ...\n", color=:yellow)
 @testset "time update of r" begin
   Random.seed!(0)
 
