@@ -18,7 +18,7 @@ end
 @everywhere function makeplots(path_to_output)
   output_dir = splitdir(path_to_output)[1]
   path_to_simdat = joinpath(output_dir, "simdat.bson")
-  simdat_y = BSON.load(path_to_simdat)[:simdat][:y]
+  simdat = BSON.load(path_to_simdat)[:simdat]
 
   println(path_to_output)
   output = BSON.load(path_to_output)
@@ -32,7 +32,8 @@ end
   imgdir = joinpath(dir_to_output, "img", )
   mkpath(imgdir)
 
-  PlotUtils.make_yz(simdat_y, Zs, Ws, lams, imgdir, vlim=(-4,4))
+  PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4))
+  PlotUtils.plotW(Ws, imgdir=imgdir, W_true=simdat[:W])
 end
 
 # # Get some simulation truths

@@ -116,6 +116,26 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
   end
 end
 
+function plotW(Ws; imgdir, W_true=nothing, xlabel="latent features")
+  I, K = size(Ws[1])
+  Ws_mat = cat(Ws..., dims=3)
+  plt.figure()
+  for i in 1:I
+    plt.subplot(I, 1, i)
+    boxplot(Ws_mat[i, :, :]')
+    plt.ylabel("W$(i)")
+    if W_true != nothing
+      K_true = size(W_true, 2)
+      for k in 1:K
+        plt.axhline(W_true[i, k])
+      end
+    end
+  end
+  plt.xlabel(xlabel)
+  plt.savefig("$(imgdir)/W.pdf", bbox_inches="tight")
+  plt.close()
+end
+
 grepKmcmc(s) = match(r"(?<=Kmcmc_)\d+", s)
 
 function make_metrics(different_K_runs_dir, outputfname; thresh,
