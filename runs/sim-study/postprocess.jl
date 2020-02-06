@@ -32,7 +32,8 @@ end
   imgdir = joinpath(dir_to_output, "img", )
   mkpath(imgdir)
 
-  PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4))
+  PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
+                    Z_true=simdat[:Z])
   PlotUtils.plotW(Ws, imgdir=imgdir, W_true=simdat[:W])
 end
 
@@ -77,7 +78,6 @@ OUTPUT_FILE = "output.bson"
 output_paths = [joinpath(root, OUTPUT_FILE)
                 for (root, _, files) in walkdir(results_dir)
                 if OUTPUT_FILE in files]
-
 
 # Make y, Z plots.
 status = pmap(makeplots, output_paths)

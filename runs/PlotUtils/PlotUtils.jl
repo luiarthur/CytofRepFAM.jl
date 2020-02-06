@@ -96,6 +96,11 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
                    fs_cbar=fs_zcbar, markernames=markernames)
     plt.savefig("$(imgdir)/Z$(i).pdf", bbox_inches="tight")
     plt.close()
+
+    # plot Zmean
+    plot_Z(mean(Zs_vec))
+    plt.savefig("$(imgdir)/Zmean.pdf", bbox_inches="tight")
+    plt.close()
   end
 
   if Z_true != nothing
@@ -116,7 +121,7 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
   end
 end
 
-function plotW(Ws; imgdir, W_true=nothing, xlabel="latent features")
+function plotW(Ws; imgdir, W_true=nothing, xlabel="cell subpopulations")
   I, K = size(Ws[1])
   Ws_mat = cat(Ws..., dims=3)
   plt.figure()
@@ -126,7 +131,7 @@ function plotW(Ws; imgdir, W_true=nothing, xlabel="latent features")
     plt.ylabel("W$(i)")
     if W_true != nothing
       K_true = size(W_true, 2)
-      for k in 1:K
+      for k in 1:K_true
         plt.axhline(W_true[i, k])
       end
     end
