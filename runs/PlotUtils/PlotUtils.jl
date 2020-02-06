@@ -147,6 +147,7 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
         # Calibration metric
         cmetric = let
           Wmean = mean(Ws)
+          metrics[Kmcmc][:I] = size(Wmean, 1)
           num_wik_lt_thresh = sum(Wmean .< thresh)
         end
 
@@ -154,7 +155,7 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
         metrics[Kmcmc][:cmetric] = cmetric
        
         # Posterior samples of R (I x K) -- number of active features / sample
-        # Rs (I x num_samples)
+        # Rs (I x num_mcmc_samples)
         Rs = hcat([vec(sum(W .> 0, dims=2)) for W in Ws]...)
 
         # Mean of R, by sample (vector of length I)
@@ -206,6 +207,22 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
     plt.close()
   end
 
+  # Plot R
+  I = metrics[Kmcmcs[1]][:I]
+  plt.figure()
+  for i in 1:I
+    plt.subplot(I, 1, i)
+    plt.plot(Kmcmcs, map(K -> metrics[K][:Rmean][i], Kmcmcs), marker="o")
+    plt.fill_between(Kmcmcs,
+                     map(K -> metrics[K][:R_025][i], Kmcmcs),
+                     map(K -> metrics[K][:R_975][i], Kmcmcs), alpha=.5)
+    if i == I
+      plt.xlabel("K")
+    end
+    plt.ylabel("R$(i)")
+  end
+  plt.savefig(joinpath(metrics_dir, "R.pdf"), bbox_inches="tight")
+  plt.close()
 
   return metrics
 end
