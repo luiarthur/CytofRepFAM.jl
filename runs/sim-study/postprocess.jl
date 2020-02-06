@@ -3,7 +3,7 @@ include("../PlotUtils/imports.jl")
 
 using Distributed
 rmprocs(filter(w -> w > 1, workers()))
-addprocs(10)
+addprocs(45)
 
 
 if length(ARGS) == 0

@@ -98,7 +98,10 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     plt.close()
 
     # plot Zmean
-    plot_Z(mean(Zs))
+    plot_yz.plot_Z_only(mean(Zs), fs=fs_z,
+                        xlab="cell subpopulations", ylab="markers",
+                        rotate_xticks=true)
+    plt.colorbar()
     plt.savefig("$(imgdir)/Zmean.pdf", bbox_inches="tight")
     plt.close()
   end
