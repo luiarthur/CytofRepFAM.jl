@@ -98,7 +98,7 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     plt.close()
 
     # plot Zmean
-    plot_Z(mean(Zs_vec))
+    plot_Z(mean(Zs))
     plt.savefig("$(imgdir)/Zmean.pdf", bbox_inches="tight")
     plt.close()
   end
