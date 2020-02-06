@@ -136,10 +136,13 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
         output = BSON.load(path_to_output)
 
         # Append metrics to metrics dictionary
-        metrics[Kmcmc] = output[:metrics]
+        # metrics[Kmcmc] = output[:metrics]
+        metrics[Kmcmc] = Dict{Symbol, Any}()
+        metrics[Kmcmc][:LPML] = output[:LPML]
+        metrics[Kmcmc][:DIC] = output[:DIC]
 
         # Posterior samples of W
-        Ws = extract(:W, output[:out][1])
+        Ws = extract(:theta__W, output[:samples][1])
  
         # Calibration metric
         cmetric = let
