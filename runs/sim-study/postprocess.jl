@@ -22,19 +22,46 @@ end
 
   println(path_to_output)
   output = BSON.load(path_to_output)
+
+  # Extract samples
   extract(s) = map(o -> o[s], output[:samples][1])
   Zs = extract(:theta__Z)
   Ws = extract(:theta__W)
   lams = extract(:theta__lam)
+  alphas = extract(:theta__alpha)
+  vs = extract(:theta__v)
+  deltas = extract(:theta__delta)
+  sig2s = extract(:theta__sig2)
+  etas = extract(:theta__eta)
 
-  # Create a directory for images if needed.
+  # Create a directory for images / txt if needed.
   dir_to_output, _ = splitdir(path_to_output)
-  imgdir = joinpath(dir_to_output, "img", )
-  mkpath(imgdir)
+  imgdir = joinpath(dir_to_output, "img")
+  mkpath("$(imgdir)/txt/")
 
+  # Number of burn in iterations
+  nburn = output[:nburn]
+
+  # Plot loglikelihood
+  PlotUtils.plot_loglike(output[:loglike], imgdir, fname="loglike.pdf")
+  PlotUtils.plot_loglike(output[:loglike][(nburn + 1):end],
+                         imgdir, fname="loglike_postburn.pdf")
+
+  # Plot parameters
+  PlotUtils.plotW(Ws, imgdir=imgdir, W_true=simdat[:W])
+  PlotUtils.plot_v(vs, imgdir)
+  PlotUtils.plot_alpha(alphas, imgdir)
+  PlotUtils.plot_mus(deltas, imgdir)
+  PlotUtils.plot_sig2(sig2s, imgdir, sig2_true=simdat[:sig2])
+
+  # TODO: Plot data density
+  PlotUtils.plot_dden(ddens=output[:dden],
+                      etas=etas, Ws=Ws, Zs=Zs, sig2s=sig2s, deltas=deltas,
+                      ygrid=output[:c][:y_grid], imgdir=imgdir, simdat=simdat)
+
+  # Plot y / Z
   PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
                     Z_true=simdat[:Z])
-  PlotUtils.plotW(Ws, imgdir=imgdir, W_true=simdat[:W])
 end
 
 # # Get some simulation truths

@@ -14,9 +14,10 @@ using DelimitedFiles
 include(joinpath(@__DIR__, "salso.jl"))
 include(joinpath(@__DIR__, "dden_complete.jl"))
 
-import PyCall, PyPlot
+import PyCall, PyPlot, Seaborn
 const plt = PyPlot.plt
 PyPlot.matplotlib.use("Agg")
+const sns = Seaborn
 
 #= Interactive plot
 PyPlot.matplotlib.use("TkAgg")
