@@ -69,6 +69,12 @@ R_df = let
 end
 
 # TODO: Plot R-metrics nicely
-# for scalebj
+# for each seed, make the R by Kmcmc graphs
+for R_df_seed in R_df.groupby(:seed)
+  # Put graphs for different scales in same graph for same seed
+  for R_df_seed_scale in R_df_seed.groupby(:scale)
+    # TODO
+  end
+end
 
 println("DONE!")
