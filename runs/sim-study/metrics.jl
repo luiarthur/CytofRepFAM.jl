@@ -70,11 +70,35 @@ end
 
 # TODO: Plot R-metrics nicely
 # for each seed, make the R by Kmcmc graphs
-for R_df_seed in R_df.groupby(:seed)
-  # Put graphs for different scales in same graph for same seed
-  for R_df_seed_scale in R_df_seed.groupby(:scale)
-    # TODO
+for R_df_seed in groupby(R_df, :seed)
+  seed = unique(R_df_seed.seed)[1]
+  unique_i = unique(R_df_seed.i)
+  I = length(unique_i)
+  plt.figure()
+  for i in 1:I
+    R_df_seed_i = R_df_seed[R_df_seed.i .== i, :]
+    plt.subplot(I, 1, i)
+    # Put graphs for different scales in same graph for same seed
+    for R_df_seed_i_scale in groupby(R_df_seed_i, :scale)
+      scale = unique(R_df_seed_i_scale.scale)[1]
+      df = sort(R_df_seed_i_scale, :Kmcmc)
+      plt.plot(df.Kmcmc, df.Rmean, label="scale: $(scale)", lw=2, marker="o")
+      plt.fill_between(df.Kmcmc, df.R_025, df.R_975, alpha=.5)
+    end
+    plt.ylabel("R$(i)")
   end
+
+  outdir = "$(results_dir)/metrics/seed_$(seed)"
+  mkpath(outdir)
+
+  # plt.legend(loc="lower right")
+  plt.legend(loc="best")
+  plt.xlabel("K")
+  plt.savefig("$(outdir)/R.pdf", bbox_inches="tight")
+  plt.close()
 end
+
+# Remove extra processors
+rmprocs(filter(w -> w > 1, workers()))
 
 println("DONE!")

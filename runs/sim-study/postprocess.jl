@@ -111,4 +111,9 @@ output_paths = [joinpath(root, OUTPUT_FILE)
 status = pmap(makeplots, output_paths)
 println(status)
 
+# Remove extra processors
+rmprocs(filter(w -> w > 1, workers()))
+
 println("DONE!")
+
+
