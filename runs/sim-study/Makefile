@@ -38,13 +38,17 @@ getalloutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR)
 
 postproc:
-	julia post_process.jl $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET)
+	@echo "Do post processing ..."
+	julia postprocess.jl $(SIM_RESULTS_DIR)
+	@echo "Compute metrics ..."
+	julia metrics.jl $(SIM_RESULTS_DIR)
+	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
 
 sendoutput:
 	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
 
 metrics:
-	julia metrics.jl
+	julia metrics.jl $(SIM_RESULTS_DIR)
 
 killsim:
 	pids=`grep -r pid $(SIM_RESULTS_DIR) | grep -oP '(?<=pid).*' | grep -oP '\d+'`; \
