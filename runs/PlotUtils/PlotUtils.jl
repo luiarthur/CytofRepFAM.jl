@@ -24,6 +24,8 @@ function quantiles(X, q; dims, drop=false)
   return out
 end
 
+skipnan(x) = x[.!isnan.(x)]
+
 extract(s, out) = [o[s] for o in out]
 
 function boxplot(x; showmeans=true, whis=[2.5, 97.5], showfliers=false, kw...)
@@ -349,7 +351,11 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
                    ygrid, imgdir, printmean=true,
                    simdat=nothing, xlabel="expression level", ylabel="density",
                    dden_xlim=(-6, 6))
+  # Make directories if needed
   mkpath("$(imgdir)/dden")
+  mkpath("$(imgdir)/txt")
+
+  # Cache data sizes
   I, J = size(ddens[1])
 
   # split etas into etas0, etas1
@@ -439,16 +445,24 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
         # TODO: Plot histogram of data
       end
 
+      # Number of MCMC samples
+      num_mcmc_samples = length(Ws)
+
+      # Create mus (vector)
+      mus = [Dict(0 => -cumsum(delta[0]),
+                  1 => cumsum(delta[1]))
+             for delta in deltas]
+
       # Plot complete posterior density (obs and imputed)
       dd_complete_post = [dden_complete(ygrid,
                                         Ws[b],
                                         etas[b],
                                         Zs[b],
                                         mus[b],
-                                        sig2s[b, :], i=i, j=j)
-                          for b in 1:nsamps]
+                                        sig2s[b], i=i, j=j)
+                          for b in 1:num_mcmc_samples]
 
-      dd_complete_post = hcat(dd_complete_post...)  # legnth(ygird) x nsamps
+      dd_complete_post = hcat(dd_complete_post...)  # legnth(ygird) x num_mcmc_samples
       dcp_lower = quantiles(dd_complete_post, .025, dims=2, drop=true)
       dcp_upper = quantiles(dd_complete_post, .975, dims=2, drop=true)
       p_ci_complete = plt.fill_between(ygrid, dcp_lower, dcp_upper, alpha=.5,

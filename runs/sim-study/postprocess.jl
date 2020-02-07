@@ -3,7 +3,7 @@ include("../PlotUtils/imports.jl")
 
 using Distributed
 rmprocs(filter(w -> w > 1, workers()))
-addprocs(45)
+addprocs(32)
 
 
 if length(ARGS) == 0
@@ -57,7 +57,8 @@ end
   # TODO: Plot data density
   PlotUtils.plot_dden(ddens=output[:dden],
                       etas=etas, Ws=Ws, Zs=Zs, sig2s=sig2s, deltas=deltas,
-                      ygrid=output[:c][:y_grid], imgdir=imgdir, simdat=simdat)
+                      ygrid=output[:c].constants.y_grid,
+                      imgdir=imgdir, simdat=simdat)
 
   # Plot y / Z
   PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
