@@ -57,3 +57,5 @@ killsim:
 zip_results:
 	zip -r results/$(SIM_EXP_NAME).zip $(SIM_RESULTS_DIR)
 
+rm_zipped_results:
+	rm -i results/$(SIM_EXP_NAME).zip
