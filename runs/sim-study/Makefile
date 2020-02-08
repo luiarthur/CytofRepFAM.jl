@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
 .PHONY: clean getoutput getalloutput killsim metrics postproc run sendoutput
-
+.PHONY: zip_results
 
 # Simulation experiment name
 # SIM_EXP_NAME = test-sim-6-3
@@ -53,3 +53,7 @@ metrics:
 killsim:
 	pids=`grep -r pid $(SIM_RESULTS_DIR) | grep -oP '(?<=pid).*' | grep -oP '\d+'`; \
 			 for p in $$pids; do kill $$p; done
+
+zip_results:
+	zip -r results/$(SIM_EXP_NAME).zip $(SIM_RESULTS_DIR)
+
