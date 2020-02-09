@@ -55,7 +55,8 @@ killsim:
 			 for p in $$pids; do kill $$p; done
 
 zip_results:
-	zip -r results/$(SIM_EXP_NAME).zip $(SIM_RESULTS_DIR)
+	cd $(SIM_RESULTS_DIR)/.. && zip -r $(SIM_EXP_NAME).zip $(SIM_EXP_NAME)
+	mv $(SIM_RESULTS_DIR).zip results/$(SIM_EXP_NAME).zip
 
 rm_zipped_results:
 	rm -i results/$(SIM_EXP_NAME).zip
