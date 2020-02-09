@@ -10,7 +10,13 @@ import matplotlib.pyplot as plt
 # have continuous parameters that don't have support on the entire real line.
 # Because I'm optimizing, and not sampling, I don't need a jacobian. See the
 # results by running this script.
-
+#
+# Sketch of proof that a Jacobian isn't needed:
+# Say we are interested in solving for theta* = argmin_theta f(theta), with
+# theta > 0.  This is the same as solving for gamma* = argmin_gamma g(gamma),
+# where g(gamma) = f(exp(gamma)), for unconstrained gamma. If gamma* minimizes
+# g, then exp(gamma*) minimizes f.  That is, theta* = exp(gamma*). No Jacobian
+# needed here.
 
 class Model(nn.Module):
     def __init__(self, y, prior_shape=2, prior_rate=3, use_jacobian=False):
@@ -98,7 +104,17 @@ if __name__ == '__main__':
     # Plot results
     post_shape = model.n + model.prior_shape
     post_rate = model.prior_rate + model.y_sum
-    plt.hist(Gamma(post_shape, post_rate).sample((100000, )), bins=64)
-    plt.axvline(map_est, color='orange', lw=2, label='MAP estimate')
+    # plt.hist(Gamma(post_shape, post_rate).sample((100000, )), bins=64)
+    x = torch.arange(0.0, 10.0, step=.01)
+    d = model.logprob(x.log())
+    plt.plot(x, d, lw=2)
+    plt.axvline(true_map_est, color='green', lw=2,
+                label='MAP estimate (true)', ls='--')
+    plt.axvline(map_est, color='orange', lw=2, label='MAP estimate (no jacobian)',
+                ls=':')
+    plt.axvline(map_est_with_jacobian, color='blue', lw=2,
+                label='MAP estimate (with jacobian)')
+    plt.xlabel('theta')
+    plt.ylabel('log density')
     plt.legend()
     plt.show()
