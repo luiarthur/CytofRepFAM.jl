@@ -144,21 +144,6 @@ different $K$ (5, 6, 7, 8, 15). Recall that $K^\true=7$ and $R^\true = (6, 5)$.
   \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$.}
 \end{figure}
 
-\begin{figure}[h]
-  \begin{center}
-    \begin{tabular}{ccc}
-      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_0/metrics/LPML.pdf} &
-      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_1/metrics/LPML.pdf} &
-      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_10/metrics/LPML.pdf} \\
-      (a) $\phi=0$ & (b) $\phi=1$ & (c) $\phi=10$ \\
-    \end{tabular}
-  \end{center}
-  \label{fig:lpml}
-  \caption{LPML for various $K_\text{MCMC}$ and $\phi$ for simulation data 1.}
-\end{figure}
-
-
-
 Notice that models with higher $\phi$ (penalty term for repFAM), tend to have
 smaller $R_i$. In addition, when $\phi=0$, redundant features are discovered.
 For example, for $K_\text{MCMC} = 8$, we would expect to recover the simulation
@@ -212,6 +197,27 @@ $\phi=10$).  However, the simulation truth was not recovered for
   \caption{Posterior distribution of $W$ for $\phi=1$, $K_\text{MCMC}=8$, and
   simulation data 1.}
   \label{fig:kmcmc8-scale1-w}
+\end{figure}
+
+
+Below are the LPMLs for simulated data 1, for various $K_\text{MCMC}$.  From
+the graphs, it seems that $K_\text{MCMC}$ larger provides better fit.  We
+expected a plateau at $K_\text{MCMC}=7$ (the simulation truth). Instead, this
+only happened for $\phi=1$ at $K_\text{MCMC}=8$. More runs at
+$K_\text{MCMC}=9,10,\cdots,14$ need to be done to better understand the
+properties of the model.
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{tabular}{ccc}
+      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_0/metrics/LPML.pdf} &
+      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_1/metrics/LPML.pdf} &
+      \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_10/metrics/LPML.pdf} \\
+      (a) $\phi=0$ & (b) $\phi=1$ & (c) $\phi=10$ \\
+    \end{tabular}
+  \end{center}
+  \label{fig:lpml}
+  \caption{LPML for various $K_\text{MCMC}$ and $\phi$ for simulation data 1.}
 \end{figure}
 
 
