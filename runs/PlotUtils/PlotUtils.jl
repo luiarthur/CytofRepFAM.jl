@@ -10,14 +10,6 @@ plot_yz = PyCall.pyimport("plot_yz")
 blue2red = PyCall.pyimport("blue2red")
 pyrange(n) = collect(range(0, stop=n-1))
 
-# General plot settings
-rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
-rcParams["font.size"] = 15
-rcParams["xtick.labelsize"] = 15
-rcParams["ytick.labelsize"] = 15
-rcParams["figure.figsize"] = (6, 6)
-
-
 function quantiles(X, q; dims, drop=false)
   Q = mapslices(x -> quantile(x, q), X, dims=dims)
   out = drop ? dropdims(Q, dims=dims) : Q

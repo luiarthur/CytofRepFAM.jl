@@ -26,6 +26,13 @@ PyPlot.matplotlib.use("TkAgg")
 PyPlot.matplotlib.use("Agg")
 =#
 
+# General plot settings
+rcParams = PyPlot.PyDict(PyPlot.matplotlib."rcParams")
+rcParams["font.size"] = 15
+rcParams["xtick.labelsize"] = 15
+rcParams["ytick.labelsize"] = 15
+rcParams["figure.figsize"] = (6, 6)
+
 
 # TODO
 # Steal things from: Cytof5/sims/repfam_fs/test
