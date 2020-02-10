@@ -1,0 +1,203 @@
+\documentclass[12pt]{article} % 12-point font
+
+\usepackage[margin=1in]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\G}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+% Statistics
+\newcommand{\E}{ \text{E} }
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Commands for this project
+\def\true{\text{TRUE}}
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bbh}{\color{blue}\textbf}  % blue bold highlight
+\newcommand{\bch}{\color{blue}\it}
+\newcommand{\ech}{\color{black}\rm}
+\usepackage{listings}
+
+% Uncomment if using bibliography
+% Bibliography
+% \usepackage{natbib}
+% \bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+
+% Title Settings
+\title{Test Simulation 6.5.1}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+
+\maketitle
+
+\tableofcontents \newpage % Comment to remove table of contents
+
+\section{Objective}\label{sec:objective}
+In test-sim-6-3, we saw that the posterior uncertainty for $R_i$ was non-existent. 
+Consequently, for this simulation study, we want to use a more complicated
+$Z^\true$ and $w^\true_i$, and see whether that increases posterior uncertainty
+for $R_i$.
+
+\section{Data Generation}\label{sec:data-generation}
+The true $Z$ used in this study is in Figure~\ref{fig:Z-true}.
+Notice in the $Z$ matrix, 
+\begin{itemize}
+  \item columns 1 \& 2 are similar (difference of 1)
+  \item columns 3 \& 4 (difference of 1)
+  \item columns 5 - 7 are distinct columns
+\end{itemize}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_0/Kmcmc_5/img/Z_true.pdf}
+  \end{center}
+  \label{fig:Z-true}
+  \caption{True $Z$. Columns 1 and 2 are similar (differs by 1). Columns 3 and
+  4 are also similar (differs by 1). Columns 5 to 7 are distinct.}
+\end{figure}
+
+The true $W$ used in this study is in Table~\ref{tab:W-true}.  In conjunction
+with $Z^\true$, this $W^\true$, makes the first two (similar) features in sample 1
+(first row) absent in the other sample. The 3rd and 4th features are rare, with
+the 3rd feature being absent in the first sample. The remaining features make
+up the majority.
+
+\begin{table}[H]
+  \centering
+  \begin{tabular}{|c|rrrrrrr|}
+    \hline
+    Sample & $k=1$ & $k=2$ & $k=3$ & $k=4$ & $k=5$ & $k=6$ & $k=7$ \\
+    \hline
+    1 & 4\% & 5\% & {\bbh 0\%} & 6\% & 44\% & 38\% & 3\% \\
+    2 & {\bbh 0\%} & {\bbh 0\%} & 6\% & 5\% & 7\% & 54\% & 28\% \\
+    \hline
+  \end{tabular}
+  \caption{True $W$ used in simulation study.}
+  \label{tab:W-true}
+\end{table}
+
+Other data simulation settings:
+\begin{itemize}
+  \item $N$ was set to (1000, 1000)
+  \item $\mu_0^\star = -2$, and $\mu_1^\star =2$
+  \item $\sigma_i^2 = 0.5$
+  \item Three data sets were generated (using different random seeds).
+\end{itemize}
+
+
+\section{MCMC settings}\label{sec:mcmc-settings}
+\begin{itemize}
+  \item Burn-in period: 10000
+  \item Number of MCMC samples collected: 2000 (thinned by 2)
+  \item Model was fit for $K=\bc{5, 6, 7, 8, 15}$ and $\phi$ the scale used in
+    the RepFAM penalty term = $\bc{0, 1, 10}$. These models were fit for each of the
+    three generated data sets. So in total, 45 runs were done.
+\end{itemize}
+
+\section{Results}\label{sec:results}
+Images generated from the results are zipped in the google drive at this link: \\
+\url{https://drive.google.com/open?id=1-hBNgiD1usNvI7WxQ-xSKEtho3c4okKh} \\
+
+(You may want to download it for convenience.)
+
+Focusing on just the results of \texttt{seed\_1}, we can look at the posterior
+distribution of $R_i$ (Figure~\ref{fig:R-post}) under different scales (0, 1, 10) and
+different $K$ (5, 6, 7, 8, 15). Recall that $K^\true=7$ and $R^\true = (6, 5)$.
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/metrics/seed_1/R.pdf}
+  \end{center}
+  \label{fig:R-post}
+  \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$.}
+\end{figure}
+
+Notice that models with higher $\phi$ (penalty term for repFAM), tend to have
+smaller $R_i$. In addition, when $\phi=0$, redundant features are discovered.
+For example, for $K_\text{MCMC} = 8$, we would expect to recover the simulation
+truth for $Z$ as $K^\true = 7 \le K_\text{MCMC}$. The posterior mean of the
+recovered $Z$ is as shown in Figure~\ref{fig:kmcmc8-scale0-zmean}. Notice that
+features 2 and 7 are the same.  However, they are both selected. This can be seen
+in Figure~\ref{fig:kmcmc8-scale0-w}, which shows the posterior distribution of $W$.
+The weights for features 2 and 7 are both non-zero, leading to $R_1$ be between
+5 and 6, but is misleading because one of the features is repeated.
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_0/Kmcmc_8/img/Zmean.pdf}
+  \end{center}
+  \caption{Posterior mean of $Z$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
+  \label{fig:kmcmc8-scale0-zmean}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_0/Kmcmc_8/img/W.pdf}
+  \end{center}
+  \caption{Posterior distribution of $W$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
+  \label{fig:kmcmc8-scale0-w}
+\end{figure}
+
+%%% 
+In contrast, for $K_\text{MCMC} = 8$ and $\phi=1$, The posterior mean of the
+recovered $Z$ is as shown in Figure~\ref{fig:kmcmc8-scale1-zmean}. Notice that
+no features are duplicated.  And the simulation truth for $W$ is recovered.
+This is true also for ($K_\text{MCMC}=15$, $\phi=1$) and ($K_\text{MCMC}=15$,
+$\phi=10$).  However, the simulation truth was not recovered for
+($K_\text{MCMC}=7$, $\phi=1$), ($K_\text{MCMC}=7$, $\phi=10$), and
+($K_\text{MCMC}=8$, $\phi=10$).
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_1/Kmcmc_8/img/Zmean.pdf}
+  \end{center}
+  \caption{Posterior mean of $Z$ for $\phi=1$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
+  \label{fig:kmcmc8-scale1-zmean}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_1/Kmcmc_8/img/W.pdf}
+  \end{center}
+  \caption{Posterior distribution of $W$ for $\phi=1$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
+  \label{fig:kmcmc8-scale1-w}
+\end{figure}
+
+
+\end{document}
