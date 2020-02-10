@@ -1,3 +1,6 @@
+module Regress
+using StatsBase
+
 """
 Impute missing values in a column, using the other columns.
 
@@ -69,13 +72,26 @@ function impute(Y; maxiter=30, tol=1e-3, init=-3, verbose=1, thresh=Inf)
   return X, diff_X
 end
 
-#= TEST
+end  # module Regress
+
+#= Demo
 using CSV
+using Statistics
 using DataFrames
 using PyPlot; const plt = PyPlot.plt
 Y = coalesce.(CSV.read("../../runs/data/cb_transformed.csv"), NaN)
 Y_mat = Matrix(Y[Y[!, :sample_id] .== 1, Not(:sample_id)])
-Y_complete, diff_Y = impute(Y_mat, init=-6, thresh=.5, maxiter=50)
-j = 32; plt.hist(Y_complete[isnan.(Y_mat[:, j]), j], bins=50, alpha=.5); axvline(0, lw=2); println("Proportion of missing: $(mean(isnan.(Y_mat[:, j])))")
+
+Y_complete, diff_Y = Regress.impute(Y_mat, init=-6, thresh=.5, maxiter=50)
+
+function plotme(j; magthresh=7)
+  yj = Y_complete[isnan.(Y_mat[:, j]), j]
+  plt.hist(yj[abs.(yj) .< magthresh , :], bins=50, alpha=.5)
+  axvline(0, lw=2)
+  println("Proportion of missing: $(mean(isnan.(Y_mat[:, j])))")
+end
+
+plotme(2)  # 16 is interesting
 plt.close();
 =#
+
