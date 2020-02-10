@@ -181,7 +181,7 @@ $\phi=10$).  However, the simulation truth was not recovered for
 ($K_\text{MCMC}=7$, $\phi=1$), ($K_\text{MCMC}=7$, $\phi=10$), and
 ($K_\text{MCMC}=8$, $\phi=10$).
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_1/Kmcmc_8/img/Zmean.pdf}
   \end{center}
@@ -190,13 +190,31 @@ $\phi=10$).  However, the simulation truth was not recovered for
   \label{fig:kmcmc8-scale1-zmean}
 \end{figure}
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_1/Kmcmc_8/img/W.pdf}
   \end{center}
   \caption{Posterior distribution of $W$ for $\phi=1$, $K_\text{MCMC}=8$, and
   simulation data 1.}
   \label{fig:kmcmc8-scale1-w}
+\end{figure}
+
+
+\hrulefill
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_10/Kmcmc_8/img/Zmean.pdf}
+  \end{center}
+  \caption{Posterior mean of $Z$ for $\phi=10$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_1/scale_10/Kmcmc_8/img/W.pdf}
+  \end{center}
+  \caption{Posterior distribution of $W$ for $\phi=10$, $K_\text{MCMC}=8$, and
+  simulation data 1.}
 \end{figure}
 
 
@@ -207,7 +225,7 @@ only happened for $\phi=1$ at $K_\text{MCMC}=8$. More runs at
 $K_\text{MCMC}=9,10,\cdots,14$ need to be done to better understand the
 properties of the model.
 
-\begin{figure}[h]
+\begin{figure}[H]
   \begin{center}
     \begin{tabular}{ccc}
       \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_0/metrics/LPML.pdf} &
@@ -219,6 +237,61 @@ properties of the model.
   \label{fig:lpml}
   \caption{LPML for various $K_\text{MCMC}$ and $\phi$ for simulation data 1.}
 \end{figure}
+
+\newpage
+
+\section{Additional Figures}
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/metrics/seed_2/R.pdf}
+  \end{center}
+  \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$ (data 2).}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/metrics/seed_3/R.pdf}
+  \end{center}
+  \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$ (data 3).}
+\end{figure}
+
+\hrulefill \newpage
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_2/scale_0/Kmcmc_8/img/Zmean.pdf}
+  \end{center}
+  \caption{Posterior mean of $Z$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 2.}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_2/scale_0/Kmcmc_8/img/W.pdf}
+  \end{center}
+  \caption{Posterior distribution of $W$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 2.}
+\end{figure}
+
+\hrulefill \newpage
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_3/scale_0/Kmcmc_8/img/Zmean.pdf}
+  \end{center}
+  \caption{Posterior mean of $Z$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 3.}
+\end{figure}
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/seed_3/scale_0/Kmcmc_8/img/W.pdf}
+  \end{center}
+  \caption{Posterior distribution of $W$ for $\phi=0$, $K_\text{MCMC}=8$, and
+  simulation data 3.}
+\end{figure}
+
+\hrulefill \newpage
 
 
 \end{document}
