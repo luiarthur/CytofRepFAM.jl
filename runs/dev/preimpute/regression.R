@@ -50,7 +50,7 @@ impute = function(Yi, Mi, k) {
 
 # Impute all missing values in a matrix
 impute_all = function(Yi, Mi, max_iter=30, tol=1e-3) {
-  X = y1
+  X = Yi
   # X[m1] = rnorm(sum(m1), -3, sd=.1)
   K = NCOL(X)
   # Initialize
