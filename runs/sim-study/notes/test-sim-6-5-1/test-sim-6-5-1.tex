@@ -138,6 +138,14 @@ different $K$ (5, 6, 7, 8, 15). Recall that $K^\true=7$ and $R^\true = (6, 5)$.
 
 \begin{figure}[h]
   \begin{center}
+    \includegraphics[scale=.5]{img/test-sim-6-5-1/metrics/seed_1/R.pdf}
+  \end{center}
+  \label{fig:R-post}
+  \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$.}
+\end{figure}
+
+\begin{figure}[h]
+  \begin{center}
     \begin{tabular}{ccc}
       \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_0/metrics/LPML.pdf} &
       \includegraphics[scale=.3]{img/test-sim-6-5-1/seed_1/scale_1/metrics/LPML.pdf} &
@@ -150,13 +158,6 @@ different $K$ (5, 6, 7, 8, 15). Recall that $K^\true=7$ and $R^\true = (6, 5)$.
 \end{figure}
 
 
-\begin{figure}[h]
-  \begin{center}
-    \includegraphics[scale=.5]{img/test-sim-6-5-1/metrics/seed_1/R.pdf}
-  \end{center}
-  \label{fig:R-post}
-  \caption{Posterior distribution of $R_i$ for various $K$ and $\phi$.}
-\end{figure}
 
 Notice that models with higher $\phi$ (penalty term for repFAM), tend to have
 smaller $R_i$. In addition, when $\phi=0$, redundant features are discovered.
