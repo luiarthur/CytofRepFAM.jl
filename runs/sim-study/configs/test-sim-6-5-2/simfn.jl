@@ -45,7 +45,7 @@ function simfn(settings::Dict{Symbol, Any})
                                       similarity_Z=sim_z)
 
     # NOTE: This is new. We want to spread weights evenly.
-    c.eta_prior = Dict(z => Dirichlet(L, 5) for z in 0:1)
+    c.eta_prior = Dict(z => Dirichlet(L[z], 5) for z in 0:1)
 
     # s = CytofRepFAM.Model.genInitialState(c, d)
     s = CytofRepFAM.Model.smartInit(c, d)
@@ -65,7 +65,7 @@ function simfn(settings::Dict{Symbol, Any})
                                N=settings[:N],
                                W=settings[:W],  # Categorical.
                                sig2=[.5, .5],
-                               seed=settings[:seed_data],
+                               seed=settings[:dataseed],
                                propmissingscale=.6,
                                sortLambda=true);
 
@@ -109,7 +109,7 @@ function simfn(settings::Dict{Symbol, Any})
                                    computeDIC=true, computeLPML=true,
                                    use_repulsive=use_repulsive,
                                    Z_thin=1,
-                                   seed=settings[:seed_mcmc])
+                                   seed=settings[:mcmcseed])
 
   # Dump output
   BSON.bson("$(results_dir)/output.bson", out)
