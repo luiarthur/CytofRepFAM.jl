@@ -25,7 +25,7 @@ for setting in settings
   setting[:aws_bucket] = "$(AWS_BUCKET_PREFIX)/$(setting[:outdir_suffix])"
 end
 
-ncores = min(45, length(settings))  # use at most 45 cores on server
+ncores = min(27, length(settings))  # use at most 45 cores on server
 setnumcores(ncores)
 
 println("Sourcing files ..."); flush(stdout)
