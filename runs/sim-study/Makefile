@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
 .PHONY: clean getoutput getalloutput killsim metrics postproc run sendoutput
-.PHONY: zip_results
+.PHONY: zip_results postproc-and-metrics
 
 # Simulation experiment name
 # SIM_EXP_NAME = test-sim-6-3
@@ -38,18 +38,18 @@ getoutput:
 getalloutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR)
 
+postproc-and-metrics: postproc metrics
+
 postproc:
-	@echo "Do post processing ..."
 	julia postprocess.jl $(SIM_RESULTS_DIR)
-	@echo "Compute metrics ..."
-	julia metrics.jl $(SIM_RESULTS_DIR)
-	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
+	make sendoutput -s
 
 sendoutput:
 	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
 
 metrics:
 	julia metrics.jl $(SIM_RESULTS_DIR)
+	make sendoutput -s
 
 killsim:
 	pids=`grep -r pid $(SIM_RESULTS_DIR) | grep -oP '(?<=pid).*' | grep -oP '\d+'`; \
