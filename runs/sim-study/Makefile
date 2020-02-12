@@ -45,7 +45,7 @@ postproc:
 	make sendoutput -s
 
 sendoutput:
-	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*'
+	aws s3 sync $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) --exclude '*.nfs*' --exclude '*.zip*'
 
 metrics:
 	julia metrics.jl $(SIM_RESULTS_DIR)
