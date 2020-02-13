@@ -101,7 +101,6 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 % latex table generated in R 3.4.4 by xtable 1.8-3 package
 % Wed Feb 12 14:53:27 2020
 \begin{table}[ht]
-  \Large
   \centering
   \begin{tabular}{rrrrrrrr}
     \hline
@@ -115,12 +114,25 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \label{tab:W-true}
 \end{table}
 
+More on data generation / MCMC setup:
+\begin{itemize}
+  \item $\mu^{\star,\true}=(-2, 2)$, $\sigma^{2,\true}_i=0.5$, $N=(1000, 1000)$
+  \item 10000 burn-in, followed by 4000 iterations, and every other sample was
+    kept (2000 samples total).
+  \item Three datasets were generated using the true parameters. Three MCMC runs using 
+    different random seeds were done. For each run, $\phi$ was set at (0, 1, 10). There
+    are a total of 27 runs.
+\end{itemize}
+
 \newpage
 \section{Log likelihood (post-burn)}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{.15}
   \end{center}
+  \caption{Post burn-in log likelihoods for each run. Burn in used was 10000.
+  These plots show the log-likelihood evaluations of the 4000 subsequent iterations
+  for each simulated dataset, each replicate, and each $\phi$.}
 \end{figure}
 
 \newpage
@@ -187,13 +199,62 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \end{center}
 \end{figure}
 
+% \newpage
+% \section{Posterior distribution of $v$}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{v.pdf}{.2}
+%   \end{center}
+% \end{figure}
+
 \newpage
-\section{Posterior distribution of $v$}
+\section{Posterior distribution of $\lambda_1$}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \imgtemplate{v.pdf}{.2}
+    \imgtemplate{y1.pdf}{.2}
   \end{center}
 \end{figure}
+
+\newpage
+\section{Posterior distribution of $\lambda_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2.pdf}{.2}
+  \end{center}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 1, marker 1}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i1_j1.pdf}{.2}
+  \end{center}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 1, marker 2}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i1_j2.pdf}{.2}
+  \end{center}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 2, marker 1}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i2_j1.pdf}{.2}
+  \end{center}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 2, marker 2}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i2_j2.pdf}{.2}
+  \end{center}
+\end{figure}
+
 
 % Uncomment if using bibliography:
 % \bibliography{bib}
