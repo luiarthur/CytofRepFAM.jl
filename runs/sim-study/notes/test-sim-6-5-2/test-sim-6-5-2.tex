@@ -131,8 +131,13 @@ More on data generation / MCMC setup:
     \imgtemplate{loglike_postburn.pdf}{.15}
   \end{center}
   \caption{Post burn-in log likelihoods for each run. Burn in used was 10000.
-  These plots show the log-likelihood evaluations of the 4000 subsequent iterations
-  for each simulated dataset, each replicate, and each $\phi$.}
+    These plots show the log-likelihood evaluations of the 4000 subsequent
+    iterations for each simulated dataset, each replicate, and each $\phi$.
+    Graphs (l), (r), and (z), clearly show that the chain is transitioning
+    between modes.  This is evident in the posterior distributions for some
+    parameters (following pages), and is most visible in sub-figures (l), (r),
+    and (z) in Figures~\ref{fig:mutrace} and \ref{fig:sigtrace}.}
+  \label{fig:ll}
 \end{figure}
 
 \newpage
@@ -141,22 +146,37 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{Zmean.pdf}{.2}
   \end{center}
+  \caption{Recall that in the simulation truth, 6 and 5 features are present in
+    samples 1 and 2 respectively. Consequently, 7 features should be active
+    (i.e. selected in at least one sample) in each figure (indicated by high
+    posterior probability). In some of these scenarios, only 6 features are
+    active, in others 8 are selected. But most of the time, 7 are selected. 
+    Eight features are selected only when $\phi=0$. That is, one feature is duplicated.
+    The feature that is duplicated is feature 3 (from Figure~\ref{fig:Z-true}.)
+    It can be seen in Figures~(\ref{fig:z1}) and (\ref{fig:z2}), that feature 3 is
+    split rather evenly into two identical features. In the causes where only 6 features
+    are selected, features 1 and 2 were merged into one group. I believe the merging 
+    of small, similar features, and the splitting of large features occurs because the 
+    prior for $W$ encourages weight to be spread evenly between features.}
+  \label{fig:zmean}
 \end{figure}
 
 \newpage
 \section{Posterior estimate of $Z_1$}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \imgtemplate{Z1.pdf}{.15}
+    \imgtemplate{Z1.pdf}{.17}
   \end{center}
+  \label{fig:z1}
 \end{figure}
 
 \newpage
 \section{Posterior estimate of $Z_2$}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \imgtemplate{Z2.pdf}{.15}
+    \imgtemplate{Z2.pdf}{.17}
   \end{center}
+  \label{fig:z2}
 \end{figure}
 
 \newpage
@@ -165,6 +185,9 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{mus_trace.pdf}{.2}
   \end{center}
+  \label{fig:mutrace}
+  \caption{Notice here that $\mu$ is still transitioning. There may be mixing
+  issues for $\mu$, $\sigma$, and $Z$. }
 \end{figure}
 
 \newpage
@@ -173,6 +196,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{mus.pdf}{.2}
   \end{center}
+  \label{fig:mu}
 \end{figure}
 
 \newpage
@@ -181,6 +205,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{sig2_trace.pdf}{.2}
   \end{center}
+  \label{fig:sigtrace}
 \end{figure}
 
 \newpage
@@ -189,6 +214,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{sig2.pdf}{.2}
   \end{center}
+  \label{fig:sig}
 \end{figure}
 
 \newpage
@@ -197,6 +223,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{W.pdf}{.2}
   \end{center}
+  \label{fig:w}
 \end{figure}
 
 % \newpage
@@ -213,6 +240,10 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{y1.pdf}{.2}
   \end{center}
+  \caption{Notice here, the large groups are split into two groups (e.g.  (j),
+  (s), (p)). Small and similar groups are grouped together (e.g.  (h),
+  ($\alpha$)).}
+  \label{fig:lam1}
 \end{figure}
 
 \newpage
@@ -221,6 +252,9 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{y2.pdf}{.2}
   \end{center}
+  \caption{Notice here, the large groups are split into two groups (e.g.  (a),
+  (g), (j), (p), (s)).}
+  \label{fig:lam2}
 \end{figure}
 
 \newpage
@@ -229,6 +263,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i1_j1.pdf}{.2}
   \end{center}
+  \label{fig:dd11}
 \end{figure}
 
 \newpage
@@ -237,6 +272,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i1_j2.pdf}{.2}
   \end{center}
+  \label{fig:dd12}
 \end{figure}
 
 \newpage
@@ -245,6 +281,8 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i2_j1.pdf}{.2}
   \end{center}
+  \label{fig:dd21}
+  \caption{Strange things in (h), (i), and (z)?}
 \end{figure}
 
 \newpage
@@ -253,6 +291,7 @@ More on data generation / MCMC setup:
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i2_j2.pdf}{.2}
   \end{center}
+  \label{fig:dd22}
 \end{figure}
 
 
