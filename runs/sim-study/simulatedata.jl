@@ -58,7 +58,8 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
                        W=Matrix([[.7, 0, .3] [.6, .1, .3]]'),
                        sig2=[.1, .1], propmissingscale=0.3,
                        beta=[-9.2, -2.3],  # linear missing mechanism
-                       sortLambda=false, seed=nothing)
+                       sortLambda=false, seed=nothing,
+                       eps_mus_dist=nothing)
   if seed != nothing
     Random.seed!(seed)
   end
@@ -87,8 +88,21 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
 
   z(i::Int, n::Int, j::Int) = Z[j, lam[i][n]]
 
-  mu(i::Int, n::Int, j::Int) = mus[z(i, n, j)][1]  # NOTE: only for L[0]=L[1]=1!
+  eps_mus = let
+    if eps_mus_dist != nothing
+      rand(eps_mus_dist, J)
+    else
+      zeros(J)
+    end
+  end
+
+  function mu(i::Int, n::Int, j::Int)
+    # NOTE: only for L[0]=L[1]=1!
+    return mus[z(i, n, j)][1] + eps_mus[j]
+  end
+
   sig(i::Int) = sqrt(sig2[i])
+
 
   for i in 1:I
     sig_i = sig(i)
@@ -117,5 +131,5 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
 
   return Dict(:Z => Z, :N => N, :L => L, :mus => mus, :W => W, :seed => seed,
               :lam => lam, :sig2 => sig2, :y => y, :y_complete => y_complete,
-              :beta => beta)
+              :beta => beta, :eps_mus => eps_mus)
 end
