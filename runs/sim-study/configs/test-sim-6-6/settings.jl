@@ -23,14 +23,12 @@ settings = let
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
   [Dict(:simname => simname,
         :repfam_dist_scale => scale,
-        :N => [1000, 1000],
+        :N => [2000, 2000],
         :Z => Z,
         :W => W,
         :thin_samps => 2,
         :nburn => 10000,
         :nsamps => 2000,
-        # :nburn => 10, # NOTE: test
-        # :nsamps => 20, # NOTE: test
         :Lmcmc => Dict(0 => 2, 1 => 2),
         :Kmcmc => 10,
         :dataseed => seed_data,

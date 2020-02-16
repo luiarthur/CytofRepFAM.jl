@@ -7,8 +7,9 @@ if length(ARGS) == 3
   SIMDIR = ARGS[1]
   RESULTS_DIR_PREFIX = ARGS[2]
   AWS_BUCKET_PREFIX = ARGS[3]
+  ISTEST = parse(Int, ARGS[4]) > 0  # this argument should be 0 or 1 (for test)
 else
-  println("Usage: julia parsim.jl <simdir> <results_dir_prefix> <aws_bucket_prefix>")
+  println("Usage: julia parsim.jl <simdir> <results_dir_prefix> <aws_bucket_prefix> <istest>")
 end
 
 function setnumcores(n::Int)
@@ -23,6 +24,10 @@ include("$(SIMDIR)/settings.jl")
 for setting in settings
   setting[:results_dir] = "$(RESULTS_DIR_PREFIX)/$(setting[:outdir_suffix])"
   setting[:aws_bucket] = "$(AWS_BUCKET_PREFIX)/$(setting[:outdir_suffix])"
+  if ISTEST
+    setting[:nsamps] = 10
+    setting[:nburn] = 10
+  end
 end
 
 ncores = min(27, length(settings))  # use at most 45 cores on server

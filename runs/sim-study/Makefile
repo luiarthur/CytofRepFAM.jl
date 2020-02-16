@@ -1,14 +1,14 @@
 SHELL:=/bin/bash
 
 .PHONY: clean getoutput getalloutput killsim metrics postproc run sendoutput
-.PHONY: zip_results postproc-and-metrics
+.PHONY: zip_results postproc-and-metrics testrun
 
 # Simulation experiment name
 # SIM_EXP_NAME = test-sim-6-3
 # SIM_EXP_NAME = test-sim-6-5
 # SIM_EXP_NAME = test-sim-6-5-1
 # SIM_EXP_NAME = test-sim-6-5-2
-SIM_EXP_NAME = test-sim-6-6-6
+SIM_EXP_NAME = test-sim-6-6
 
 # Simulation settings dir
 SIM_CONFIG_DIR = configs/$(SIM_EXP_NAME)
@@ -26,7 +26,12 @@ SIM_AWS_BUCKET = s3://cytof-repfam/$(SIM_EXP_NAME)
 ### Sim Make cmds ###
 run:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
-	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) \
+	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 0 \
+		&> results/$(SIM_EXP_NAME)-master-log.txt &
+
+testrun:
+	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
+	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 1 \
 		&> results/$(SIM_EXP_NAME)-master-log.txt &
 
 clean:
