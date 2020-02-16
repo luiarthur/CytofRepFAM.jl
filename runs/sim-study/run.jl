@@ -3,7 +3,7 @@ include("imports.jl")  # Load on main node.
 
 
 # NOTE: Change this.
-if length(ARGS) == 3
+if length(ARGS) == 4
   SIMDIR = ARGS[1]
   RESULTS_DIR_PREFIX = ARGS[2]
   AWS_BUCKET_PREFIX = ARGS[3]
