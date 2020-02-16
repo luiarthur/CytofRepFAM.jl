@@ -10,6 +10,7 @@ if length(ARGS) == 4
   ISTEST = parse(Int, ARGS[4]) > 0  # this argument should be 0 or 1 (for test)
 else
   println("Usage: julia parsim.jl <simdir> <results_dir_prefix> <aws_bucket_prefix> <istest>")
+  exit(1)
 end
 
 function setnumcores(n::Int)
