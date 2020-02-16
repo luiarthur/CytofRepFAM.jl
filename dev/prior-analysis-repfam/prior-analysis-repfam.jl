@@ -1,3 +1,8 @@
+# NOTE
+# Did a prior analysis for a version of repFAM where Z is
+# a function of H, v. The results were underwhelming, and we couldn't
+# achieve repulsiveness. Need to give up this idea.
+
 import Pkg; Pkg.activate("../../")
 include("HMC.jl")
 using Distributions
@@ -14,6 +19,7 @@ function grad_logprobH(H, j, k, phi)
       out += tmp * 2 / phi
     end
   end
+  return out
 end
 
 function grad_logprobH(H, phi)
@@ -84,7 +90,44 @@ function drawZ(J, K, alpha, phi; stickbreak=false)
   return v .> cdf.(Normal(0, 1), H)
 end
 
+function drawH(n, J, K, phi; num_leapfrog_steps=2^6, eps=.01, burn=0)
+  lp(H) = logprobH(H, phi)
+  grad_lp(H) = grad_logprobH(H, phi)
+
+  H = randn(J, K)
+  for _ in 1:burn
+    H, _ = HMC.hmc_update(H, lp, grad_lp, num_leapfrog_steps, eps)
+  end
+
+  Hs = [zeros(J, K) for _ in 1:n]
+  lpHs = zeros(n)
+  
+  for i in 1:n
+    H, lpH = HMC.hmc_update(H, lp, grad_lp, num_leapfrog_steps, eps)
+    Hs[i] .= copy(H)
+    lpHs[i] = lpH
+  end
+
+  return Hs, lpHs
+end
+
+function drawZ(N, J, K, alpha, phi;
+               stickbreak=false, num_leapfrog_steps=2^6, eps=.01, burn=0)
+  if stickbreak
+    vs = [cumprod(rand(Beta(alpha, 1), 1, K), dims=2) for _ in 1:N]
+  else
+    vs = [rand(Beta(alpha / K, 1), 1, K) for _ in 1:N]
+  end
+
+  Hs, lpH = drawH(N, J, K, phi,
+                  num_leapfrog_steps=num_leapfrog_steps, eps=eps, burn=burn)
+
+  return [vs[i] .> cdf.(Normal(0, 1), Hs[i]) for i in 1:N]
+end
+
+
 # Simulate
-ndraws = 100000
-Zs = [drawZ(2, 2, 1.0, 0.0, stickbreak=true) for _ in 1:ndraws]
-countmap(Zs)
+N, alpha, phi, J, K, burn = (10000, 0.5, 100.0, 2, 2, 100)
+@time Zs = drawZ(N, J, K, alpha, phi, stickbreak=true, burn=burn)
+Zcounts = countmap(Zs)
+sort(collect(Zcounts), by=x -> -x.second)

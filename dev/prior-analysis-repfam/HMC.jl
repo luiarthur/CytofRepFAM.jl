@@ -10,7 +10,7 @@ rand_momentum(x) = randn(size(x))
 """
 Compute kinetic energy given momentum
 """
-compute_kinetic_energy(momentum) = sum(v .^ 2) / 2
+compute_kinetic_energy(momentum) = sum(momentum .^ 2) / 2
 
 """
 See p. 14 of
@@ -25,7 +25,7 @@ function hmc_update(curr_state,
   qs = copy(curr_state)
 
   # Momentum variables
-  ps = rand_momentum(q)
+  ps = rand_momentum(qs)
 
   # Current kinetic energy
   curr_K = compute_kinetic_energy(ps)
@@ -41,34 +41,26 @@ function hmc_update(curr_state,
 
   # Make a half step for momentum at the beginning
   gs = grad_U(qs)
-  for (q, p) in zip(qs, ps)
-    ps .-= eps * qs / 2
-  end
+  ps .-= eps * qs / 2
 
   # Alternate full steps for position and momentum
   for i in 1:num_leapfrog_steps
     # Make a full step for the position
-    for (q, p) in zip(qs, ps)
-      qs .+= eps * ps
-    end
+    qs .+= eps * ps
 
     # Make a full step for the momentum, except at end of trajectory
     if i < num_leapfrog_steps
       gs = grad_U(qs)
-      for (q, p) in zip(qs, ps)
-        ps .-= eps * qs
-      end
+      ps .-= eps * qs
     end
   end
 
   # Make a half step for momentum at the end
   gs = grad_U(qs)
-  for (q, p) in zip(qs, ps)
-    ps .-= eps * qs / 2
-  end
+  ps .-= eps * qs / 2
 
   # Proposed potential energy
-  cand_U = U(state)
+  cand_U = U(qs)
 
   # Proposed kinetic  energy
   cand_K = compute_kinetic_energy(ps)
@@ -79,7 +71,7 @@ function hmc_update(curr_state,
 
   # Accept or reject
   if log_acceptance_ratio > log(rand())
-    return state, -cand_U
+    return qs, -cand_U
   else
     return curr_state, -curr_U
   end
