@@ -10,7 +10,7 @@ addprocs(27)
 @everywhere include(joinpath(@__DIR__, "../../../PlotUtils/imports.jl"))
 
 # Directory where results are
-results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-5-2"
+results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-6"
 
 ### Create metrics ###
 
@@ -105,7 +105,7 @@ metrics_df = let
   df
 end
 
-CSV.write("metrics.csv", metrics_df)
+CSV.write("metrics/metrics.csv", metrics_df)
 
 # Remove extra processors
 rmprocs(filter(w -> w > 1, workers()))
