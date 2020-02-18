@@ -1,10 +1,6 @@
 fname = test-sim-6-6
 
-getresults:
-	cd ../../ && \
-		make getoutput -s && \
-		make zip_results -s && \
-		cd results && unzip $(fname)
+all: build
 
 build:
 	latexmk $(fname).tex -pdf
@@ -17,3 +13,9 @@ cleanall: clean
 
 watch:
 	latexmk -pvc -pdf $(fname).tex
+
+getresults:
+	cd ../../ && \
+		make getoutput -s && \
+		make zip_results -s && \
+		cd results && unzip $(fname)
