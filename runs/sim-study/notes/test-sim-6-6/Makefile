@@ -1,5 +1,11 @@
 fname = test-sim-6-6
 
+getresults:
+	cd ../../ && \
+		make getoutput -s && \
+		make zip_results -s && \
+		cd results && unzip $(fname)
+
 build:
 	latexmk $(fname).tex -pdf
 
