@@ -12,15 +12,17 @@ addprocs(16)
 @everywhere eye(T::Type, n::Int) = Matrix{T}(LinearAlgebra.I, n, n)
 
 @everywhere function gen_distribution(P)
-  rand(InverseWishart(P, eye(Float64, P)))
+  S = rand(InverseWishart(P, eye(Float64, P)))
+  m = randn(P) * 10
+  (m, S)
 end
 
 # True distribution has this covariance
 # @everywhere P = 5  # NOTE: works great
 @everywhere P = 20 # NOTE: works
 # @everywhere P = 50 # NOTE: dimension too high?
-@everywhere S = gen_distribution(P)
-@everywhere mvn = MvNormal(S)
+@everywhere m, S = gen_distribution(P)
+@everywhere mvn = MvNormal(m, S)
 
 @everywhere function update(init::T, tau, propCov, iters) where T
   samps = T[]
@@ -37,10 +39,11 @@ end
   return samps
 end
 
-taus = 1.5 .^ (0:15)
-iters = 10
-epochs = 1000
-buffsize = 3000
+taus = 1.1 .^ (0:15)
+# taus = .99 .^ (15:-1:0)
+iters = 100
+epochs = 100
+buffsize = 1000
 
 
 @time samps = let
@@ -76,10 +79,6 @@ buffsize = 3000
         tmp = copy(state[j])
         state[j] = copy(state[i])
         state[i] = tmp
-
-        # tmp = propCov[j]
-        # propCov[j] = propCov[i]
-        # propCov[i] = tmp
       end
     end
   end
@@ -103,6 +102,9 @@ begin
   show(stdout, "text/plain", cov(mvn)[1:K, 1:K])
   # show(stdout, "text/plain", cor(mvn)[1:K, 1:K])
   # rcommon.plotPosts(Matrix(hcat(samps[(end-tail):end]...)')[:, 1:K]);
+
+  println("mean(mvn), mean(samps)")
+  show(stdout, "text/plain", [mean(mvn) mean(samps)])
 
   nothing
 end;
