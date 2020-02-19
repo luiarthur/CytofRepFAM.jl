@@ -18,9 +18,10 @@ Random.seed!(0)
 eye(n) = Matrix{Float64}(LinearAlgebra.I, n, n)
 
 function gen_distribution(P)
-  S = rand(InverseWishart(P, eye(P)))
+  S = randn(P, P)
+  SST = S * S'
   m = randn(P)
-  (m, S)
+  (m, SST)
 end
 
 # Dimensions
@@ -40,25 +41,28 @@ function gensamples(init::T, propCov, iters) where T
   return out
 end
 
-delta(n) = min(n^(-0.5), .001)
+delta(n) = min(n^(-0.5), .01)
 compute_acceptance_rate(x) = length(unique(x)) / length(x)
 
-function adapt(init, epochs, batchsize; target_acceptance_rate=.23, s=1.0)
+function adapt(init, epochs, batchsize; target_acceptance_rate=.23)
   x = copy(init)
-  propCov = s * eye(length(init))
+  P = length(init)
+  propCov = 0.01 * eye(P) / P
   for i in 1:epochs
     print("\r$(i)/$(epochs)")
     samps = gensamples(x, propCov, batchsize)
     acceptance_rate = compute_acceptance_rate(samps)
-    # Adapt s
+    # Adapt s, propCov
     propCov = let
-      factor = exp(delta(i))
-      if acceptance_rate > target_acceptance_rate
-        s *= factor
+      # See: http://probability.ca/jeff/ftpdir/adaptex.pdf
+      Cest = cov(samps) # * (1 / i) + propCov * (i - 1) / i
+      C1 = Cest * 5.66 / P + 1e-6 * eye(P)
+      C0 = 0.01 * eye(P) / P
+      if i <= 2 * P
+        C = C0
       else
-        s /= factor
+        C = 0.95 > rand() ? C1 : C0
       end
-      C = s * cov(hcat(samps...)') + 1e-6 * eye(P)
       C
     end
     x .= copy(samps[end])
@@ -71,8 +75,11 @@ function adapt(init, epochs, batchsize; target_acceptance_rate=.23, s=1.0)
 end
 
 
-samps, propCov = adapt(randn(P), 500, 500, s=0.1);
+@time samps, propCov = adapt(randn(P), 1000, 500);
+println("Dims: $P")
 println("Accept rate: $(compute_acceptance_rate(samps))")
 K = 5
-pretty(cov(samps)[1:K, 1:K])
+println("Est. Cov.:")
+pretty(cov(samps)[1:K, 1:K], digits=3)
+println("True Cov.:")
 pretty(cov(mvn)[1:K, 1:K], digits=3)
