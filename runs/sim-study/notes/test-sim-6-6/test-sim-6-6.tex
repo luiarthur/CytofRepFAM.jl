@@ -127,7 +127,9 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 
 \subsection{More on data generation / MCMC setup}
 \begin{itemize}
-  \item $\mu^{\star,\true}=(-2, 2)$, $\sigma^{2,\true}_i=0.5$, $N=(2000, 2000)$
+  \item $(\mu_{0,j}^\star)^\true=-2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item $(\mu_{1,j}^\star)^\true=2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
   \item 10000 burn-in, followed by 4000 iterations, and every other sample was
     kept (2000 samples total).
   \item Three datasets were generated using the true parameters. Three MCMC runs using 
@@ -153,10 +155,9 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \caption{Post burn-in log likelihoods for each run. Burn in used was 10000.
     These plots show the log-likelihood evaluations of the 4000 subsequent
     iterations for each simulated dataset, each replicate, and each $\phi$.
-    Graphs (l), (r), and (z), clearly show that the chain is transitioning
-    between modes.  This is evident in the posterior distributions for some
-    parameters (following pages), and is most visible in sub-figures (l), (r),
-    and (z) in Figures~\ref{fig:mutrace} and \ref{fig:sigtrace}.}
+    Unlike in the previous simulation study, we see no clear evidence that 
+    the chains have not converged. However, from Table~\ref{tab:metrics}, it's
+    clear that some chains are stuck in local modes.}
   \label{fig:ll}
 \end{figure}
 
@@ -170,14 +171,18 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     samples 1 and 2 respectively. Consequently, 7 features should be active
     (i.e. selected in at least one sample) in each figure (indicated by high
     posterior probability). In some of these scenarios, only 6 features are
-    active, in others 8 are selected. But most of the time, 7 are selected. 
-    Eight features are selected only when $\phi=0$. That is, one feature is duplicated.
-    The feature that is duplicated is feature 3 (from Figure~\ref{fig:Z-true}.)
-    It can be seen in Figures~(\ref{fig:z1}) and (\ref{fig:z2}), that feature 3 is
-    split rather evenly into two identical features. In the causes where only 6 features
-    are selected, features 1 and 2 were merged into one group. I believe the merging 
-    of small, similar features, and the splitting of large features occurs because the 
-    prior for $W$ encourages weight to be spread evenly between features.}
+    active, in others 8 are selected. There are also cases were only 5 features
+    are active. But most of the time, 7 are selected.  Eight features are
+    selected only when $\phi=0$. That is, one feature is duplicated.  The
+    feature that is duplicated is feature 3 (from Figure~\ref{fig:Z-true}.) It
+    can be seen in Figures~(\ref{fig:z1}) and (\ref{fig:z2}), that feature 3 is
+    split rather evenly into two identical features. In the cases where only 6
+    features are selected, features 1 and 2 were merged into one group. I
+    believe the merging of small, similar features, and the splitting of large
+    features occurs because the prior for $W$ encourages weight to be spread
+    evenly between features. Moreover, in the case where only 5 features are
+    active, features 1 and 2 were merged into feature 3, which is a similar but
+    much more abundant feature (see (r), (w)).}
   \label{fig:zmean}
 \end{figure}
 
@@ -206,8 +211,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{mus_trace.pdf}{.2}
   \end{center}
   \label{fig:mutrace}
-  \caption{Notice here that $\mu$ is still transitioning. There may be mixing
-  issues for $\mu$, $\sigma$, and $Z$. }
+  \caption{Notice here that for (r) and (w), $\mu$ is near 0.}
 \end{figure}
 
 \newpage
@@ -260,9 +264,9 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{y1.pdf}{.2}
   \end{center}
-  \caption{Notice here, the large groups are split into two groups (e.g.  (j),
-  (s), (p)). Small and similar groups are grouped together (e.g.  (h),
-  ($\alpha$)).}
+  % \caption{Notice here, the large groups are split into two groups (e.g.  (j),
+  % (s), (p)). Small and similar groups are grouped together (e.g.  (h),
+  % ($\alpha$)).}
   \label{fig:lam1}
 \end{figure}
 
@@ -272,8 +276,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{y2.pdf}{.2}
   \end{center}
-  \caption{Notice here, the large groups are split into two groups (e.g.  (a),
-  (g), (j), (p), (s)).}
+  % \caption{Notice here, the large groups are split into two groups (e.g.  (a),
+  % (g), (j), (p), (s)).}
   \label{fig:lam2}
 \end{figure}
 
@@ -284,6 +288,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{dden/dden_i1_j1.pdf}{.2}
   \end{center}
   \label{fig:dd11}
+  \caption{Strange things in (r), (w). Seems to be mixing issues, getting trapped in local modes.}
 \end{figure}
 
 \newpage
@@ -302,7 +307,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{dden/dden_i2_j1.pdf}{.2}
   \end{center}
   \label{fig:dd21}
-  \caption{Strange things in (h), (i), and (z)?}
+  % \caption{Strange things in (h), (i), and (z)?}
 \end{figure}
 
 \newpage
@@ -323,45 +328,47 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 \begin{tabular}{crrrrrrrrrrr}
   \hline
   \rule{0pt}{2.6ex}
-  & Data & MCMC & $\phi$ & DIC & LPML & $\hat{R}_1$ & $\hat{R}_2$ & $R_1 (2.5\%)$ & $R_2 (2.5\%)$ & $R_1 (97.5\%)$ & $R_2 (97.5\%)$\\
+  & Data & MCMC & $\phi$ & DIC & LPML & $\hat{R}_1$ & $\hat{R}_2$& $R_1 (2.5\%)$ & $R_2 (2.5\%)$ & $R_1 (97.5\%)$ & $R_2 (97.5\%)$ \\
   \hline
-  a) &   1 &   1 &   0 & -781118.53 & -18.22 & 5.00 & 5.00 & 6.00 & 6.00 & 5.15 & 5.77 \\
-  b) &   1 &   1 &   1 & -780253.61 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  c) &   1 &   1 &  10 & -878131.60 & -17.72 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  \hline
-  d) &   1 &   2 &   0 & -877944.78 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  e) &   1 &   2 &   1 & -879072.72 & -17.73 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  f) &   1 &   2 &  10 & -780334.99 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  \hline
-  g) &   1 &   3 &   0 & -781079.80 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  h) &   1 &   3 &   1 & -780999.12 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  i) &   1 &   3 &  10 & -878139.99 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  \hline\hline
-  j) &   2 &   1 &   0 & -861980.28 & -18.15 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  k) &   2 &   1 &   1 & -793929.95 & -18.48 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
-  l) &   2 &   1 &  10 & -861537.43 & -18.18 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  \hline
-  m) &   2 &   2 &   0 & -921424.46 & -17.87 & 7.00 & 6.00 & 7.00 & 6.00 & 6.99 & 6.00 \\
-  n) &   2 &   2 &   1 & -794848.92 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
-  o) &   2 &   2 &  10 & -921825.37 & -17.88 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  \hline
-  p) &   2 &   3 &   0 & -861615.02 & -18.18 & 5.00 & 6.00 & 6.00 & 6.00 & 5.04 & 6.00 \\
-  q) &   2 &   3 &   1 & -794300.71 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
-  r) &   2 &   3 &  10 & -682542.83 & -18.87 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
-  \hline\hline
-  s) &   3 &   1 &   0 & -763241.45 & -18.20 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  t) &   3 &   1 &   1 & -763658.98 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  u) &   3 &   1 &  10 & -676237.65 & -18.61 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
-  \hline
-  v) &   3 &   2 &   0 & -851310.67 & -17.79 & 7.00 & 6.00 & 7.00 & 6.00 & 7.00 & 6.00 \\
-  w) &   3 &   2 &   1 & -557653.90 & -19.06 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
-  x) &   3 &   2 &  10 & -851130.61 & -17.80 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
-  \hline
-  y) &   3 &   3 &   0 & -764177.86 & -18.21 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 \\
-  z) &   3 &   3 &   1 & -763702.20 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
-  $\alpha$ &   3 &   3 &  10 & -851580.44 & -17.78 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  a) &1 &1 & 0 & -781118.53 & -18.22 & 5.15 & 5.77 & 5.00 & 5.00 & 6.00 & 6.00 \\
+  b) &1 &1 & 1 & -780253.61 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  c) &1 &1 &10 & -878131.60 & -17.72 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  d) &1 &2 & 0 & -877944.78 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  e) &1 &2 & 1 & -879072.72 & -17.73 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  f) &1 &2 &10 & -780334.99 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  \hline                                           
+  g) &1 &3 & 0 & -781079.80 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  h) &1 &3 & 1 & -780999.12 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  i) &1 &3 &10 & -878139.99 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline\hline                                     
+  j) &2 &1 & 0 & -861980.28 & -18.15 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  k) &2 &1 & 1 & -793929.95 & -18.48 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  l) &2 &1 &10 & -861537.43 & -18.18 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  \hline                                           
+  m) &2 &2 & 0 & -921424.46 & -17.87 & 6.99 & 6.00 & 7.00 & 6.00 & 7.00 & 6.00 \\
+  n) &2 &2 & 1 & -794848.92 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  o) &2 &2 &10 & -921825.37 & -17.88 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  p) &2 &3 & 0 & -861615.02 & -18.18 & 5.04 & 6.00 & 5.00 & 6.00 & 6.00 & 6.00 \\
+  q) &2 &3 & 1 & -794300.71 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  r) &2 &3 &10 & -682542.83 & -18.87 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
+  \hline\hline                                     
+  s) &3 &1 & 0 & -763241.45 & -18.20 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  t) &3 &1 & 1 & -763658.98 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  u) &3 &1 &10 & -676237.65 & -18.61 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  \hline                                           
+  v) &3 &2 & 0 & -851310.67 & -17.79 & 7.00 & 6.00 & 7.00 & 6.00 & 7.00 & 6.00 \\
+  w) &3 &2 & 1 & -557653.90 & -19.06 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
+  x) &3 &2 &10 & -851130.61 & -17.80 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  y) &3 &3 & 0 & -764177.86 & -18.21 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 \\
+  z) &3 &3 & 1 & -763702.20 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  $\alpha$) &3 &3 &10 & -851580.44 & -17.78 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
   \hline
 \end{tabular}
+\caption{Metrics}
+\label{tab:metrics}
 \end{table}
 
 
