@@ -38,6 +38,15 @@ end
 axhlines(x; kw...) = for xi in x plt.axhline(xi; kw...) end
 cm_greys = plt.cm.get_cmap("Greys", 5)
 
+function plot_missmech(beta, i; xlim=[-10, 5],
+                      ygrid=range(xlim[1], stop=xlim[2], length=300))
+  p = [CytofRepFAM.Model.prob_miss(y, beta[:, i]) for y in ygrid]
+  plt.plot(ygrid, p, lw=3)
+  plt.title("Missing Mechanism for Sample $(i)")
+  plt.xlabel("Probability of Missing")
+  plt.ylabel("Expression Level")
+end
+
 # TODO
 # Steal things from: Cytof5/sims/repfam_fs/test
 
@@ -208,7 +217,7 @@ function plot_sig2(sig2s, imgdir; sig2_true=nothing, printmean=true)
 
 end
 
-function plotW(Ws; imgdir, W_true=nothing, xlabel="cell subpopulations")
+function plot_W(Ws; imgdir, W_true=nothing, xlabel="cell subpopulations")
   I, K = size(Ws[1])
   Ws_mat = cat(Ws..., dims=3)
   plt.figure()

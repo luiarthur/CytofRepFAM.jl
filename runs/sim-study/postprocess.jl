@@ -34,6 +34,9 @@ end
   sig2s = extract(:theta__sig2)
   etas = extract(:theta__eta)
 
+  # Number of samples
+  I = length(sig2s[1])
+
   # Create a directory for images / txt if needed.
   dir_to_output, _ = splitdir(path_to_output)
   imgdir = joinpath(dir_to_output, "img")
@@ -47,8 +50,19 @@ end
   PlotUtils.plot_loglike(output[:loglike][(nburn + 1):end],
                          imgdir, fname="loglike_postburn.pdf")
 
+  # Plot missing mechanism
+  for i in 1:I
+    PlotUtils.plot_missmech(output[:c].constants.beta, i, xlim=[-5, 0])
+    plt.savefig("$(imgdir)/missmech_$(i).pdf", bbox_inches="tight")
+  end
+
+  # Print missing mechanism
+  open(joinpath(imgdir, "txt/beta.txt"), "w") do io
+    writedlm(io, output[:c].constants.beta, ',')
+  end
+
   # Plot parameters
-  PlotUtils.plotW(Ws, imgdir=imgdir, W_true=simdat[:W])
+  PlotUtils.plot_W(Ws, imgdir=imgdir, W_true=simdat[:W])
   PlotUtils.plot_v(vs, imgdir)
   PlotUtils.plot_alpha(alphas, imgdir)
   PlotUtils.plot_mus(deltas, imgdir)
@@ -62,7 +76,7 @@ end
 
   # Plot y / Z
   PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
-                    Z_true=simdat[:Z])
+                    Z_true=simdat[:Z], w_thresh=0.0)
 end
 
 # # Get some simulation truths
