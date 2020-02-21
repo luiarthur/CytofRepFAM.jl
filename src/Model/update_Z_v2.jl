@@ -33,11 +33,7 @@ function update_Z_marg_lamgam!(j::Int, k::Int,
   s.Z[j, k] = new_Zjk_is_one
 end
 
-# TODO: Benchmark. This vs vectorized operations.
-# Things that may be slowing down everything:
-# - Normal object creation in `logdmixture`
-# - computng mus from delta for each i,n,j in `logdmixture`
-# - Computing the noisy component (because we're not using it).
+
 function update_Z_marg_lamgam!(s::State, c::Constants, d::Data, sb_ibp::Bool;
                                use_repulsive::Bool=false)
   # Precompute mus0, mus1, sig
