@@ -10,7 +10,8 @@ addprocs(27)
 @everywhere include(joinpath(@__DIR__, "../../../PlotUtils/imports.jl"))
 
 # Directory where results are
-results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-6"
+simname = basename(strip(@__DIR__, '/'))
+results_dir = "/scratchdata/alui2/cytof/results/repfam/$(simname)"
 
 ### Create metrics ###
 
