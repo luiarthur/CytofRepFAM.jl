@@ -8,6 +8,7 @@ include("gibbs.jl")
 include("TuningParam.jl")
 include("Fitness.jl")
 include("Util.jl")
+include("ParTemp.jl")
 
 
 function metropolisBase(curr::Float64, log_prob::Function, stepSD::Float64)
