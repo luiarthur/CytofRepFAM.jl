@@ -8,7 +8,8 @@ SHELL:=/bin/bash
 # SIM_EXP_NAME = test-sim-6-5
 # SIM_EXP_NAME = test-sim-6-5-1
 # SIM_EXP_NAME = test-sim-6-5-2
-SIM_EXP_NAME = test-sim-6-6
+# SIM_EXP_NAME = test-sim-6-6
+SIM_EXP_NAME = test-sim-6-6-1
 
 # Simulation settings dir
 SIM_CONFIG_DIR = configs/$(SIM_EXP_NAME)
