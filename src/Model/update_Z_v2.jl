@@ -37,13 +37,20 @@ end
 # Things that may be slowing down everything:
 # - Normal object creation in `logdmixture`
 # - computng mus from delta for each i,n,j in `logdmixture`
+# - Computing the noisy component (because we're not using it).
 function update_Z_marg_lamgam!(s::State, c::Constants, d::Data, sb_ibp::Bool;
                                use_repulsive::Bool=false)
+  # Precompute mus0, mus1, sig
+  mus0 = mus(false, s, c, d)
+  mus1 = mus(true, s, c, d)
+  sig = sqrt.(s.sig2)
+
   # Precompute A, B0, B1
   A = [[logdnoisy(i, n, s, c, d) for n in 1:d.N[i]] for i in 1:d.I]
-  B0 = [[logdmixture(0, i, n, j, s, c, d) for n in 1:d.N[i], j in 1:d.J]
-        for i in 1:d.I]
-  B1 = [[logdmixture(1, i, n, j, s, c, d) for n in 1:d.N[i], j in 1:d.J]
+  B0 = [[logdmixture(s.y_imputed[i][n, j], mus0, sig[i], s.eta[false][i, j, :])
+         for n in 1:d.N[i], j in 1:d.J] for i in 1:d.I]
+  B1 = [[logdmixture(s.y_imputed[i][n, j], mus1, sig[i], s.eta[true][i, j, :])
+         for n in 1:d.N[i], j in 1:d.J]
         for i in 1:d.I]
 
   for j in 1:d.J

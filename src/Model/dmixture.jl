@@ -1,10 +1,11 @@
-function dmixture(z::Integer, i::Integer, n::Integer, j::Integer,
-                  s::State, c::Constants, d::Data)::Float64
-  sd = sqrt(s.sig2[i])
-  dvec = s.eta[z][i, j, :]
-  dvec .*= pdf.(Normal.(mus(Bool(z), s, c, d), sd), s.y_imputed[i][n, j])
-  return sum(dvec)
-end
+# Deprecate this
+# function dmixture(z::Integer, i::Integer, n::Integer, j::Integer,
+#                   s::State, c::Constants, d::Data)::Float64
+#   sd = sqrt(s.sig2[i])
+#   dvec = s.eta[z][i, j, :]
+#   dvec .*= pdf.(Normal.(mus(Bool(z), s, c, d), sd), s.y_imputed[i][n, j])
+#   return sum(dvec)
+# end
 
 
 function logdmixture(z::Integer, i::Integer, n::Integer, j::Integer,
@@ -15,6 +16,13 @@ function logdmixture(z::Integer, i::Integer, n::Integer, j::Integer,
   return MCMC.logsumexp(logdvec)
 end
 
+
+function logdmixture(y_inj:: Float64,
+                     mus_z::Vector{Float64}, sig_i::Float64,
+                     eta_zij::Vector{Float64})
+  return MCMC.logsumexp(MCMC.lpdf_normal.(y_inj, mus_z, sig_i) + log.(eta_zij))
+end
+                     
 
 function logdnoisy(i::Integer, n::Integer,
                    s::State, c::Constants, d::Data)::Float64

@@ -171,4 +171,11 @@ end
 log 1 minus. For example, `log1m(.3) == log(1 - .3) == log1p(-.3) == log(.7)`.
 """
 log1m(x::T) where {T <: Number} = log1p(-x)
+
+
+# Log pdf of (standard) normal, for efficiency.
+lpdf_normal(z) = -(log(2*pi) + z*z) / 2
+lpdf_normal(y, m, s) = lpdf_normal((y - m) / s) - log(s)
 end # MCMC
+
+
