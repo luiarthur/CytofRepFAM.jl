@@ -1,5 +1,12 @@
 ### DIC ###
 
+# TODO: Check this. Make more computationally stable?
+function DIC_gelman(ll::Vector{T}) where T <: Number
+  D = -2 * ll  # deviance
+  Dmean = mean(D)  # lower is better
+  pD = (Dmean ^ 2) * var(D / Dmean) / 2  # penalty (> 0)
+  return Dmean + pD  # lower is better
+end
 
 # Batch DIC
 function deviance(param::T, loglike::Function) where T
