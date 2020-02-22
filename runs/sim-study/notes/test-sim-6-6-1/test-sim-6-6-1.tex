@@ -1,0 +1,381 @@
+\documentclass[10pt]{article} % 12-point font
+
+\usepackage[margin=1.5cm]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\Gam}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+\def\Dir{\text{Dirichlet}}
+\def\TN{\text{TN}}
+% Statistics
+\newcommand{\E}{\text{E}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Uncomment if using bibliography
+% Bibliography
+% \usepackage{natbib}
+% \bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+
+
+% Macros for this project
+\def\true{\text{TRUE}}
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bbh}{\color{blue}\textbf}  % blue bold highlight
+\newcommand{\bch}{\color{blue}\it}  % blue italics
+\newcommand{\ech}{\color{black}\rm}
+% \usepackage{listings}
+\def\imgdir{../../results/test-sim-6-6-1}
+\input{imgtemplate.tex}
+
+% Title Settings
+\title{Simulation Study 6.6.1}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+
+\maketitle
+
+% \tableofcontents \newpage % Comment to remove table of contents
+
+% \section{Objective}\label{sec:objective}
+% TODO
+
+\section{Data Generation}\label{sec:data-generation}
+Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} respectively show the true
+$Z$ and $W$ used to generate the simulated data in this study. Note the following:
+\begin{itemize}
+  \item Features (columns) 1, 2, and 3 are similar (maximum difference of 2).
+    In Sample 1, the first two features are rare / absent in one sample, and
+    the third feature is abundant in both samples. Previously, we wanted to
+    know if the first two features are prone to being absorbed into feature 3. We
+    found that using the prior $w^\star_{i,k} \sim \Gam(10, 1)$, and using priors
+    that encouraged $r_{i,k}$ to be sparse, Features 1 and 2 tend to merge
+    (into Feature 2, which is slightly larger), and Feature 3 would be in its
+    own cluster or split into two smaller identical features. We believe this is 
+    due to prior information in $w^\star$ encouraging features to be equally weighted.
+    In this study, we continue to monitor these kinds of behaviour.
+  \item Features 4 and 5 are similar (difference of 1). They are rare / absent
+    in one sample and abundant in another. Previously, we were also curious if
+    these two features will be merged. Although, we didn't expect them to. It was
+    conceivable that they will only be ``selected'' in one sample, but not in
+    another. We found that they were always recovered, in part, we believe, because
+    they had a large presence in one sample. We continue to monitor their behaviour
+    here.
+  \item Feature 6 is abundant in Sample 1 but not in Sample 2. We expect it to be
+    recovered in $Z$ but it is conceivable that it will not be ``selected'' in sample
+    2. It is distinct from other features.
+  \item Feature 7 is rare in Sample 1, and absent in Sample 2. Nevertheless, we
+    expect it to recovered in $Z$ because it is different from the other
+    features.
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \includegraphics[scale=.4]{\imgdir/dataseed_1/mcmcseed_1/scale_0/img/Z_true.pdf}
+  \end{center}
+  \caption{$Z^\true$}
+  \label{fig:Z-true}
+\end{figure}
+
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Wed Feb 12 14:53:27 2020
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{rrrrrrrr}
+    \hline
+    & $k=1$ & $k=2$ & $k=3$ & $k=4$ & $k=5$ & $k=6$ & $k=7$ \\
+    \hline
+    Sample 1 & 0.04 & 0.05 & 0.39 & 0.00 & 0.06 & 0.43 & 0.03 \\
+    Sample 2 & 0.00 & 0.05 & 0.54 & 0.20 & 0.14 & 0.07 & 0.00 \\
+    \hline
+  \end{tabular}
+  \caption{$W^\true$}
+  \label{tab:W-true}
+\end{table}
+
+\subsection{More on data generation / MCMC setup}
+\begin{itemize}
+  \item $(\mu_{0,j}^\star)^\true=-2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item $(\mu_{1,j}^\star)^\true=2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
+  \item 10000 burn-in, followed by 4000 iterations, and every other sample was
+    kept (2000 samples total).
+  \item Three datasets were generated using the true parameters. Three MCMC runs using 
+    different random seeds were done. For each run, $\phi$ was set at (0, 1, 10). There
+    are a total of 27 runs.
+  \item \textbf{Some Priors:}
+  \begin{itemize}
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=10, \text{rate}=1)$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
+    \item $\alpha \sim \Gam(0.1, 0.1)$
+    \item $\delta_0 \sim \TN^-(1.0, 0.1)$
+    \item $\delta_1 \sim \TN^+(1.0, 0.1)$
+    \item $\sigma^2_i \sim \InvGamma^+(1.0, 0.1)$
+  \end{itemize}
+\end{itemize}
+
+\newpage
+\section{Log likelihood (post-burn)}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{loglike_postburn.pdf}{.15}
+  \end{center}
+  \caption{Post burn-in log likelihoods for each run. Burn in used was 10000.
+    These plots show the log-likelihood evaluations of the 4000 subsequent
+    iterations for each simulated dataset, each replicate, and each $\phi$.
+    Unlike in the previous simulation study, we see no clear evidence that 
+    the chains have not converged. However, from Table~\ref{tab:metrics}, it's
+    clear that some chains are stuck in local modes.}
+  \label{fig:ll}
+\end{figure}
+
+\newpage
+\section{Posterior mean of $Z$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Zmean.pdf}{.2}
+  \end{center}
+  \caption{Recall that in the simulation truth, 6 and 5 features are present in
+    samples 1 and 2 respectively. Consequently, 7 features should be active
+    (i.e. selected in at least one sample) in each figure (indicated by high
+    posterior probability). In some of these scenarios, only 6 features are
+    active, in others 8 are selected. There are also cases were only 5 features
+    are active. But most of the time, 7 are selected.  Eight features are
+    selected only when $\phi=0$. That is, one feature is duplicated.  The
+    feature that is duplicated is feature 3 (from Figure~\ref{fig:Z-true}.) It
+    can be seen in Figures~(\ref{fig:z1}) and (\ref{fig:z2}), that feature 3 is
+    split rather evenly into two identical features. In the cases where only 6
+    features are selected, features 1 and 2 were merged into one group. I
+    believe the merging of small, similar features, and the splitting of large
+    features occurs because the prior for $W$ encourages weight to be spread
+    evenly between features. Moreover, in the case where only 5 features are
+    active, features 1 and 2 were merged into feature 3, which is a similar but
+    much more abundant feature (see (r), (w)).}
+  \label{fig:zmean}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z1.pdf}{.17}
+  \end{center}
+  \label{fig:z1}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z2.pdf}{.17}
+  \end{center}
+  \label{fig:z2}
+\end{figure}
+
+\newpage
+\section{Trace plots of $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus_trace.pdf}{.2}
+  \end{center}
+  \label{fig:mutrace}
+  \caption{Notice here that for (r) and (w), $\mu$ is near 0.}
+\end{figure}
+
+\newpage
+\section{Posterior distributions of $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus.pdf}{.2}
+  \end{center}
+  \label{fig:mu}
+\end{figure}
+
+\newpage
+\section{Trace plots of $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2_trace.pdf}{.2}
+  \end{center}
+  \label{fig:sigtrace}
+\end{figure}
+
+\newpage
+\section{Posterior distribution of $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2.pdf}{.2}
+  \end{center}
+  \label{fig:sig}
+\end{figure}
+
+\newpage
+\section{Posterior distribution of $W$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{W.pdf}{.2}
+  \end{center}
+  \label{fig:w}
+\end{figure}
+
+% \newpage
+% \section{Posterior distribution of $v$}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{v.pdf}{.2}
+%   \end{center}
+% \end{figure}
+
+\newpage
+\section{Posterior distribution of $\lambda_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1.pdf}{.2}
+  \end{center}
+  % \caption{Notice here, the large groups are split into two groups (e.g.  (j),
+  % (s), (p)). Small and similar groups are grouped together (e.g.  (h),
+  % ($\alpha$)).}
+  \label{fig:lam1}
+\end{figure}
+
+\newpage
+\section{Posterior distribution of $\lambda_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2.pdf}{.2}
+  \end{center}
+  % \caption{Notice here, the large groups are split into two groups (e.g.  (a),
+  % (g), (j), (p), (s)).}
+  \label{fig:lam2}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 1, marker 1}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i1_j1.pdf}{.2}
+  \end{center}
+  \label{fig:dd11}
+  \caption{Strange things in (r), (w). Seems to be mixing issues, getting trapped in local modes.}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 1, marker 2}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i1_j2.pdf}{.2}
+  \end{center}
+  \label{fig:dd12}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 2, marker 1}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i2_j1.pdf}{.2}
+  \end{center}
+  \label{fig:dd21}
+  % \caption{Strange things in (h), (i), and (z)?}
+\end{figure}
+
+\newpage
+\section{Posterior predictive density for sample 2, marker 2}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i2_j2.pdf}{.2}
+  \end{center}
+  \label{fig:dd22}
+\end{figure}
+
+\newpage
+\section{Metrics}
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Thu Feb 13 22:57:36 2020
+\begin{table}[H]
+\centering
+\begin{tabular}{crrrrrrrrrrr}
+  \hline
+  \rule{0pt}{2.6ex}
+  & Data & MCMC & $\phi$ & DIC & LPML & $\hat{R}_1$ & $\hat{R}_2$& $R_1 (2.5\%)$ & $R_2 (2.5\%)$ & $R_1 (97.5\%)$ & $R_2 (97.5\%)$ \\
+  \hline
+  a) &1 &1 & 0 & -781118.53 & -18.22 & 5.15 & 5.77 & 5.00 & 5.00 & 6.00 & 6.00 \\
+  b) &1 &1 & 1 & -780253.61 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  c) &1 &1 &10 & -878131.60 & -17.72 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  d) &1 &2 & 0 & -877944.78 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  e) &1 &2 & 1 & -879072.72 & -17.73 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  f) &1 &2 &10 & -780334.99 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  \hline                                           
+  g) &1 &3 & 0 & -781079.80 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  h) &1 &3 & 1 & -780999.12 & -18.20 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  i) &1 &3 &10 & -878139.99 & -17.75 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline\hline                                     
+  j) &2 &1 & 0 & -861980.28 & -18.15 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  k) &2 &1 & 1 & -793929.95 & -18.48 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  l) &2 &1 &10 & -861537.43 & -18.18 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  \hline                                           
+  m) &2 &2 & 0 & -921424.46 & -17.87 & 6.99 & 6.00 & 7.00 & 6.00 & 7.00 & 6.00 \\
+  n) &2 &2 & 1 & -794848.92 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  o) &2 &2 &10 & -921825.37 & -17.88 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  p) &2 &3 & 0 & -861615.02 & -18.18 & 5.04 & 6.00 & 5.00 & 6.00 & 6.00 & 6.00 \\
+  q) &2 &3 & 1 & -794300.71 & -18.47 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  r) &2 &3 &10 & -682542.83 & -18.87 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
+  \hline\hline                                     
+  s) &3 &1 & 0 & -763241.45 & -18.20 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  t) &3 &1 & 1 & -763658.98 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  u) &3 &1 &10 & -676237.65 & -18.61 & 5.00 & 4.00 & 5.00 & 4.00 & 5.00 & 4.00 \\
+  \hline                                           
+  v) &3 &2 & 0 & -851310.67 & -17.79 & 7.00 & 6.00 & 7.00 & 6.00 & 7.00 & 6.00 \\
+  w) &3 &2 & 1 & -557653.90 & -19.06 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 & 4.00 \\
+  x) &3 &2 &10 & -851130.61 & -17.80 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline                                           
+  y) &3 &3 & 0 & -764177.86 & -18.21 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 & 6.00 \\
+  z) &3 &3 & 1 & -763702.20 & -18.21 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 & 5.00 \\
+  $\alpha$) &3 &3 &10 & -851580.44 & -17.78 & 6.00 & 5.00 & 6.00 & 5.00 & 6.00 & 5.00 \\
+  \hline
+\end{tabular}
+\caption{Metrics}
+\label{tab:metrics}
+\end{table}
+
+\newpage
+\section{Missing Mechanism}
+TODO: Include missing mechanisms
+
+
+% Uncomment if using bibliography:
+% \bibliography{bib}
+\end{document}
