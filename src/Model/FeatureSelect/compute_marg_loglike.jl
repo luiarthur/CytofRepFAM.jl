@@ -11,7 +11,7 @@ p(y_complete, m | theta)
 
 where y_complete is the (y_obs, y_mis), for a given iteration.
 """
-function compute_marg_loglike(s::State, c::Constants, data::Data)
+function compute_marg_loglike(s::State, c::Constants, d::Data)
   # log-likelihood
   ll = 0.0
 
@@ -30,13 +30,15 @@ function compute_marg_loglike(s::State, c::Constants, data::Data)
     mi = Bool.(d.m[i])
     Ni = d.N[i]
     Z = reshape(s.Z, 1, J, K)
+    eta0i = s.eta[false][i:i, :, :]
+    eta1i = s.eta[true][i:i, :, :]
 
     # Ni x J x 1
     yi = reshape(s.y_imputed[i], Ni, J, 1)
 
     # Ni x J x 1
-    kernel0 = MCMC.lpdf_gmm(yi, mus0, sig[i], s.eta0[i:i, :, :], dims=3)
-    kernel1 = MCMC.lpdf_gmm(yi, mus1, sig[i], s.eta1[i:i, :, :], dims=3)
+    kernel0 = MCMC.lpdf_gmm(yi, mus0, sig[i], eta0i, dims=3)
+    kernel1 = MCMC.lpdf_gmm(yi, mus1, sig[i], eta1i, dims=3)
 
     # (1 x J x K) .* (Ni x 1 x K) -> Ni x K
     Z_mix = let

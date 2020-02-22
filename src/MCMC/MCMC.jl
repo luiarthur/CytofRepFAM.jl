@@ -189,7 +189,7 @@ lpdf_normal(y, m, s) = lpdf_normal((y - m) / s) - log(s)
 log pdf of gaussian mixture model
 """
 function lpdf_gmm(x, m, s, w; dims)
-  return logsumexp(log.w() .+ lpdf_normal(x, m, s), dims=dims)
+  return logsumexp(log.(w) .+ lpdf_normal.(x, m, s), dims=dims)
 end
 
 end # MCMC
