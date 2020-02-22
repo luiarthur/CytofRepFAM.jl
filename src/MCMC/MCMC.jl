@@ -168,6 +168,12 @@ function logsumexp(logx::T...) where {T <: Number}
 end
 
 
+function logsumexp(logx::T; dims) where T <: AbstractArray
+  mx = maximum(logx, dims=dims)
+  return mx .+ log.(sum(exp.(logx .- mx), dims=dims))
+end
+
+
 """
 log 1 minus. For example, `log1m(.3) == log(1 - .3) == log1p(-.3) == log(.7)`.
 """
@@ -177,6 +183,13 @@ log1m(x::T) where {T <: Number} = log1p(-x)
 # Log pdf of (standard) normal, for efficiency.
 lpdf_normal(z) = -(log(2*pi) + z*z) / 2
 lpdf_normal(y, m, s) = lpdf_normal((y - m) / s) - log(s)
+
+
+"""
+log pdf of gaussian mixture model
+"""
+function lpdf_gmm(x, m, s, w; dims)
+  return logsumexp(log.w() .+ lpdf_normal(x, m, s), dims=dims)
+end
+
 end # MCMC
-
-
