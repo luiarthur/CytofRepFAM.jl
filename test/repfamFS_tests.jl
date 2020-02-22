@@ -18,8 +18,8 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)
 
-  _ = CytofRepFAM.Model.compute_marg_loglike(s, c,d)
-  @time ll = CytofRepFAM.Model.compute_marg_loglike(s, c,d)
+  _ = CytofRepFAM.Model.compute_marg_loglike(s, c, d)
+  @time ll = CytofRepFAM.Model.compute_marg_loglike(s, c, d)
   println("Loglike marginalized lam, gam: $(ll)")
 
   return Dict(:d => d, :c => c, :s => s, :t => t, :X => X,
