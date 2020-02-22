@@ -50,11 +50,11 @@ function compute_marg_loglike(s::State, c::Constants, d::Data)
     f = Z_mix .+ log.(s.W[i:i, :])
 
     # Ni-dim
-    lli = logsumexp(f, dims=2)
+    lli = MCMC.logsumexp(f, dims=2)
 
     # Add probability of missing for only imputed values only, because for
     # observed values, the probability evaluates to a constant across models.
-    pm = [Model.prob_miss(y_inj, c.beta[:, i]) for y_inj in yi[mi]]
+    pm = [Model.prob_miss(y_inj, c.beta[:, i]) for y_inj in s.y_imputed[i][mi]]
 
     # Increment loglikelihood
     ll += sum(lli) + sum(log.(pm))

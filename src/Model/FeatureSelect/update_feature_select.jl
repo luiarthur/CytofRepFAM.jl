@@ -46,6 +46,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
     (:sig2, () -> update_sig2!(s.theta, c.constants, d.data)),
     (:y_imputed, () -> update_y_imputed!(s.theta, c.constants, d.data, t.tuners)),
     # Compute loglikelihood.
+    # (:marg_loglike, () -> println(compute_marg_loglike(s.theta, c.constants, d.data))),
     (:loglike, () -> append!(ll, compute_loglike(s.theta, c.constants, d.data)))
   ]
 
