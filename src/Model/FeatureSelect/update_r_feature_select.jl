@@ -110,6 +110,7 @@ end
 
 # FIXME: spitting out NaN's for W!
 #        pretty sure this is wrong!
+# TODO: Deprecate this.
 function update_r!(i::Integer, k::Integer,
                    s::StateFS, c::ConstantsFS, d::DataFS; verbose::Int=0)
   function logprob(r_ik::Bool)
