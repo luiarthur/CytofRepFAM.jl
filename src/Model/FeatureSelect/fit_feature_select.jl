@@ -1,9 +1,6 @@
 """
 printFreq: defaults to 0 => prints every 10%. turn off printing by 
            setting to -1.
-joint_update_r (Bool): If true, updates each `r_{ik}` sequentially. 
-                       If false, updates `r` via a metropolis step
-                       (as a matrix), by flipping one random bit in `r`.
 """
 function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                  nmcmc::Int, nburn::Int, 
@@ -19,8 +16,6 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                  computedden::Bool=false,
                  sb_ibp::Bool=false,
                  use_repulsive::Bool=true, joint_update_Z::Bool=true,
-                 joint_update_r::Bool=false,
-                 _r_marg_lam_freq::Float64=1.0,
                  verbose::Int=1, time_updates::Bool=false, Z_thin::Int=0,
                  seed::Int=-1)
 
@@ -41,8 +36,6 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
   end
   flush(stdout)
 
-  @assert 0 <= _r_marg_lam_freq <= 1
-
   @assert 0 <= Z_thin
   if Z_thin == 0
     Z_thin = d.data.J
@@ -58,7 +51,6 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     println("joint_update_Z: $(joint_update_Z)")
     println("use_repulsive: $(use_repulsive)")
     println("Z_thin: $(Z_thin)")
-    println("joint_update_r: $(joint_update_r)")
     flush(stdout)
   end
 
@@ -161,9 +153,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                                  ll=loglike, fix=fix,
                                  use_repulsive=use_repulsive,
                                  joint_update_Z=joint_update_Z,
-                                 joint_update_r=joint_update_r,
                                  sb_ibp=sb_ibp, time_updates=time_updates,
-                                 r_marg_lam_freq=_r_marg_lam_freq,
                                  Z_thin=Z_thin)
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0

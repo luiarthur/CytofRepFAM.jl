@@ -5,9 +5,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
                                       use_repulsive::Bool,
                                       joint_update_Z::Bool, sb_ibp::Bool, 
                                       time_updates::Bool=false,
-                                      r_marg_lam_freq::Float64=1.0,
-                                      Z_thin::Int=1,
-                                      joint_update_r::Bool=true)
+                                      Z_thin::Int=1)
 
   # NOTE: `@doIf` is defined in "../util.jl"
 
@@ -26,8 +24,6 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
     end
   end
 
-  r_marg_lam = (r_marg_lam_freq > rand())
-
   # Parameter update-order should be:
   # Z -> v -> alpha -> 
   # omega -> r -> lam -> W* -> gamma -> eta -> delta -> sig2 -> y*
@@ -36,8 +32,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
     (:v, () -> update_v!(s.theta, c.constants, d.data, t.tuners, sb_ibp)),
     (:alpha, () -> update_alpha!(s.theta, c.constants, d.data, sb_ibp)), 
     (:omega, () -> update_omega!(s, c, d, t)),
-    (:r, () -> update_r!(s, c, d, marg_lam=r_marg_lam,
-                         joint_update=joint_update_r)),
+    (:r, () -> update_r!(s, c, d)),
     (:lam, () -> update_lam!(s.theta, c.constants, d.data)),
     (:W_star, () -> update_W_star!(s, c, d, t)),
     (:gam, () -> update_gam!(s.theta, c.constants, d.data)),
