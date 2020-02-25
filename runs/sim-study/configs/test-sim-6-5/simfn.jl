@@ -34,7 +34,7 @@ function simfn(settings::Dict{Symbol, Any})
     deltaz_prior = TruncatedNormal(1.0, 0.1, 0.0, Inf)
     d = CytofRepFAM.Model.Data(simdat[:y])
     c = CytofRepFAM.Model.defaultConstants(d, K, L,
-                                      tau0=1.0, tau1=1.0,
+                                      s_delta_0=1.0, s_delta_1=1.0,
                                       sig2_prior=InverseGamma(11, 5),
                                       delta0_prior=deltaz_prior,
                                       delta1_prior=deltaz_prior,

@@ -48,7 +48,7 @@ function defaultConstants(data::Data, K::Int, L::Dict{Int, Int};
                           sig2_prior=InverseGamma(3.0, 2 / 3),
                           sig2_range=[0.0, Inf],
                           alpha_prior = Gamma(3.0, 0.5),
-                          tau0::Float64=0.0, tau1::Float64=0.0,
+                          s_delta_0::Float64=0.0, s_delta_1::Float64=0.0,
                           delta0_prior=TruncatedNormal(1.0, 1.0, 0.0, Inf),
                           delta1_prior=TruncatedNormal(1.0, 1.0, 0.0, Inf),
                           probFlip_Z::Float64=1.0 / (data.J * K),
@@ -60,15 +60,6 @@ function defaultConstants(data::Data, K::Int, L::Dict{Int, Int};
   @assert 0 <= sig2_range[1] < sig2_range[2]
 
   delta_prior = Dict{Int, Truncated{Normal{Float64}, Continuous}}()
-  vec_y = vcat(vec.(data.y)...)
-  y_neg = filter(y_inj -> !isnan(y_inj) && y_inj < 0, vec_y)
-  y_pos = filter(y_inj -> !isnan(y_inj) && y_inj > 0, vec_y)
-  if tau0 <= 0
-    tau0 = std(y_neg)
-  end
-  if tau1 <= 0
-    tau1 = std(y_pos)
-  end
   delta_prior[0] = delta0_prior
   delta_prior[1] = delta1_prior
 

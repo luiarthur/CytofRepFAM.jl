@@ -23,7 +23,7 @@ printstyled("Test update times for r ...\n", color=:yellow)
 
   # time these:
   for i in 1:5
-    @time CytofRepFAM.Model.update_r!(sfs, cfs, dfs, joint_update=false)
+    @time CytofRepFAM.Model.update_r!(sfs, cfs, dfs)
   end
   println("checksum: $(sum(sfs.theta.lam[2]))")
 

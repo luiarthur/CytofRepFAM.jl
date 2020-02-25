@@ -34,7 +34,7 @@ function update_delta!(s::State, c::Constants, d::Data)
 end
 
 function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
-  (psi_z, tau_z, lower, upper) = params(c.delta_prior[z])
+  (m_delta_z, s_delta_z, lower, upper) = params(c.delta_prior[z])
 
   cardinality = zeros(Int, d.I)
   g_sum = zeros(Float64, d.I)
@@ -57,9 +57,9 @@ function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
     end
   end
 
-  denom = 1.0 + tau_z^2 * sum(cardinality ./ s.sig2)
-  new_m = (psi_z + tau_z^2 * sum(g_sum ./ s.sig2)) / denom
-  new_s = sqrt(tau_z^2 / denom)
+  denom = 1.0 + s_delta_z^2 * sum(cardinality ./ s.sig2)
+  new_m = (m_delta_z + s_delta_z^2 * sum(g_sum ./ s.sig2)) / denom
+  new_s = sqrt(s_delta_z^2 / denom)
 
   s.delta[z][l] = rand(TruncatedNormal(new_m, new_s, lower, upper))
 end
