@@ -3,7 +3,7 @@ function update_lam_logpostvec!(i::Int, n::Int, s::State, c::Constants, d::Data)
   loglike0 = logdnoisy(i, n, s, c, d)
   logPost0 = logprior0 + loglike0
 
-  logpriorVec = log.(s.W[i,:]) .+ log(1.0 - s.eps[i])
+  logpriorVec = log.(s.W[i,:]) .+ MCMC.log1m(s.eps[i])
   loglikeVec = zeros(c.K)
 
   for k in 1:c.K
