@@ -79,10 +79,8 @@ similarity = 1. Similarly, when distance between z_{k1} and z_{k2} approaches
 """
 function logprob_Z_repFAM(Z::Matrix{Bool}, v::Vector{Float64},
                           similarity::Function)::Float64
-  J, K = size(Z)
-
   # IBP component
-  lp = sum(Z * log.(v) + (1 .- Z) * MCMC.log1m.( v))
+  lp = sum(Z * log.(v) + (1 .- Z) * MCMC.log1m.(v))
 
   # Repulsive component
   log_penalty = log_penalty_repFAM(Z, similarity)

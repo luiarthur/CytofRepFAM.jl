@@ -87,7 +87,7 @@ function log_dmix_nolamgam(Z::Matrix{Bool}, i::Integer, n::Integer,
   end
 
   return MCMC.logsumexp([log(s.eps[i]) + logdnoisy(i, n, s, c, d),
-                         log(1 - s.eps[i]) +
+                         MCMC.log1m(s.eps[i]) +
                          MCMC.logsumexp(log_dyin_not_noisy)])
 end
 
