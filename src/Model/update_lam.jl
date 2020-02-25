@@ -1,3 +1,4 @@
+# TODO: Make this more efficient for repFAM?
 function update_lam_logpostvec!(i::Int, n::Int, s::State, c::Constants, d::Data)
   logprior0 = log(s.eps[i])
   loglike0 = logdnoisy(i, n, s, c, d)
