@@ -24,7 +24,7 @@ function compute_marg_loglike(s::State, c::Constants, d::Data,
   # Precompute / reshapes
   mus0 = reshape(mus(false, s, c, d), 1, 1, L[0])
   mus1 = reshape(mus(true, s, c, d), 1, 1, L[1])
-  sig = sqrt.(s.sig2 * temper)
+  sig = sqrt.(s.sig2)
 
   for i in 1:d.I
     # Dimensions
@@ -38,8 +38,8 @@ function compute_marg_loglike(s::State, c::Constants, d::Data,
     yi = reshape(s.y_imputed[i], Ni, J, 1)
 
     # Ni x J x 1
-    kernel0 = MCMC.lpdf_gmm(yi, mus0, sig[i], eta0i, dims=3)
-    kernel1 = MCMC.lpdf_gmm(yi, mus1, sig[i], eta1i, dims=3)
+    kernel0 = MCMC.lpdf_gmm(yi, mus0, sig[i], eta0i, temper, dims=3)
+    kernel1 = MCMC.lpdf_gmm(yi, mus1, sig[i], eta1i, temper, dims=3)
 
     # (1 x J x K) .* (Ni x 1 x K) -> Ni x K
     Z_mix = let

@@ -193,4 +193,12 @@ function lpdf_gmm(x, m, s, w; dims)
   return logsumexp(log.(w) .+ lpdf_normal.(x, m, s), dims=dims)
 end
 
+
+"""
+log pdf of gaussian mixture model, with temperature `temper`.
+"""
+function lpdf_gmm(x, m, s, w, temper; dims)
+  return logsumexp(log.(w) .+ lpdf_normal.(x, m, s) / temper, dims=dims)
+end
+
 end # MCMC
