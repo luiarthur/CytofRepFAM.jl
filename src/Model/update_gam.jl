@@ -3,7 +3,10 @@ function update_gam!(i::Int, n::Int, j::Int, s::State, c::Constants, d::Data)
   if k > 0
     z = s.Z[j, k]
     logpriorVec = log.(s.eta[z][i, j, :])
-    loglikeVec = logpdf.(Normal.(mus(z, s, c, d), sqrt(s.sig2[i])), s.y_imputed[i][n, j])
+    # loglikeVec = logpdf.(Normal.(mus(z, s, c, d), sqrt(s.sig2[i])), s.y_imputed[i][n, j])
+    loglikeVec = MCMC.lpdf_normal.(s.y_imputed[i][n, j],
+                                   mus(z, s, c, d),
+                                   sqrt(s.sig2[i] * c.temper))
     logPostVec = logpriorVec .+ loglikeVec
     s.gam[i][n, j] = MCMC.wsample_logprob(logPostVec)
   else

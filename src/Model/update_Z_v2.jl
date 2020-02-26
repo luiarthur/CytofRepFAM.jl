@@ -39,7 +39,7 @@ function update_Z_marg_lamgam!(s::State, c::Constants, d::Data, sb_ibp::Bool;
   # Precompute mus0, mus1, sig
   mus0 = mus(false, s, c, d)
   mus1 = mus(true, s, c, d)
-  sig = sqrt.(s.sig2)
+  sig = sqrt.(s.sig2 * c.temper)
 
   # Precompute A, B0, B1
   A = [[logdnoisy(i, n, s, c, d) for n in 1:d.N[i]] for i in 1:d.I]

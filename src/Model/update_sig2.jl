@@ -15,8 +15,8 @@ function update_sig2!(i::Int, s::State, c::Constants, d::Data)
     end
   end
 
-  newShape = shape(c.sig2_prior) + cardinality / 2
-  newScale = scale(c.sig2_prior) + ss / 2
+  newShape = shape(c.sig2_prior) + cardinality / (2 * c.temper)
+  newScale = scale(c.sig2_prior) + ss / (2 * c.temper)
 
   if c.sig2_range == [0, Inf]
     s.sig2[i] = rand(InverseGamma(newShape, newScale))

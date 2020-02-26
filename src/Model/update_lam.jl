@@ -1,8 +1,11 @@
 # TODO: Make this more efficient for repFAM?
 function update_lam_logpostvec!(i::Int, n::Int, s::State, c::Constants, d::Data)
-  logprior0 = log(s.eps[i])
-  loglike0 = logdnoisy(i, n, s, c, d)
-  logPost0 = logprior0 + loglike0
+  logPost0 = if s.eps[i] > 0
+    logprior0 = log(s.eps[i])
+    loglike0 = logdnoisy(i, n, s, c, d)
+  else
+    -Inf
+  end
 
   logpriorVec = log.(s.W[i,:]) .+ MCMC.log1m(s.eps[i])
   loglikeVec = zeros(c.K)

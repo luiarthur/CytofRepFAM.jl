@@ -28,7 +28,7 @@ function logdmixture_r(i::Integer, s::State, c::Constants, d::Data)
   # Precompute / reshapes
   mus0 = reshape(mus(false, s, c, d), 1, 1, c.L[0])
   mus1 = reshape(mus(true, s, c, d), 1, 1, c.L[1])
-  sig = sqrt.(s.sig2)
+  sig = sqrt.(s.sig2 * c.temper)
   Ni = d.N[i]
   Z = reshape(s.Z, 1, d.J, c.K)
   eta0i = s.eta[false][i:i, :, :]
