@@ -11,7 +11,8 @@ p(y_complete, m | theta)
 
 where y_complete is the (y_obs, y_mis), for a given iteration.
 """
-function compute_marg_loglike(s::State, c::Constants, d::Data)
+function compute_marg_loglike(s::State, c::Constants, d::Data,
+                              temperature::Float64)
   # log-likelihood
   ll = 0.0
 
@@ -23,7 +24,7 @@ function compute_marg_loglike(s::State, c::Constants, d::Data)
   # Precompute / reshapes
   mus0 = reshape(mus(false, s, c, d), 1, 1, L[0])
   mus1 = reshape(mus(true, s, c, d), 1, 1, L[1])
-  sig = sqrt.(s.sig2)
+  sig = sqrt.(s.sig2 * temperature)
 
   for i in 1:d.I
     # Dimensions
