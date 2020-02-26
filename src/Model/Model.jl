@@ -1,6 +1,7 @@
 module Model
 
 using Distributions
+using Distributed
 
 using RCall  # Mclust
 
