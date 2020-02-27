@@ -98,10 +98,10 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     end
 
     function paramMeanCompute(d::MCMC.DICstream{DICparam})::DICparam
-      return DICparam(d.paramSum.p ./ d.counter,
-                      d.paramSum.mu ./ d.counter,
-                      d.paramSum.sig ./ d.counter,
-                      d.paramSum.y ./ d.paramSum.y)
+      return DICparam(d.paramSum.p / d.counter,
+                      d.paramSum.mu / d.counter,
+                      d.paramSum.sig / d.counter,
+                      d.paramSum.y / d.counter)
     end
 
     function loglikeDIC(param::DICparam)::Float64
@@ -182,6 +182,9 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
       # Add to printMsg
       printMsg(iter, " -- DIC: $(MCMC.computeDIC(dicStream, loglikeDIC,
                                                  paramMeanCompute))")
+
+      DICg = MCMC.DIC_gelman(sum(d.data.N) * loglike[(nburn+1):end])
+      printMsg(iter, " -- DIC_gelman: $(DICg)")
     end
 
     printMsg(iter, "\n")
@@ -219,10 +222,13 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                                              loglikeDIC,
                                              paramMeanCompute,
                                              return_Dmean_pD=true) : (NaN, NaN)
+    DICg = MCMC.DIC_gelman(sum(d.data.N) * loglike[(nburn+1):end])
+
     metrics = Dict(:LPML => LPML,
                    :DIC => Dmean + pD,
                    :Dmean => Dmean,
-                   :pD => pD)
+                   :pD => pD,
+                   :DICg => DICg)
     println()
     println("metrics:")
     for (k, v) in metrics
