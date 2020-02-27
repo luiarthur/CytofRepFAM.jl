@@ -33,7 +33,7 @@ end
 
 printstyled("Test fitting repFAM on simulated data ...\n", color=:yellow)
 @testset "update W*, r, omega" begin
-  config = init_state_const_data() 
+  config = init_state_const_data(seed=0)
   cfs = CytofRepFAM.Model.ConstantsFS(config[:c])
   dfs = CytofRepFAM.Model.DataFS(config[:d], config[:X])
   sfs = CytofRepFAM.Model.StateFS{Float64}(config[:s], dfs)
