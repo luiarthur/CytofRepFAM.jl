@@ -50,7 +50,8 @@ Fits the feature allocation model (FAM) as shown in the paper via MCMC.
 
 - `use_repulsive::Bool`<false>: Whether to use the repulsive FAM.
 
-- `joint_update_Z::Bool`<false>: Whether to jointly update elements in Z.
+- `Z_marg_lamgam::Bool`<true>: Whether to marginalize over (lambda, gamma)
+   when updating Z.
 
 - `verbose::Bool`<1>: Verbosity of output. 0 for bare minimum to none.
   1 for basic output. Greater than 1 for full on debug mode.
@@ -67,7 +68,7 @@ function cytof_fit(init::State, c::Constants, d::Data;
                    computeDIC::Bool=false, computeLPML::Bool=false,
                    computedden::Bool=false,
                    sb_ibp::Bool=false,
-                   use_repulsive::Bool=false, joint_update_Z::Bool=false,
+                   use_repulsive::Bool=false, Z_marg_lamgam::Bool=false,
                    verbose::Int=1)
 
   if verbose >= 1
@@ -192,7 +193,7 @@ function cytof_fit(init::State, c::Constants, d::Data;
 
   function update!(s::State, iter::Int, out)
     update_state!(s, c, d, tuners, loglike, fix, use_repulsive,
-                  joint_update_Z, sb_ibp)
+                  Z_marg_lamgam, sb_ibp)
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       append!(dden,

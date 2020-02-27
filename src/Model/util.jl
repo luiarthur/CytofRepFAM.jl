@@ -1,5 +1,3 @@
-import Base.show
-
 function padZeroCols(x::Matrix, desiredSize::Int)
   @assert size(x, 2) <= desiredSize
 

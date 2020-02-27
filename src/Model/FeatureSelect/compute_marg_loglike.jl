@@ -11,8 +11,7 @@ p(y_complete, m | theta)
 
 where y_complete is the (y_obs, y_mis), for a given iteration.
 """
-function compute_marg_loglike(s::State, c::Constants, d::Data,
-                              temper::Float64)
+function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
   # log-likelihood
   ll = 0.0
 

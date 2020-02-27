@@ -44,7 +44,7 @@ printstyled("Test fitting FAM on simulated data ...\n", color=:yellow)
     computeLPML=true,
     computeDIC=true,
     computedden=true,
-    joint_update_Z=false)
+    Z_marg_lamgam=false)
 
   # Create directory for output if needed.
   output_dir = "results/fam/"

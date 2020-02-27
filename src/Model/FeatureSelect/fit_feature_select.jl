@@ -1,22 +1,32 @@
+nsamps_to_thin(nsamps::Int, nmcmc::Int) = max(1, div(nmcmc, nsamps))
+
+monitor1 = [:theta__Z, :theta__v, :theta__alpha,
+            :omega, :r, :theta__lam, :W_star, :theta__eta,
+            :theta__W, :theta__delta, :theta__sig2]
+
+monitor2 = [:theta__y_imputed, :theta__gam]
+
+
 """
 printFreq: defaults to 0 => prints every 10%. turn off printing by 
            setting to -1.
+thins: defaults to `[2, nsamps_to_thin(10, nmcmc)]`.
+       i.e. Keep every other sample for monitor 1 (so the total number of
+       samples is `nmcmc/2`). And keep 10 samples total for monitor 2.
 """
 function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                  nmcmc::Int, nburn::Int, 
                  tuners::Union{Nothing, TunersFS}=nothing,
-                 monitors=[[:theta__Z, :theta__v, :theta__alpha,
-                            :omega, :r, :theta__lam, :W_star, :theta__eta,
-                            :theta__W, :theta__delta, :theta__sig2]],
+                 monitors=[monitor1, monitor2],
                  fix::Vector{Symbol}=Symbol[],
-                 thins::Vector{Int}=[1],
+                 thins::Vector{Int}=[2, nsamps_to_thin(10, nmcmc)],
                  thin_dden::Int=1,
                  printFreq::Int=0, 
                  computeDIC::Bool=false, computeLPML::Bool=false,
                  computedden::Bool=false,
                  sb_ibp::Bool=false,
-                 use_repulsive::Bool=true, joint_update_Z::Bool=true,
-                 verbose::Int=1, time_updates::Bool=false, Z_thin::Int=0,
+                 use_repulsive::Bool=true, Z_marg_lamgam::Bool=true,
+                 verbose::Int=1, time_updates::Bool=false, Z_thin::Int=1,
                  seed::Int=-1)
 
   # Set random seed if needed
@@ -36,7 +46,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
   end
   flush(stdout)
 
-  @assert 0 <= Z_thin
+  @assert Z_thin >= 0
   if Z_thin == 0
     Z_thin = d.data.J
   end
@@ -48,7 +58,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     end
     println("fixing: $fixed_vars_str")
     println("Use stick-breaking IBP: $(sb_ibp)")
-    println("joint_update_Z: $(joint_update_Z)")
+    println("Z_marg_lamgam: $(Z_marg_lamgam)")
     println("use_repulsive: $(use_repulsive)")
     println("Z_thin: $(Z_thin)")
     flush(stdout)
@@ -152,7 +162,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     update_state_feature_select!(s, c, d, tuners, 
                                  ll=loglike, fix=fix,
                                  use_repulsive=use_repulsive,
-                                 joint_update_Z=joint_update_Z,
+                                 Z_marg_lamgam=Z_marg_lamgam,
                                  sb_ibp=sb_ibp, time_updates=time_updates,
                                  Z_thin=Z_thin)
 

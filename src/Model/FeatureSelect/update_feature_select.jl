@@ -3,7 +3,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
                                       ll::Vector{Float64},
                                       fix::Vector{Symbol},
                                       use_repulsive::Bool,
-                                      joint_update_Z::Bool, sb_ibp::Bool, 
+                                      Z_marg_lamgam::Bool, sb_ibp::Bool, 
                                       time_updates::Bool=false,
                                       Z_thin::Int=1)
 
@@ -14,7 +14,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
 
   function update_Z_!()
     for i in 1:Z_thin
-      if joint_update_Z  # marginalize over lambda and gamma occasionally
+      if Z_marg_lamgam  # marginalize over lambda and gamma occasionally
         update_Z_v2!(s.theta, c.constants, d.data, t.tuners, sb_ibp,
                      use_repulsive=use_repulsive)
       else  # Do regular updates
@@ -41,7 +41,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
     (:sig2, () -> update_sig2!(s.theta, c.constants, d.data)),
     (:y_imputed, () -> update_y_imputed!(s.theta, c.constants, d.data, t.tuners)),
     # Compute loglikelihood.
-    # (:marg_loglike, () -> println(compute_marg_loglike(s.theta, c.constants, d.data))),
+    # (:marg_loglike, () -> println(compute_marg_loglike(s.theta, c.constants, d.data, c.temper))),
     (:loglike, () -> append!(ll, compute_loglike(s.theta, c.constants, d.data)))
   ]
 

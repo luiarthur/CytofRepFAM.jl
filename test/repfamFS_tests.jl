@@ -65,7 +65,7 @@ printstyled("Test fitting repFAM on simulated data ...\n", color=:yellow)
   out = CytofRepFAM.Model.fit_fs!(sfs, cfs, dfs, tuners=tfs,
                              nmcmc=nmcmc, nburn=nburn,
                              printFreq=1, time_updates=true,
-                             computeDIC=true, computeLPML=true, Z_thin=5,
+                             computeDIC=true, computeLPML=true, Z_thin=1,
                              seed=0)
 
   outdir = "results/repfam"

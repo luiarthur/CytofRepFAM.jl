@@ -15,7 +15,7 @@ include("compute_loglike.jl")
 
 function update_state!(s::State, c::Constants, d::Data, tuners::Tuners,
                        ll::Vector{Float64}, fix::Vector{Symbol},
-                       use_repulsive::Bool, joint_update_Z::Bool, sb_ibp::Bool)
+                       use_repulsive::Bool, Z_marg_lamgam::Bool, sb_ibp::Bool)
 
   # NOTE: `@doIf` is defined in "util.jl"
 
@@ -24,7 +24,7 @@ function update_state!(s::State, c::Constants, d::Data, tuners::Tuners,
 
   # Gibbs.
   if isRandom(:Z)
-    if joint_update_Z
+    if Z_marg_lamgam
       update_Z_v2!(s, c, d, tuners, sb_ibp, use_repulsive=use_repulsive)
     else
       # Do regular updates
