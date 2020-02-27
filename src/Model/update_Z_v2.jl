@@ -42,13 +42,24 @@ function update_Z_marg_lamgam!(s::State, c::Constants, d::Data, sb_ibp::Bool;
   sig = sqrt.(s.sig2 * c.temper)
 
   # Precompute A, B0, B1
-  A = [[logdnoisy(i, n, s, c, d) for n in 1:d.N[i]] for i in 1:d.I]
+
+  # size(A[i]) = N[i]
+  A = [if s.eps[i] > 0
+         [logdnoisy(i, n, s, c, d) for n in 1:d.N[i]]
+       else
+         zeros(d.N[i])
+       end for i in 1:d.I]
+
+  # size(B0[i]) = (N[i], J)
   B0 = [[logdmixture(s.y_imputed[i][n, j], mus0, sig[i], s.eta[false][i, j, :])
          for n in 1:d.N[i], j in 1:d.J] for i in 1:d.I]
+
+  # size(B1[i]) = (N[i], J)
   B1 = [[logdmixture(s.y_imputed[i][n, j], mus1, sig[i], s.eta[true][i, j, :])
          for n in 1:d.N[i], j in 1:d.J]
         for i in 1:d.I]
 
+  # NOTE: The updates of Z_{j,k} cannot be made asynchronous naively.
   for j in 1:d.J
     for k in 1:c.K
       update_Z_marg_lamgam!(j, k, A, B0, B1, s, c, d, sb_ibp,
