@@ -59,42 +59,6 @@ end
 
 
 ### For updating Z marginalizing over lambda and gamma ############
-
-
-function log_dmix_nolamgam(Z::Matrix{Bool}, i::Integer, n::Integer,
-                           s::State, c::Constants, d::Data)::Float64
-
-  # Indices for k such that W[i, k] > 0 (selected)
-  selected_k = findall(identity, s.W[i, :] .> 0)
-
-  # Get the density over all markers
-  log_dyin_not_noisy = log.(s.W[i, :])
-
-  # NOTE: For the not-selected ones, log(W[i,k]) = -Inf anyway.
-  for k in selected_k
-    logdvec = sum(logdmixture(Z[j, k], i, n, j, s, c, d) for j in 1:d.J)
-    log_dyin_not_noisy[k] += logdvec
-  end
-
-  return MCMC.logsumexp([log(s.eps[i]) + logdnoisy(i, n, s, c, d),
-                         MCMC.log1m(s.eps[i]) +
-                         MCMC.logsumexp(log_dyin_not_noisy)])
-end
-
-
-function log_dmix_nolamgam(Z::Matrix{Bool}, s::State, c::Constants, d::Data)::Float64
-  out = 0.0
-
-  for i in 1:d.I
-    for n in 1:d.N[i]
-      out += log_dmix_nolamgam(Z, i, n, s, c, d)
-    end
-  end
-
-  return out
-end
-
-#####################################################################
 function log_dmix_nolamgam(Z::Matrix{Bool}, i::Integer, n::Integer,
                            A::Vector{Vector{Float64}},
                            B0::Vector{Matrix{Float64}},
