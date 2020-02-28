@@ -28,26 +28,36 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
 
   # Create distributed arrays for:
   # - loglike, ConstantsFS, StatesFS, TunersFS
-  lls = distribute([Float64[0.0] for _ in tempers])
-  cs = distribute([let 
-                      ct = deepcopy(cfs)
-                      ct.constants.temper = tau
-                      ct
-                    end for tau in tempers])
-  states = distribute([deepcopy(init) for _ in tempers])
-  tuners = distribute([deepcopy(tfs) for _ in tempers])
+  lls = [Float64[0.0] for _ in tempers]
+  cs = [let 
+          ct = deepcopy(cfs)
+          ct.constants.temper = tau
+          ct
+        end for tau in tempers]
+  states = [deepcopy(init) for _ in tempers]
+  tuners = [deepcopy(tfs) for _ in tempers]
 
   println("About to start parallel chains ...")
   for iter in 1:(nburn+nmcmc)
     # Perform updates in parallel
-    @sync @distributed for t in 1:num_tempers
-      update_state_feature_select!(states[t], cs[t], dfs, tuners[t],
-                                   ll=lls[t], fix=fix,
-                                   use_repulsive=use_repulsive,
-                                   Z_marg_lamgam=Z_marg_lamgam,
-                                   sb_ibp=sb_ibp, time_updates=time_updates[t])
-      println(lls[t])
+    @time out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
+      @time for _ in 1:swap_freq
+        update_state_feature_select!(s, c, dfs, t,
+                                     ll=ll, fix=fix,
+                                     use_repulsive=use_repulsive,
+                                     Z_marg_lamgam=Z_marg_lamgam,
+                                     sb_ibp=sb_ibp, time_updates=tu)
+        # println(ll)
+      end
+      return Dict(:s => s, :c => c, :t => t, :ll => ll)
     end
+    println("Done with iter $iter")
+
+    # replace stuff
+    states = [o[:s] for o in out]
+    cs = [o[:c] for o in out]
+    tuners = [o[:t] for o in out]
+    lls = [o[:ll] for o in out]
 
     if iter % swap_freq == 0
       println("TODO: PERFORM SWAP.")

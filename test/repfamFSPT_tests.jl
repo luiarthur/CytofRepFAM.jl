@@ -1,7 +1,7 @@
 #= Load these if running these tests in terminal
 import Pkg; Pkg.activate("..")  # CytofRepFAM
 using CytofRepFAM, Random, BSON, Test, Distributions
-using Distributed, DistributedArrays
+using Distributed
 include("repfamFS_tests.jl")
 =#
 using Distributed
@@ -25,21 +25,26 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   nmcmc = 3
   nburn = 5
 
-  maxcores = 2
+  maxcores = 4
   rmprocs(filter(w -> w > 1, workers()))
   addprocs(maxcores)
   @everywhere begin
     import Pkg; Pkg.activate("../")
     using CytofRepFAM
-    using DistributedArrays
+    # using DistributedArrays
   end
 
-  #=TODO: test to see if I can make a distributed array and swap.
-  =#
-
   # FIXME: fit_fs_pt.jl
+  tempers = 1.1 .^ collect(0:(maxcores-1))
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
-                                     tempers=[1.0, 2.0], ncores=maxcores,
+                                     tempers=tempers,
+                                     ncores=maxcores,
+                                     nmcmc=nmcmc, nburn=nburn,
+                                     printFreq=1, seed=0)
+  @time out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
+                                     tempers=tempers,
+                                     swap_freq=5,
+                                     ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
                                      printFreq=1, seed=0)
   rmprocs(filter(w -> w > 1, workers()))
