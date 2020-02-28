@@ -1,3 +1,10 @@
+function swap!(i, j, x)
+  tmp = x[i]
+  x[i] = x[j]
+  x[j] = tmp
+  return x
+end
+
 function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     tempers::Vector{Float64}, ncores::Int,
                     nmcmc::Int, nburn::Int, 

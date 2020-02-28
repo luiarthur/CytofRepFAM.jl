@@ -31,8 +31,11 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   @everywhere begin
     import Pkg; Pkg.activate("../")
     using CytofRepFAM
-    # using DistributedArrays
+    using DistributedArrays
   end
+
+  #=TODO: test to see if I can make a distributed array and swap.
+  =#
 
   # FIXME: fit_fs_pt.jl
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
