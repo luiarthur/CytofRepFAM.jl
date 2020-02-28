@@ -1,9 +1,10 @@
 #= Load these if running these tests in terminal
-import Pkg; Pkg.activate("../")  # CytofRepFAM
-using CytofRepFAM, Random, BSON, Test, Distributions, Distributed
+import Pkg; Pkg.activate("..")  # CytofRepFAM
+using CytofRepFAM, Random, BSON, Test, Distributions
+using Distributed, DistributedArrays
+include("repfamFS_tests.jl")
 =#
 using Distributed
-using DistributedArrays
 
 printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 @testset "repFAM PT" begin
@@ -24,21 +25,20 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   nmcmc = 3
   nburn = 5
 
+  maxcores = 2
   rmprocs(filter(w -> w > 1, workers()))
-  addprocs(2)
+  addprocs(maxcores)
   @everywhere begin
     import Pkg; Pkg.activate("../")
     using CytofRepFAM
-    using DistributedArrays
+    # using DistributedArrays
   end
-
-  # CytofRepFAM.ModelPT.pt()
 
   # FIXME: fit_fs_pt.jl
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
-                                     tempers=[1.0, 2.0], ncores=2,
+                                     tempers=[1.0, 2.0], ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
-                                     printFreq=1, time_updates=true, seed=0)
+                                     printFreq=1, seed=0)
   rmprocs(filter(w -> w > 1, workers()))
 
   # outdir = "results/repfam"

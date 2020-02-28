@@ -1,11 +1,3 @@
-nsamps_to_thin(nsamps::Int, nmcmc::Int) = max(1, div(nmcmc, nsamps))
-
-monitor1 = [:theta__Z, :theta__v, :theta__alpha,
-            :omega, :r, :theta__lam, :W_star, :theta__eta,
-            :theta__W, :theta__delta, :theta__sig2]
-
-monitor2 = [:theta__y_imputed, :theta__gam]
-
 function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     tempers::Vector{Float64}, ncores::Int,
                     nmcmc::Int, nburn::Int, 
@@ -20,15 +12,15 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     computedden::Bool=false,
                     sb_ibp::Bool=false,
                     use_repulsive::Bool=true, Z_marg_lamgam::Bool=true,
-                    verbose::Int=1, time_updates::Bool=false, Z_thin::Int=1,
-                    seed::Int=-1)
-
-  println("HERE")
+                    verbose::Int=1,
+                    time_updates=[false for _ in tempers],
+                    Z_thin::Int=1, seed::Int=-1)
 
   # Number of temperatures
   num_tempers = length(tempers)
 
-  # Create arrays
+  # Create distributed arrays for:
+  # - loglike, ConstantsFS, StatesFS, TunersFS
   lls = distribute([Float64[0.0] for _ in tempers])
   cs = distribute([let 
                       ct = deepcopy(cfs)
@@ -38,25 +30,21 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
   states = distribute([deepcopy(init) for _ in tempers])
   tuners = distribute([deepcopy(tfs) for _ in tempers])
 
-  # Perform updates in parallel
-  # pmap(states, cs, tunerss, lls) do s, c, tuner, ll
-  #   println(time())
-  #   update_state_feature_select!(s, c, d, tuner,
-  #                                ll=ll, fix=fix,
-  #                                use_repulsive=use_repulsive,
-  #                                Z_marg_lamgam=Z_marg_lamgam,
-  #                                sb_ibp=sb_ibp, time_updates=false)
-  # end
+  println("About to start parallel chains ...")
+  for iter in 1:(nburn+nmcmc)
+    # Perform updates in parallel
+    @sync @distributed for t in 1:num_tempers
+      update_state_feature_select!(states[t], cs[t], dfs, tuners[t],
+                                   ll=lls[t], fix=fix,
+                                   use_repulsive=use_repulsive,
+                                   Z_marg_lamgam=Z_marg_lamgam,
+                                   sb_ibp=sb_ibp, time_updates=time_updates[t])
+      println(lls[t])
+    end
 
-  println("HERE2")
-  @sync @distributed for t in 1:num_tempers
-    println("Hey")
-    update_state_feature_select!(states[t], cs[t], dfs, tuners[t],
-                                 ll=lls[t], fix=Symbol[],
-                                 use_repulsive=true,
-                                 Z_marg_lamgam=true,
-                                 sb_ibp=false, time_updates=false)
+    if iter % swap_freq == 0
+      println("TODO: PERFORM SWAP.")
+    end
   end
-
-  println("THERE")
+  println("After running parallel chains ...")
 end
