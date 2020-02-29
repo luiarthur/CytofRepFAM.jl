@@ -63,8 +63,10 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   outdir = "results/repfam-pt"
   mkpath(outdir)
 
-  open(joinpath(outdir, "ll.txt"), "w") do io
-    writedlm(io, out[:ll], ',')
+  for t in 1:length(out[:lls])
+    open(joinpath(outdir, "ll_$(t).txt"), "w") do io
+      writedlm(io, out[:lls][t], ',')
+    end
   end
 
   BSON.bson("$(outdir)/out_fs_pt.bson", out)

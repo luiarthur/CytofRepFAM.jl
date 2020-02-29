@@ -102,7 +102,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
   end
   println("After running parallel chains ...")
 
-  out = Dict(:ll => lls[1],
+  out = Dict(:lls => lls,
              :state => states[1],
              :c => cfs,
              :d => dfs,
