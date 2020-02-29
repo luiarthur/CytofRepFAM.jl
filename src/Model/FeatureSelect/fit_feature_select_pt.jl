@@ -28,7 +28,7 @@ function swapchains!(states, loglike, temperatures;
     if verbose > 2
       println("    mu*0 for state $(i): $(-cumsum(states[i].theta.delta[false]))")
       println("    mu*1 for state $(i): $(cumsum(states[i].theta.delta[true]))")
-      println("    sig2 for state $(j): $(states[i].theta.sig2)")
+      println("    sig2 for state $(i): $(states[i].theta.sig2)")
       println("    mu*0 for state $(j): $(-cumsum(states[j].theta.delta[false]))")
       println("    mu*1 for state $(j): $(cumsum(states[j].theta.delta[true]))")
       println("    sig2 for state $(j): $(states[j].theta.sig2)")

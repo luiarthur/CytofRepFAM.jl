@@ -4,7 +4,8 @@ using CytofRepFAM, Random, BSON, Test, Distributions
 =#
 
 function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
-                               L=Dict(0=>5, 1=>3), seed=-1)
+                               L=Dict(0=>5, 1=>3), KMCMC=K*2,
+                               LMCMC=Dict(0=>5, 1=>5), seed=-1)
 
   if seed >= 0
     Random.seed!(seed)
@@ -13,10 +14,13 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
   I = length(N)
   simdat = CytofRepFAM.Model.genData(J, N, K, L, sortLambda=true)
   d = CytofRepFAM.Model.Data(simdat[:y])
-  c = CytofRepFAM.Model.defaultConstants(d, K * 2, Dict(0=>5, 1=>5))
+  c = CytofRepFAM.Model.defaultConstants(d, KMCMC, LMCMC)
   s = CytofRepFAM.Model.genInitialState(c, d)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)
+  println("mu*0 truth: $(-cumsum(s.delta[false]))")
+  println("mu*1 truth: $(cumsum(s.delta[true]))")
+  println("sig2 truth: $(s.sig2)")
 
   _ = CytofRepFAM.Model.compute_marg_loglike(s, c, d, 1.0)
   @time ll = CytofRepFAM.Model.compute_marg_loglike(s, c, d, 1.0)
