@@ -13,10 +13,12 @@ function swapchains!(states, loglike, temperatures; verbose=0)
     i, j = t, t - 1
     s1, s2 = states[i].theta, states[j].theta
     t1, t2 = temperatures[i], temperatures[j]
-    log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
-                                                          (s1, s2),
-                                                          (t1, t2))
-    should_swap_chains = log_accept_ratio > log(rand())
+    accept_prob = MCMC.WSPT.compute_accept_ratio(loglike, (s1, s2), (t1, t2))
+    should_swap_chains = accept_prob > rand()
+
+    if verbose > 1
+      println("swap prob: $(accept_prob)")
+    end
 
     if should_swap_chains
       swap!(i, j, states)
@@ -87,7 +89,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
 
     if iter % swap_freq == 0
       llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
-      swapchains!(states, llf, tempers, verbose=1)
+      swapchains!(states, llf, tempers, verbose=verbose)
     end
   end
   println("After running parallel chains ...")
