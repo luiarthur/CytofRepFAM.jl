@@ -9,8 +9,12 @@ function swapchains!(states, loglike, temperatures; verbose=0)
   nchains = length(states)
   @assert nchains == length(temperatures)
 
-  for t in nchains:-1:2
-    i, j = t, t - 1
+  # for t in nchains:-1:1
+  for t in [rand(1:nchains)]
+    i, j = (t, t - 1)
+    if j == 0 && nchains >= 3
+      j = rand(3:nchains)
+    end
     s1, s2 = states[i].theta, states[j].theta
     t1, t2 = temperatures[i], temperatures[j]
     log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
@@ -91,12 +95,19 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
     tuners = [o[:t] for o in out]
     lls = [o[:ll] for o in out]
 
-    if iter % swap_freq == 0 || iter == div(nburn, 2) || iter == div(nburn, 4)
+    if iter > nburn  # && iter % swap_freq == 0
       llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
       swapchains!(states, llf, tempers, verbose=verbose)
     end
   end
   println("After running parallel chains ...")
+
+  out = Dict(:ll => lls[1],
+             :state => states[1],
+             :c => cfs,
+             :d => dfs,
+             :t => tfs)
+  return out
 end
 
 
