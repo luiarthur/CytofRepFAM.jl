@@ -26,12 +26,12 @@ function swapchains!(states, loglike, temperatures;
     should_swap_chains = log_accept_ratio > log(rand())
 
     if verbose > 2
-      println("    mu*0 for state $(i): $(-cumsum(states[i].delta[false]))")
-      println("    mu*1 for state $(i): $(cumsum(states[i].delta[true]))")
-      println("    sig2 for state $(j): $(states[i].sig2)")
-      println("    mu*0 for state $(j): $(-cumsum(states[j].delta[false]))")
-      println("    mu*1 for state $(j): $(cumsum(states[j].delta[true]))")
-      println("    sig2 for state $(j): $(states[j].sig2)")
+      println("    mu*0 for state $(i): $(-cumsum(states[i].theta.delta[false]))")
+      println("    mu*1 for state $(i): $(cumsum(states[i].theta.delta[true]))")
+      println("    sig2 for state $(j): $(states[i].theta.sig2)")
+      println("    mu*0 for state $(j): $(-cumsum(states[j].theta.delta[false]))")
+      println("    mu*1 for state $(j): $(cumsum(states[j].theta.delta[true]))")
+      println("    sig2 for state $(j): $(states[j].theta.sig2)")
     elseif verbose > 1
       println("swap log accept ratio ($(i), $(j)): $(log_accept_ratio)")
     end
