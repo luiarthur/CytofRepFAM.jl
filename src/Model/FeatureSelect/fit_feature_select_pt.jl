@@ -1,6 +1,6 @@
 function swap!(i, j, x)
-  tmp = x[i]
-  x[i] = x[j]
+  tmp = deepcopy(x[i])
+  x[i] = deepcopy(x[j])
   x[j] = tmp
   return x
 end
@@ -13,11 +13,13 @@ function swapchains!(states, loglike, temperatures; verbose=0)
     i, j = t, t - 1
     s1, s2 = states[i].theta, states[j].theta
     t1, t2 = temperatures[i], temperatures[j]
-    accept_prob = MCMC.WSPT.compute_accept_ratio(loglike, (s1, s2), (t1, t2))
-    should_swap_chains = accept_prob > rand()
+    log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
+                                                          (s1, s2),
+                                                          (t1, t2))
+    should_swap_chains = log_accept_ratio > log(rand())
 
     if verbose > 1
-      println("swap prob: $(accept_prob)")
+      println("swap log accept ratio ($(i), $(j)): $(log_accept_ratio)")
     end
 
     if should_swap_chains
@@ -66,8 +68,10 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
   println("About to start parallel chains ...")
   for iter in 1:(nburn+nmcmc)
     # Perform updates in parallel
-    @time out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
-      @time for _ in 1:swap_freq
+    # @time out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
+    #   @time for _ in 1:swap_freq
+    out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
+      for _ in 1:swap_freq
         update_state_feature_select!(s, c, dfs, t,
                                      ll=ll, fix=fix,
                                      use_repulsive=use_repulsive,
@@ -87,7 +91,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
     tuners = [o[:t] for o in out]
     lls = [o[:ll] for o in out]
 
-    if iter % swap_freq == 0
+    if iter % swap_freq == 0 || iter == div(nburn, 2) || iter == div(nburn, 4)
       llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
       swapchains!(states, llf, tempers, verbose=verbose)
     end

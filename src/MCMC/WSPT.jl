@@ -12,7 +12,7 @@ function compute_log_accept_ratio(loglike::Function, states, temps)
   loglike_cand = loglike(s1, t2) + loglike(s2, t1)
   loglike_curr = loglike(s1, t1) + loglike(s2, t2)
 
-  return min(loglike_cand - loglike_curr, 0)
+  return loglike_cand - loglike_curr
 end
 
 function compute_accept_ratio(loglike::Function, states, temps)

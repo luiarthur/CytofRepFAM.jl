@@ -22,10 +22,10 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # nburn = 1200
 
   # For compile tests
-  nmcmc = 50
-  nburn = 50
+  nmcmc = 100
+  nburn = 100
 
-  maxcores = 4
+  maxcores = 16
   rmprocs(filter(w -> w > 1, workers()))
   addprocs(maxcores)
   @everywhere begin
@@ -34,7 +34,8 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   end
 
   # FIXME: fit_fs_pt.jl
-  tempers = 2.0 .^ collect(0:(maxcores-1))
+  tempers = 1.1 .^ collect(0:(maxcores-1))
+  # tempers = fill(1.0, maxcores)
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
                                      ncores=maxcores,
@@ -42,7 +43,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                      printFreq=1, seed=0)
   @time out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
-                                     swap_freq=5,
+                                     swap_freq=1,
                                      ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
                                      printFreq=1, seed=0, verbose=2)
