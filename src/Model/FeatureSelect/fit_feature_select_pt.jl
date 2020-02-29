@@ -5,16 +5,19 @@ function swap!(i, j, x)
   return x
 end
 
-function swapchains!(states, loglike, temperatures; verbose=0)
+function swapchains!(states, loglike, temperatures;
+                     paircounts, swapcounts, verbose=0)
+  """
+  See: https://academic.oup.com/gji/article/196/1/357/585739
+  """
   nchains = length(states)
-  @assert nchains == length(temperatures)
+  @assert (nchains == length(temperatures)) && (mod(nchains, 2) == 0)
 
-  # for t in nchains:-1:1
-  for t in [rand(1:nchains)]
-    i, j = (t, t - 1)
-    if j == 0 && nchains >= 3
-      j = rand(3:nchains)
-    end
+  for (i, j) in Iterators.partition(Random.shuffle(1:nchains), 2)
+    # Increment pair counts
+    paircounts[i, j] += 1
+    paircounts[j, i] += 1
+
     s1, s2 = states[i].theta, states[j].theta
     t1, t2 = temperatures[i], temperatures[j]
     log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
@@ -22,12 +25,22 @@ function swapchains!(states, loglike, temperatures; verbose=0)
                                                           (t1, t2))
     should_swap_chains = log_accept_ratio > log(rand())
 
-    if verbose > 1
+    if verbose > 2
+      println("    mu*0 for state $(i): $(-cumsum(states[i].delta[false]))")
+      println("    mu*1 for state $(i): $(cumsum(states[i].delta[true]))")
+      println("    sig2 for state $(j): $(states[i].sig2)")
+      println("    mu*0 for state $(j): $(-cumsum(states[j].delta[false]))")
+      println("    mu*1 for state $(j): $(cumsum(states[j].delta[true]))")
+      println("    sig2 for state $(j): $(states[j].sig2)")
+    elseif verbose > 1
       println("swap log accept ratio ($(i), $(j)): $(log_accept_ratio)")
     end
 
     if should_swap_chains
       swap!(i, j, states)
+      # Increment swap-counts matrix
+      swapcounts[i, j] += 1
+      swapcounts[j, i] += 1
       if verbose > 0
         println("Swapped chains $(i) and $(j)")
       end
@@ -57,6 +70,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
 
   # Number of temperatures
   num_tempers = length(tempers)
+  @assert mod(num_tempers, 2) == 0
 
   # Create distributed arrays for:
   # - loglike, ConstantsFS, StatesFS, TunersFS
@@ -68,6 +82,8 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
         end for tau in tempers]
   states = [deepcopy(init) for _ in tempers]
   tuners = [deepcopy(tfs) for _ in tempers]
+  swapcounts = zeros(Int, num_tempers, num_tempers)
+  paircounts = zeros(Int, num_tempers, num_tempers)
 
   println("About to start parallel chains ...")
   for iter in 1:(nburn+nmcmc)
@@ -97,7 +113,9 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
 
     if iter > nburn  # && iter % swap_freq == 0
       llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
-      swapchains!(states, llf, tempers, verbose=verbose)
+      swapchains!(states, llf, tempers,
+                  paircounts=paircounts, swapcounts=swapcounts,
+                  verbose=verbose)
     end
   end
   println("After running parallel chains ...")
@@ -106,7 +124,9 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
              :state => states[1],
              :c => cfs,
              :d => dfs,
-             :t => tfs)
+             :t => tfs,
+             :paircounts => paircounts,
+             :swapcounts => swapcounts)
   return out
 end
 

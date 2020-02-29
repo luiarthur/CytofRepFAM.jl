@@ -4,6 +4,7 @@ using CytofRepFAM, Random, BSON, Test, Distributions
 using Distributed
 include("repfamFS_tests.jl")
 =#
+using CytofRepFAM
 using Distributed
 using DelimitedFiles
 
@@ -23,10 +24,11 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # nburn = 1200
 
   # For compile tests
-  nmcmc = 200
-  nburn = 200
+  nmcmc = 5000
+  nburn = 10
+  swap_freq = 1
 
-  maxcores = 8
+  maxcores = 16
   rmprocs(filter(w -> w > 1, workers()))
   addprocs(maxcores)
   @everywhere begin
@@ -40,8 +42,8 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # tempers = 1.1 .^ collect(0:(maxcores-1))
   # tempers = 1.01 .^ collect(0:(maxcores-1))  # swaps a lot
   # tempers = 2.0 .^ collect(0:(maxcores-1))
-  tempers = 1.1 .^ collect(0:(maxcores-1))
   # tempers = 1.1 .^ collect(0:(maxcores-1))
+  tempers = 1000.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
   # tempers = fill(1.0, maxcores)
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
@@ -51,11 +53,11 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                      printFreq=1, seed=0)
   @time out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
-                                     swap_freq=2,
+                                     swap_freq=swap_freq,
                                      ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
-                                     Z_marg_lamgam=false,
-                                     printFreq=1, seed=0, verbose=2)
+                                     Z_marg_lamgam=true,
+                                     printFreq=1, seed=0, verbose=3)
   rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
@@ -68,6 +70,15 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
       writedlm(io, out[:lls][t], ',')
     end
   end
+
+  open(joinpath(outdir, "swapcounts.txt"), "w") do io
+    writedlm(io, out[:swapcounts], ',')
+  end
+
+  open(joinpath(outdir, "paircounts.txt"), "w") do io
+    writedlm(io, out[:paircounts], ',')
+  end
+
 
   BSON.bson("$(outdir)/out_fs_pt.bson", out)
   BSON.bson("$(outdir)/data_fs_pt.bson", Dict(:simdat => config[:simdat]))
