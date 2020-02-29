@@ -5,6 +5,30 @@ function swap!(i, j, x)
   return x
 end
 
+function swapchains!(states, loglike, temperatures; verbose=0)
+  nchains = length(states)
+  @assert nchains == length(temperatures)
+
+  for t in nchains:-1:2
+    i, j = t, t - 1
+    s1, s2 = states[i].theta, states[j].theta
+    t1, t2 = temperatures[i], temperatures[j]
+    log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
+                                                          (s1, s2),
+                                                          (t1, t2))
+    should_swap_chains = log_accept_ratio > log(rand())
+
+    if should_swap_chains
+      swap!(i, j, states)
+      if verbose > 0
+        println("Swapped chains $(i) and $(j)")
+      end
+    end
+  end
+
+  return
+end
+
 function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     tempers::Vector{Float64}, ncores::Int,
                     nmcmc::Int, nburn::Int, 
@@ -62,8 +86,23 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
     lls = [o[:ll] for o in out]
 
     if iter % swap_freq == 0
-      println("TODO: PERFORM SWAP.")
+      llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
+      swapchains!(states, llf, tempers, verbose=1)
     end
   end
   println("After running parallel chains ...")
 end
+
+
+#= Possible implementation detail
+@assert mod(nmcmc + nburn, swap_freq) == 0
+
+for iter in 1:div(nmcmc + nburn, swap_freq)
+  # Update states in parallel
+  for _ in 1:swap_freq
+    states = update(states)
+  end
+
+  # SWAP STATES
+end
+=#
