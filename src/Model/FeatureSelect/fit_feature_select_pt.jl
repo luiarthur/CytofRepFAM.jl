@@ -45,6 +45,8 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
         update_state_feature_select!(s, c, dfs, t,
                                      ll=ll, fix=fix,
                                      use_repulsive=use_repulsive,
+                                     # TODO: make this more explicit, instead
+                                     # of random. See `update_Z_v2`.
                                      Z_marg_lamgam=Z_marg_lamgam,
                                      sb_ibp=sb_ibp, time_updates=tu)
         # println(ll)
