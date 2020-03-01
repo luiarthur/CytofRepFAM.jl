@@ -3,7 +3,6 @@ module Model
 import Base.show
 using Distributions
 using Distributed
-using DistributedArrays
 
 using RCall  # Mclust
 
