@@ -27,7 +27,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # nburn = 1200
 
   # For compile tests
-  nmcmc = 5000
+  nmcmc = 10000
   nburn = 10
   swap_freq = 1
 
@@ -61,6 +61,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                      ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
                                      Z_marg_lamgam=true,
+                                     use_rand_inits=true,
                                      printFreq=1, seed=0, verbose=3)
   rmprocs(filter(w -> w > 1, workers()))
 

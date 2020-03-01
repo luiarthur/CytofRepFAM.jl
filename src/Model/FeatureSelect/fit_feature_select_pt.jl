@@ -51,6 +51,7 @@ function swapchains!(states, loglike, temperatures;
 end
 
 function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
+                    use_rand_inits=false,
                     tempers::Vector{Float64}, ncores::Int,
                     nmcmc::Int, nburn::Int, 
                     swap_freq::Int=10,
@@ -80,7 +81,15 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
           ct.constants.temper = tau
           ct
         end for tau in tempers]
-  states = [deepcopy(init) for _ in tempers]
+  states = if use_rand_inits
+    println("Using random inits!")
+    [let
+       s = genInitialState(cfs.constants, dfs.data)
+       StateFS{Float64}(s, dfs)
+     end for _ in tempers]
+  else
+    [deepcopy(init) for _ in tempers]
+  end
   tuners = [deepcopy(tfs) for _ in tempers]
   swapcounts = zeros(Int, num_tempers, num_tempers)
   paircounts = zeros(Int, num_tempers, num_tempers)
