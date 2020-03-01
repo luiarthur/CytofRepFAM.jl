@@ -6,14 +6,26 @@ function swap!(i, j, x)
 end
 
 function swapchains!(states, loglike, temperatures;
-                     paircounts, swapcounts, verbose=0)
+                     paircounts, swapcounts, verbose=0, randpair=0.0)
   """
+  randpair: The proportion of time to propose swapping random pairs. 
+            If set to 0.0, then pairs are swapped from hottest to coolest
+            or coolest to hottest. If set to 1.0, then random pairs are 
+            formed and proposed to be swapped.
+
   See: https://academic.oup.com/gji/article/196/1/357/585739
   """
   nchains = length(states)
   @assert (nchains == length(temperatures)) && (mod(nchains, 2) == 0)
 
-  for (i, j) in Iterators.partition(Random.shuffle(1:nchains), 2)
+  pairs = if randpair > rand()
+    Iterators.partition(Random.shuffle(1:nchains), 2)
+  else
+    p = zip(1:(nchains - 1), 2:nchains)
+    rand(Bool) ? p : Iterators.reverse(p)
+  end
+
+  for (i, j) in pairs
     # Increment pair counts
     paircounts[i, j] += 1
     paircounts[j, i] += 1
