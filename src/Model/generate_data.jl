@@ -67,6 +67,9 @@ end
 
 function genData(J::Int, N::Vector{Int}, K::Int, L::Dict{Int, Int};
                  useSimpleZ::Bool=true, prob1::Float64=.6,
+                 sig2::Vector{Float64}=fill(0.1, length(N)),
+                 mus=Dict(0=>collect(range(-5, length=L[0], stop=-1)),
+                          1=>collect(range(1, length=L[1], stop=5))),
                  sortLambda::Bool=false, propMissingScale::Float64=0.7)
 
   I = length(N)
@@ -74,9 +77,7 @@ function genData(J::Int, N::Vector{Int}, K::Int, L::Dict{Int, Int};
 
   genData(J=J, N=N, K=K, L=L, Z=Z,
           beta=[-9.2, -2.3], # linear missing mechanism
-          sig2=fill(0.1, I),
-          mus=Dict(0=>collect(range(-5, length=L[0], stop=-1)),
-                   1=>collect(range(1, length=L[1], stop=5))),
+          sig2=sig2, mus=mus,
           a_W=[float(i) for i in 1:K],
           a_eta=Dict([ z => [float(l) for l in 1:L[z]] for z in 0:1 ]),
           sortLambda=sortLambda, propMissingScale=propMissingScale)

@@ -5,6 +5,9 @@ using CytofRepFAM, Random, BSON, Test, Distributions
 
 function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                L=Dict(0=>5, 1=>3), KMCMC=K*2,
+                               sig2=fill(0.1, length(N)),
+                               mus=Dict(0=>collect(range(-5, length=L[0], stop=-1)),
+                                        1=>collect(range(1, length=L[1], stop=5))),
                                LMCMC=Dict(0=>5, 1=>5), seed=-1)
 
   if seed >= 0
@@ -12,15 +15,17 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
   end
 
   I = length(N)
-  simdat = CytofRepFAM.Model.genData(J, N, K, L, sortLambda=true)
+  simdat = CytofRepFAM.Model.genData(J, N, K, L, 
+                                     mus=mus, sig2=sig2,
+                                     sortLambda=true)
   d = CytofRepFAM.Model.Data(simdat[:y])
   c = CytofRepFAM.Model.defaultConstants(d, KMCMC, LMCMC)
   s = CytofRepFAM.Model.genInitialState(c, d)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)
-  println("mu*0 truth: $(-cumsum(s.delta[false]))")
-  println("mu*1 truth: $(cumsum(s.delta[true]))")
-  println("sig2 truth: $(s.sig2)")
+  println("mu*0 truth: $(simdat[:mus][0])")
+  println("mu*1 truth: $(simdat[:mus][1])")
+  println("sig2 truth: $(simdat[:sig2])")
 
   _ = CytofRepFAM.Model.compute_marg_loglike(s, c, d, 1.0)
   @time ll = CytofRepFAM.Model.compute_marg_loglike(s, c, d, 1.0)
