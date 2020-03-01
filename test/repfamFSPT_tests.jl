@@ -48,19 +48,21 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # tempers = 1.1 .^ collect(0:(maxcores-1))
   # tempers = fill(1.0, maxcores)
   # tempers = 2.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
-  tempers = 1000.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
+  tempers = 100.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
   out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
                                      ncores=maxcores,
                                      swap_freq=1,
                                      nmcmc=2, nburn=2,
                                      printFreq=1, seed=0)
+
   @time out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
                                      tempers=tempers,
                                      swap_freq=swap_freq,
                                      ncores=maxcores,
                                      nmcmc=nmcmc, nburn=nburn,
                                      Z_marg_lamgam=true,
+                                     randpair=0.1,
                                      use_rand_inits=true,
                                      printFreq=1, seed=0, verbose=3)
   rmprocs(filter(w -> w > 1, workers()))

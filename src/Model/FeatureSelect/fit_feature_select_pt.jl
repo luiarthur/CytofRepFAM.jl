@@ -119,6 +119,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                                      # TODO: make this more explicit, instead
                                      # of random. See `update_Z_v2`.
                                      Z_marg_lamgam=Z_marg_lamgam,
+                                     randpair=0.0,
                                      sb_ibp=sb_ibp, time_updates=tu)
         # println(ll)
       end
@@ -136,6 +137,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
       llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
       swapchains!(states, llf, tempers,
                   paircounts=paircounts, swapcounts=swapcounts,
+                  randpair=randpair,
                   verbose=verbose)
     end
   end
