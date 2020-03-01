@@ -31,7 +31,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   nburn = 10
   swap_freq = 1
 
-  maxcores = 16
+  maxcores = 20
   rmprocs(filter(w -> w > 1, workers()))
   addprocs(maxcores)
   @everywhere begin
@@ -64,7 +64,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                      Z_marg_lamgam=true,
                                      randpair=0.1,
                                      use_rand_inits=true,
-                                     printFreq=1, seed=0, verbose=3)
+                                     printFreq=1, seed=0, verbose=2)
   rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
