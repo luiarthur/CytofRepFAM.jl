@@ -73,6 +73,7 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     thins::Vector{Int}=[2, nsamps_to_thin(10, nmcmc)],
                     thin_dden::Int=1,
                     printFreq::Int=0, 
+                    randpair=0.0,
                     computeDIC::Bool=false, computeLPML::Bool=false,
                     computedden::Bool=false,
                     sb_ibp::Bool=false,
@@ -119,7 +120,6 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                                      # TODO: make this more explicit, instead
                                      # of random. See `update_Z_v2`.
                                      Z_marg_lamgam=Z_marg_lamgam,
-                                     randpair=0.0,
                                      sb_ibp=sb_ibp, time_updates=tu)
         # println(ll)
       end
