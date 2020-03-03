@@ -17,7 +17,10 @@ function fit_fs_pt!(cfs::ConstantsFS,
                     computeDIC::Bool=false, computeLPML::Bool=false,
                     computedden::Bool=false,
                     sb_ibp::Bool=false,
-                    use_repulsive::Bool=true, Z_marg_lamgam::Bool=true,
+                    use_repulsive::Bool=true,
+                    Z_marg_lamgam::Float64=1.0,
+                    Z_marg_lamgam_decay_rate::Float64=100.0,
+                    Z_marg_lamgam_min::Float64=0.05,
                     verbose::Int=1,
                     time_updates=false,
                     seed::Int=-1)
@@ -53,6 +56,8 @@ function fit_fs_pt!(cfs::ConstantsFS,
     println("fixing: $fixed_vars_str")
     println("Use stick-breaking IBP: $(sb_ibp)")
     println("Z_marg_lamgam: $(Z_marg_lamgam)")
+    println("Z_marg_lamgam_decay_rate: $(Z_marg_lamgam_decay_rate)")
+    println("Z_marg_lamgam_min: $(Z_marg_lamgam_min)")
     println("use_repulsive: $(use_repulsive)")
     flush(stdout)
   end
@@ -86,15 +91,27 @@ function fit_fs_pt!(cfs::ConstantsFS,
   # Update function
   # function update(states::Vector{StateFS}, args::Vector{Dict{Symbol, Any}}, iter::Int)
   function update(states, args, iter::Int)
+    # Whether or not to marginalize over lambda and gamma.
+    # We want to do this more often at the beginning, and less at the end.
+    zmarg = ((Z_marg_lamgam - Z_marg_lamgam_min) * 
+             exp(-iter/Z_marg_lamgam_decay_rate) + 
+             Z_marg_lamgam_min) > rand()
+
     s_arg_vec = pmap(states, args) do s, arg
       tu = (arg[:c].constants.temper == 1) && time_updates
+      
+      # For reproducibility.
+      if seed > - 1
+        temper_idx = findfirst(tau -> tau == arg[:c].constants.temper, tempers)
+        Random.seed!(iter + temper_idx + seed)
+      end
 
       update_state_feature_select!(s, arg[:c], dfs, arg[:t],
                                    ll=arg[:ll], fix=fix,
                                    use_repulsive=use_repulsive,
                                    # TODO: make this more explicit, instead
                                    # of random. See `update_Z_v2`.
-                                   Z_marg_lamgam=Z_marg_lamgam,
+                                   Z_marg_lamgam=zmarg,
                                    sb_ibp=sb_ibp, time_updates=tu)
       (s, arg)
     end
@@ -103,6 +120,9 @@ function fit_fs_pt!(cfs::ConstantsFS,
     args = [sa[2] for sa in s_arg_vec]
 
     # Swap Chains
+    if verbose > 0
+      println()
+    end
     llf(s, tuner) = compute_marg_loglike(s, cfs.constants, dfs.data, tuner)
     swapchains!(states, llf, tempers,
                 paircounts=paircounts, swapcounts=swapcounts,

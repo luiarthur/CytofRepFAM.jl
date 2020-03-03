@@ -26,12 +26,13 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # For algo tests
   # nmcmc = 10000
   # nburn = 10
+  # maxcores = 20
 
   # For compile tests
   nmcmc = 3
   nburn = 3
+  maxcores = 2
 
-  maxcores = 4
   if length(workers()) != maxcores
     rmprocs(filter(w -> w > 1, workers()))
     addprocs(maxcores)
@@ -41,7 +42,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
     end
   end
 
-  # FIXME: fit_fs_pt.jl
+  # Temperatures
   # tempers = 1.025 .^ collect(0:(maxcores-1))
   # tempers = 1.02 .^ collect(0:(maxcores-1))
   # tempers = 1.1 .^ collect(0:(maxcores-1))
@@ -59,14 +60,17 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
                                            tempers=tempers,
                                            nmcmc=nmcmc, nburn=nburn,
-                                           Z_marg_lamgam=true,
+                                           Z_marg_lamgam=0.5,
+                                           Z_marg_lamgam_decay_rate=10.0,
+                                           Z_marg_lamgam_min=0.05,
                                            randpair=0.3,
                                            printFreq=1, seed=0,
                                            computedden=true,
                                            computeDIC=true,
                                            computeLPML=true,
-                                           verbose=2)
-  rmprocs(filter(w -> w > 1, workers()))
+                                           time_updates=true,
+                                           verbose=1)
+  # rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
 

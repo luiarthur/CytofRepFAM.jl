@@ -15,8 +15,8 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
   function update_Z_!()
     for i in 1:Z_thin
       if Z_marg_lamgam  # marginalize over lambda and gamma occasionally
-        update_Z_v2!(s.theta, c.constants, d.data, t.tuners, sb_ibp,
-                     use_repulsive=use_repulsive)
+        update_Z_marg_lamgam!(s.theta, c.constants, d.data,
+                              sb_ibp, use_repulsive=use_repulsive)
       else  # Do regular updates
         update_Z!(s.theta, c.constants, d.data, sb_ibp,
                   use_repulsive=use_repulsive)
