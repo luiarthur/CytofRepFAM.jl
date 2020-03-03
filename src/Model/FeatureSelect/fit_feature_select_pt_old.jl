@@ -1,3 +1,4 @@
+# TODO: DEPRECATE THIS!
 function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     use_rand_inits=false,
                     tempers::Vector{Float64}, ncores::Int,
