@@ -72,11 +72,11 @@ function fit_fs_pt!(cfs::ConstantsFS,
 
   # DIC
   if computeDIC
-    dicStream = initDicStream(d.data)
-    loglikeDIC(param::DICparam) = computeLoglikeDIC(d.data, param)
+    dicStream = initDicStream(dfs.data)
+    loglikeDIC(param::DICparam) = computeLoglikeDIC(dfs.data, param)
 
     convertStateToDicParam(s::State)::DICparam = let
-      _convertStateToDicParam(s, c.constants, d.data)
+      _convertStateToDicParam(s, cfs.constants, dfs.data)
     end
   end
 
@@ -196,9 +196,9 @@ function fit_fs_pt!(cfs::ConstantsFS,
 
   if computeDIC || computeLPML
     LPML = computeLPML ? MCMC.computeLPML(cpoStream) : NaN
-    Dmea, pD = computeDIC ? MCMC.computeDIC(dicStream, loglikeDIC,
-                                            paramMeanCompute,
-                                            return_Dmean_pD=true) : (NaN, NaN)
+    Dmean, pD = computeDIC ? MCMC.computeDIC(dicStream, loglikeDIC,
+                                             paramMeanCompute,
+                                             return_Dmean_pD=true) : (NaN, NaN)
 
     ll1 = args[1][:ll]
     DICg = MCMC.DIC_gelman(ll1[(nburn+1):end])
@@ -211,7 +211,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
     println()
     println("metrics:")
     for (k, v) in metrics
-      mega_out[k] = v
+      out[k] = v
       println("$k => $v")
     end
     flush(stdout)

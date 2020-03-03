@@ -56,14 +56,17 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                      nmcmc=2, nburn=2,
                                      printFreq=1, seed=0)
 
-  # @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
-  #                                          tempers=tempers,
-  #                                          nmcmc=nmcmc, nburn=nburn,
-  #                                          Z_marg_lamgam=true,
-  #                                          randpair=0.1,
-  #                                          printFreq=1, seed=0,
-  #                                          verbose=2)
-  # rmprocs(filter(w -> w > 1, workers()))
+  @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
+                                           tempers=tempers,
+                                           nmcmc=nmcmc, nburn=nburn,
+                                           Z_marg_lamgam=true,
+                                           randpair=0.3,
+                                           printFreq=1, seed=0,
+                                           computedden=true,
+                                           computeDIC=true,
+                                           computeLPML=true,
+                                           verbose=2)
+  rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
 
