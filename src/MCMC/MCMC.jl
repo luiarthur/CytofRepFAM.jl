@@ -5,6 +5,7 @@ export gibbs, TuningParam, metropolis, metropolisAdaptive, logpdfLogX
 export metLogAdaptive, metLogitAdaptive
 
 include("gibbs.jl")
+include("gibbs_pt.jl")
 include("TuningParam.jl")
 include("Fitness.jl")
 include("Util.jl")

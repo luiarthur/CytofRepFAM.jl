@@ -8,6 +8,7 @@ using CytofRepFAM
 using Distributed
 using DelimitedFiles
 
+
 printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 @testset "repFAM PT" begin
   config = init_state_const_data(N=[3,2]*100, L=Dict(0=>1, 1=>1),
@@ -23,20 +24,21 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  # nmcmc = 100
-  # nburn = 1200
+  # nmcmc = 10000
+  # nburn = 10
 
   # For compile tests
-  nmcmc = 10000
-  nburn = 10
-  swap_freq = 1
+  nmcmc = 3
+  nburn = 3
 
-  maxcores = 20
-  rmprocs(filter(w -> w > 1, workers()))
-  addprocs(maxcores)
-  @everywhere begin
-    import Pkg; Pkg.activate("../")
-    using CytofRepFAM
+  maxcores = 4
+  if length(workers()) != maxcores
+    rmprocs(filter(w -> w > 1, workers()))
+    addprocs(maxcores)
+    @everywhere begin
+      import Pkg; Pkg.activate("../")
+      using CytofRepFAM
+    end
   end
 
   # FIXME: fit_fs_pt.jl
@@ -49,23 +51,19 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # tempers = fill(1.0, maxcores)
   # tempers = 2.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
   tempers = 50.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
-  out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
+  out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs, 
                                      tempers=tempers,
-                                     ncores=maxcores,
-                                     swap_freq=1,
                                      nmcmc=2, nburn=2,
                                      printFreq=1, seed=0)
 
-  @time out = CytofRepFAM.Model.fit_fs_pt!(sfs, cfs, dfs, tfs,
-                                     tempers=tempers,
-                                     swap_freq=swap_freq,
-                                     ncores=maxcores,
-                                     nmcmc=nmcmc, nburn=nburn,
-                                     Z_marg_lamgam=true,
-                                     randpair=0.1,
-                                     use_rand_inits=true,
-                                     printFreq=1, seed=0, verbose=2)
-  rmprocs(filter(w -> w > 1, workers()))
+  # @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
+  #                                          tempers=tempers,
+  #                                          nmcmc=nmcmc, nburn=nburn,
+  #                                          Z_marg_lamgam=true,
+  #                                          randpair=0.1,
+  #                                          printFreq=1, seed=0,
+  #                                          verbose=2)
+  # rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
 
@@ -85,7 +83,6 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   open(joinpath(outdir, "paircounts.txt"), "w") do io
     writedlm(io, out[:paircounts], ',')
   end
-
 
   BSON.bson("$(outdir)/out_fs_pt.bson", out)
   BSON.bson("$(outdir)/data_fs_pt.bson", Dict(:simdat => config[:simdat]))

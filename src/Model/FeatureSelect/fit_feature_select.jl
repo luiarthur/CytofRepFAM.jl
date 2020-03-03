@@ -6,6 +6,33 @@ monitor1 = [:theta__Z, :theta__v, :theta__alpha,
 
 monitor2 = [:theta__y_imputed, :theta__gam]
 
+function _convertStateToDicParam(s::State, c::Constants, d::Data)::DICparam
+  I = d.I
+  N = d.N
+  J = d.J
+  beta = c.beta
+
+  p = [[prob_miss(s.y_imputed[i][n, j], beta[:, i])
+        for n in 1:N[i], j in 1:J] for i in 1:I]
+
+  mu = [[mus(i, n, j, s, c, d)
+         for n in 1:N[i], j in 1:J] for i in 1:I]
+
+  sig = [fill(sqrt(s.sig2[i]), N[i]) for i in 1:I]
+
+  y = deepcopy(s.y_imputed)
+
+  return DICparam(p, mu, sig, y)
+end
+
+
+function initDicStream(data::Data)
+  param = DICparam(p=deepcopy(data.y),
+                   mu=deepcopy(data.y),
+                   sig=[zeros(Float64, data.N[i]) for i in 1:data.I],
+                   y=deepcopy(data.y))
+  return MCMC.DICstream{DICparam}(param)
+end
 
 """
 printFreq: defaults to 0 => prints every 10%. turn off printing by 
@@ -72,8 +99,9 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
 
   # Initialize tuners if needed
   if tuners == nothing
-    t = Tuners(d.data.y, c.constants.K)
-    TunersFS(t, init.theta, d.data.X)
+    tuners = TunersFS(Tuners(d.data.y, c.constants.K),
+                      init.theta,
+                      d.data.X)
   end
 
   function printMsg(iter::Int, msg::String)
@@ -92,70 +120,15 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
 
   # DIC
   if computeDIC
-    local tmp = DICparam(p=deepcopy(d.data.y),
-                         mu=deepcopy(d.data.y),
-                         sig=[zeros(Float64, d.data.N[i]) for i in 1:d.data.I],
-                         y=deepcopy(d.data.y))
-    dicStream = MCMC.DICstream{DICparam}(tmp)
+    dicStream = initDicStream(d.data)
+    loglikeDIC(param::DICparam) = computeLoglikeDIC(d.data, param)
 
-    function updateParams(d::MCMC.DICstream{DICparam}, param::DICparam)
-      d.paramSum.p += param.p
-      d.paramSum.mu += param.mu
-      d.paramSum.sig += param.sig
-      d.paramSum.y += param.y
-
-      return
-    end
-
-    function paramMeanCompute(d::MCMC.DICstream{DICparam})::DICparam
-      return DICparam(d.paramSum.p / d.counter,
-                      d.paramSum.mu / d.counter,
-                      d.paramSum.sig / d.counter,
-                      d.paramSum.y / d.counter)
-    end
-
-    function loglikeDIC(param::DICparam)::Float64
-      ll = 0.0
-
-      for i in 1:d.data.I
-        for j in 1:d.data.J
-          for n in 1:d.data.N[i]
-            y_inj_is_missing = (d.data.m[i][n, j] == 1)
-
-            # NOTE: Refer to `../compute_loglike.jl` for reasoning.
-            if y_inj_is_missing
-
-              # Compute p(m_inj | y_inj, theta) term.
-              ll += log(param.p[i][n, j])
-            end
-
-            # Compute p(y_inj | theta) term.
-            ll += logpdf(Normal(param.mu[i][n, j], param.sig[i][n]),
-                         param.y[i][n, j])
-          end
-        end
-      end
-
-      return ll
-    end
-
-    function convertStateToDicParam(s::State)::DICparam
-      p = [[prob_miss(s.y_imputed[i][n, j], c.constants.beta[:, i])
-            for n in 1:d.data.N[i], j in 1:d.data.J] 
-           for i in 1:d.data.I]
-
-      mu = [[mus(i, n, j, s, c.constants, d.data)
-             for n in 1:d.data.N[i], j in 1:d.data.J] 
-            for i in 1:d.data.I]
-
-      sig = [fill(sqrt(s.sig2[i]), d.data.N[i]) for i in 1:d.data.I]
-
-      y = deepcopy(s.y_imputed)
-
-      return DICparam(p, mu, sig, y)
+    convertStateToDicParam(s::State)::DICparam = let
+      _convertStateToDicParam(s, c.constants, d.data)
     end
   end
 
+  # Cache for data density
   dden = Matrix{Vector{Float64}}[]
 
   function update!(s::StateFS, iter::Int, out)
@@ -167,9 +140,9 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                                  Z_thin=Z_thin)
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
-      append!(dden,
-              [[datadensity(i, j, s.theta, c.constants, d.data)
-                for i in 1:d.data.I, j in 1:d.data.J]])
+      # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
+      # length g.
+      append!(dden, [datadensity(s.theta, c.constants, d.data)])
     end
 
     if computeLPML && iter > nburn
@@ -193,7 +166,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
       printMsg(iter, " -- DIC: $(MCMC.computeDIC(dicStream, loglikeDIC,
                                                  paramMeanCompute))")
 
-      DICg = MCMC.DIC_gelman(sum(d.data.N) * loglike[(nburn+1):end])
+      DICg = MCMC.DIC_gelman(loglike[(nburn+1):end])
       printMsg(iter, " -- DIC_gelman: $(DICg)")
     end
 
@@ -201,7 +174,11 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
     flush(stdout)
   end
 
-  if isinf(compute_loglike(init.theta, c.constants, d.data, normalize=true))
+  # Loglike of initial state
+  init_ll = compute_marg_loglike(init.theta, c.constants,
+                                 d.data, c.constants.temper)
+
+  if isinf(init_ll)
     println("Warning: Initial state yields likelihood of zero.")
     msg = """
     It is likely the case that the initialization of missing values
@@ -232,7 +209,7 @@ function fit_fs!(init::StateFS, c::ConstantsFS, d::DataFS;
                                              loglikeDIC,
                                              paramMeanCompute,
                                              return_Dmean_pD=true) : (NaN, NaN)
-    DICg = MCMC.DIC_gelman(sum(d.data.N) * loglike[(nburn+1):end])
+    DICg = MCMC.DIC_gelman(loglike[(nburn+1):end])
 
     metrics = Dict(:LPML => LPML,
                    :DIC => Dmean + pD,

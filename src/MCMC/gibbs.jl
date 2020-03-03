@@ -115,16 +115,16 @@ function gibbs(init::T,
 
   # burn in
   for i in 1:nburn
-    printMsg(i)
     update(state, i, out)
+    printMsg(i)
   end
 
 
   counters = zeros(Int, numMonitors)
   # Gibbs loop
   for i in 1:nmcmc
-    printMsg(i + nburn)
     update(state, i + nburn, out)
+    printMsg(i + nburn)
 
     for j in 1:numMonitors
       if i % thins[j] == 0

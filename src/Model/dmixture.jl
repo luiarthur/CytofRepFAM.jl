@@ -58,6 +58,10 @@ function datadensity(i::Integer, j::Integer,
 end
 
 
+function datadensity(s::State, c::Constants, d::Data)
+  return [datadensity(i, j, s, c, d) for i in 1:d.I, j in 1:d.J]
+end
+
 ### For updating Z marginalizing over lambda and gamma ############
 function log_dmix_nolamgam(Z::Matrix{Bool}, i::Integer, n::Integer,
                            A::Vector{Vector{Float64}},

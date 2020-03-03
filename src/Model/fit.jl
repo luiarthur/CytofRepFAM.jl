@@ -127,49 +127,7 @@ function cytof_fit(init::State, c::Constants, d::Data;
                          y=deepcopy(d.y))
     dicStream = MCMC.DICstream{DICparam}(tmp)
 
-    function updateParams(d::MCMC.DICstream{DICparam}, param::DICparam)
-      d.paramSum.p += param.p
-      d.paramSum.mu += param.mu
-      d.paramSum.sig += param.sig
-      d.paramSum.y += param.y
-      return
-    end
-
-    function paramMeanCompute(d::MCMC.DICstream{DICparam})::DICparam
-      return DICparam(d.paramSum.p ./ d.counter,
-                      d.paramSum.mu ./ d.counter,
-                      d.paramSum.sig ./ d.counter,
-                      d.paramSum.y ./ d.counter)
-    end
-
-    function loglikeDIC(param::DICparam)::Float64
-      ll = 0.0
-
-      for i in 1:d.I
-        for j in 1:d.J
-          for n in 1:d.N[i]
-            y_inj_is_missing = (d.m[i][n, j] == 1)
-
-            # NOTE: This is Conditional DIC, which treats missing values
-            # as additional parameters. The p(m_obs | y_obs, beta) term
-            # is excluded because it is a constant due to beta being fixed.
-            # See: http://www.bias-project.org.uk/papers/DIC.pdf
-            #
-            # NOTE: Refer to `../compute_loglike.jl` for reasoning.
-            if y_inj_is_missing
-              # Compute p(m_inj | y_inj, theta) term.
-              ll += log(param.p[i][n, j])
-            else
-              # Compute p(y_inj | theta) term.
-              ll += logpdf(Normal(param.mu[i][n, j], param.sig[i][n]),
-                           param.y[i][n, j])
-            end
-          end
-        end
-      end
-
-      return ll
-    end
+    loglikeDIC(param::DICparam) = computeLoglikeDIC(d, param)
 
     # FIXME: Doesn't work for c.noisyDist not Normal
     function convertStateToDicParam(s::State)::DICparam

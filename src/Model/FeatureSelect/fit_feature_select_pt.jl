@@ -1,72 +1,11 @@
-function swap!(i, j, x)
-  tmp = deepcopy(x[i])
-  x[i] = deepcopy(x[j])
-  x[j] = tmp
-  return x
-end
-
-function swapchains!(states, loglike, temperatures;
-                     paircounts, swapcounts, verbose=0, randpair=0.0)
-  """
-  randpair: The proportion of time to propose swapping random pairs. 
-            If set to 0.0, then pairs are swapped from hottest to coolest
-            or coolest to hottest. If set to 1.0, then random pairs are 
-            formed and proposed to be swapped.
-
-  See: https://academic.oup.com/gji/article/196/1/357/585739
-  """
-  nchains = length(states)
-  @assert (nchains == length(temperatures)) && (mod(nchains, 2) == 0)
-
-  pairs = if randpair > rand()
-    Iterators.partition(Random.shuffle(1:nchains), 2)
-  else
-    p = zip(1:(nchains - 1), 2:nchains)
-    rand(Bool) ? p : Iterators.reverse(p)
-  end
-
-  for (i, j) in pairs
-    # Increment pair counts
-    paircounts[i, j] += 1
-    paircounts[j, i] += 1
-
-    s1, s2 = states[i].theta, states[j].theta
-    t1, t2 = temperatures[i], temperatures[j]
-    log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
-                                                          (s1, s2),
-                                                          (t1, t2))
-    should_swap_chains = log_accept_ratio > log(rand())
-
-    if verbose > 2
-      println("    mu*0 for state $(i): $(-cumsum(states[i].theta.delta[false]))")
-      println("    mu*1 for state $(i): $(cumsum(states[i].theta.delta[true]))")
-      println("    sig2 for state $(i): $(states[i].theta.sig2)")
-      println("    mu*0 for state $(j): $(-cumsum(states[j].theta.delta[false]))")
-      println("    mu*1 for state $(j): $(cumsum(states[j].theta.delta[true]))")
-      println("    sig2 for state $(j): $(states[j].theta.sig2)")
-    elseif verbose > 1
-      println("swap log accept ratio ($(i), $(j)): $(log_accept_ratio)")
-    end
-
-    if should_swap_chains
-      swap!(i, j, states)
-      # Increment swap-counts matrix
-      swapcounts[i, j] += 1
-      swapcounts[j, i] += 1
-      if verbose > 0
-        println("Swapped chains $(i) and $(j)")
-      end
-    end
-  end
-
-  return
-end
-
-function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
-                    use_rand_inits=false,
-                    tempers::Vector{Float64}, ncores::Int,
+# FIXME! 
+# Need to update.
+function fit_fs_pt!(cfs::ConstantsFS,
+                    dfs::DataFS;
+                    tempers::Vector{Float64},
                     nmcmc::Int, nburn::Int, 
-                    swap_freq::Int=10,
+                    tfs::Union{Nothing, Vector{TunersFS}}=nothing,
+                    inits=nothing,
                     remove_current_workers::Bool=true,
                     monitors=[monitor1, monitor2],
                     fix::Vector{Symbol}=Symbol[],
@@ -74,95 +13,216 @@ function fit_fs_pt!(init::StateFS, cfs::ConstantsFS, dfs::DataFS, tfs::TunersFS;
                     thin_dden::Int=1,
                     printFreq::Int=0, 
                     randpair=0.0,
+                    checkpoint=0,
                     computeDIC::Bool=false, computeLPML::Bool=false,
                     computedden::Bool=false,
                     sb_ibp::Bool=false,
                     use_repulsive::Bool=true, Z_marg_lamgam::Bool=true,
                     verbose::Int=1,
-                    time_updates=[false for _ in tempers],
-                    Z_thin::Int=1, seed::Int=-1)
+                    time_updates=false,
+                    seed::Int=-1)
+
+  printMsg(iter::Int, msg::String) = if printFreq > 0 && iter % printFreq == 0
+    print(msg)
+  end
 
   # Number of temperatures
   num_tempers = length(tempers)
-  @assert mod(num_tempers, 2) == 0
 
-  # Create distributed arrays for:
-  # - loglike, ConstantsFS, StatesFS, TunersFS
-  lls = [Float64[0.0] for _ in tempers]
-  cs = [let 
-          ct = deepcopy(cfs)
-          ct.constants.temper = tau
-          ct
-        end for tau in tempers]
-  states = if use_rand_inits
+  @assert mod(num_tempers, 2) == 0
+  if tfs != nothing
+    @assert num_tempers == length(tfs)
+  end
+
+  # Cache for swap counts
+  swapcounts = zeros(Int, num_tempers, num_tempers)
+
+  # Cache for pair counts
+  paircounts = zeros(Int, num_tempers, num_tempers)
+
+  # Set random seed if needed
+  if seed >= 0
+    Random.seed!(seed)
+  end
+
+  if verbose >= 1
+    fixed_vars_str = join(fix, ", ")
+    if fixed_vars_str == ""
+      fixed_vars_str = "nothing"
+    end
+    println("fixing: $fixed_vars_str")
+    println("Use stick-breaking IBP: $(sb_ibp)")
+    println("Z_marg_lamgam: $(Z_marg_lamgam)")
+    println("use_repulsive: $(use_repulsive)")
+    flush(stdout)
+  end
+
+  @assert printFreq >= -1
+  if printFreq == 0
+    numPrints = 10
+    printFreq = Int(ceil((nburn + nmcmc) / numPrints))
+  end
+
+  ### Coldest chain stuff ###
+
+  # Instantiate (but not initialize) CPO stream
+  if computeLPML
+    cpoStream = MCMC.CPOstream{Float64}()
+  end
+
+  # DIC
+  if computeDIC
+    dicStream = initDicStream(d.data)
+    loglikeDIC(param::DICparam) = computeLoglikeDIC(d.data, param)
+
+    convertStateToDicParam(s::State)::DICparam = let
+      _convertStateToDicParam(s, c.constants, d.data)
+    end
+  end
+
+  # Cache for data density
+  dden = Matrix{Vector{Float64}}[]
+
+  # Update function
+  # function update(states::Vector{StateFS}, args::Vector{Dict{Symbol, Any}}, iter::Int)
+  function update(states, args, iter::Int)
+    s_arg_vec = pmap(states, args) do s, arg
+      tu = (arg[:c].constants.temper == 1) && time_updates
+
+      update_state_feature_select!(s, arg[:c], dfs, arg[:t],
+                                   ll=arg[:ll], fix=fix,
+                                   use_repulsive=use_repulsive,
+                                   # TODO: make this more explicit, instead
+                                   # of random. See `update_Z_v2`.
+                                   Z_marg_lamgam=Z_marg_lamgam,
+                                   sb_ibp=sb_ibp, time_updates=tu)
+      (s, arg)
+    end
+
+    states = [sa[1] for sa in s_arg_vec]
+    args = [sa[2] for sa in s_arg_vec]
+
+    # Swap Chains
+    llf(s, tuner) = compute_marg_loglike(s, cfs.constants, dfs.data, tuner)
+    swapchains!(states, llf, tempers,
+                paircounts=paircounts, swapcounts=swapcounts,
+                randpair=randpair, verbose=verbose)
+
+    s = states[1]
+    c = args[1][:c]
+    d = dfs
+    ll = args[1][:ll]
+
+    if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
+      # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
+      # length g.
+      append!(dden, [datadensity(s.theta, c.constants, d.data)])
+    end
+
+    if computeLPML && iter > nburn
+      # Inverse likelihood for each data point
+      like = [[compute_like(i, n, s.theta, c.constants, d.data)
+               for n in 1:d.data.N[i]] for i in 1:d.data.I]
+
+      # Update (or initialize) CPO
+      MCMC.updateCPO(cpoStream, vcat(like...))
+
+      # Add to printMsg
+      printMsg(iter, " -- LPML: $(MCMC.computeLPML(cpoStream))")
+    end
+
+    if computeDIC && iter > nburn
+      # Update DIC
+      MCMC.updateDIC(dicStream, s.theta, updateParams,
+                     loglikeDIC, convertStateToDicParam)
+
+      # Add to printMsg
+      printMsg(iter, " -- DIC: $(MCMC.computeDIC(dicStream, loglikeDIC,
+                                                 paramMeanCompute))")
+
+      DICg = MCMC.DIC_gelman(ll[(nburn+1):end])
+      printMsg(iter, " -- DIC_gelman: $(DICg)")
+    end
+
+    printMsg(iter, "\n")
+    flush(stdout)
+
+    return states, args
+  end
+
+
+  # Create vectors of states
+  states = if inits == nothing
     println("Using random inits!")
     [let
        s = genInitialState(cfs.constants, dfs.data)
+       s.eps .= 0.0
        StateFS{Float64}(s, dfs)
      end for _ in tempers]
   else
-    [deepcopy(init) for _ in tempers]
+    @assert length(inits) == num_tempers
+    inits
   end
-  tuners = [deepcopy(tfs) for _ in tempers]
-  swapcounts = zeros(Int, num_tempers, num_tempers)
-  paircounts = zeros(Int, num_tempers, num_tempers)
 
-  println("About to start parallel chains ...")
-  for iter in 1:(nburn+nmcmc)
-    # Perform updates in parallel
-    # @time out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
-    #   @time for _ in 1:swap_freq
-    out = pmap(states, cs, tuners, lls, time_updates) do s, c, t, ll, tu
-      for _ in 1:swap_freq
-        update_state_feature_select!(s, c, dfs, t,
-                                     ll=ll, fix=fix,
-                                     use_repulsive=use_repulsive,
-                                     # TODO: make this more explicit, instead
-                                     # of random. See `update_Z_v2`.
-                                     Z_marg_lamgam=Z_marg_lamgam,
-                                     sb_ibp=sb_ibp, time_updates=tu)
-        # println(ll)
-      end
-      return Dict(:s => s, :c => c, :t => t, :ll => ll)
-    end
-    println("Done with iter $iter")
+  # Create Args
+  args = [let
+            ll = Float64[]
+            c = deepcopy(cfs)
+            c.constants.temper = tempers[i]
+            t = if tfs == nothing
+              TunersFS(Tuners(dfs.data.y, cfs.constants.K),
+                       states[1].theta, dfs.X)
+            else
+              tfs[i]
+            end
+            Dict(:ll => ll, :c => c, :t => t)
+          end
+          for i in 1:num_tempers]
 
-    # replace stuff
-    states = [o[:s] for o in out]
-    cs = [o[:c] for o in out]
-    tuners = [o[:t] for o in out]
-    lls = [o[:ll] for o in out]
+  println("Running Gibbs sampler ...")
+  samples, states, args = MCMC.gibbs_pt(states, args, update, monitors=monitors,
+                                        thins=thins, nmcmc=nmcmc, nburn=nburn,
+                                        printFreq=printFreq,
+                                        printlnAfterMsg=false)
 
-    if iter > nburn  # && iter % swap_freq == 0
-      llf(s, t) = compute_marg_loglike(s, cfs.constants, dfs.data, t)
-      swapchains!(states, llf, tempers,
-                  paircounts=paircounts, swapcounts=swapcounts,
-                  randpair=randpair,
-                  verbose=verbose)
-    end
-  end
-  println("After running parallel chains ...")
-
-  out = Dict(:lls => lls,
-             :state => states[1],
+  out = Dict(:samples => samples,
+             :lastState => states[1],
+             :lls => [arg[:ll] for arg in args],
              :c => cfs,
              :d => dfs,
-             :t => tfs,
+             :tempers => tempers,
              :paircounts => paircounts,
              :swapcounts => swapcounts)
-  return out
-end
 
+  if computeDIC || computeLPML
+    LPML = computeLPML ? MCMC.computeLPML(cpoStream) : NaN
+    Dmea, pD = computeDIC ? MCMC.computeDIC(dicStream, loglikeDIC,
+                                            paramMeanCompute,
+                                            return_Dmean_pD=true) : (NaN, NaN)
 
-#= Possible implementation detail
-@assert mod(nmcmc + nburn, swap_freq) == 0
+    ll1 = args[1][:ll]
+    DICg = MCMC.DIC_gelman(ll1[(nburn+1):end])
 
-for iter in 1:div(nmcmc + nburn, swap_freq)
-  # Update states in parallel
-  for _ in 1:swap_freq
-    states = update(states)
+    metrics = Dict(:LPML => LPML,
+                   :DIC => Dmean + pD,
+                   :Dmean => Dmean,
+                   :pD => pD,
+                   :DICg => DICg)
+    println()
+    println("metrics:")
+    for (k, v) in metrics
+      mega_out[k] = v
+      println("$k => $v")
+    end
+    flush(stdout)
   end
 
-  # SWAP STATES
+  if computedden
+    out[:dden] = dden
+  end
+
+  out[:nburn] = nburn
+  out[:nmcmc] = nmcmc
+
+  return out
 end
-=#

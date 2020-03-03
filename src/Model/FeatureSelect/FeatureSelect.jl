@@ -12,4 +12,6 @@ include("update_lam_feature_select.jl")
 include("compute_marg_loglike.jl")
 include("update_feature_select.jl")
 include("fit_feature_select.jl")
+
+include("swap_chains.jl")
 include("fit_feature_select_pt.jl")

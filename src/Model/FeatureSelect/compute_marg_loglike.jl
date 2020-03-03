@@ -27,7 +27,6 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
 
   for i in 1:d.I
     # Dimensions
-    mi = Bool.(d.m[i])
     Ni = d.N[i]
     Z = reshape(s.Z, 1, J, K)
     eta0i = s.eta[false][i:i, :, :]
@@ -54,6 +53,7 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
 
     # Add probability of missing for only imputed values only, because for
     # observed values, the probability evaluates to a constant across models.
+    mi = Bool.(d.m[i])
     pm = [Model.prob_miss(y_inj, c.beta[:, i]) for y_inj in s.y_imputed[i][mi]]
 
     # Increment loglikelihood
