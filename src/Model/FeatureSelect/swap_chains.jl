@@ -40,14 +40,16 @@ function swapchains!(states, loglike, temperatures;
     ti, tj = temperatures[i], temperatures[j]
     log_accept_ratio = MCMC.WSPT.compute_log_accept_ratio(loglike,
                                                           (si, sj),
-                                                          (ti, tj))
+                                                          (ti, tj),
+                                                          verbose=verbose-2)
     should_swap_chains = log_accept_ratio > log(rand())
 
-    if verbose > 2
-      println_mu_sig2(states, i)
-      println_mu_sig2(states, j)
-    elseif verbose > 1
+    if verbose > 1
       println("swap log accept ratio ($(i), $(j)): $(log_accept_ratio)")
+      if verbose > 2
+        println_mu_sig2(states, i)
+        println_mu_sig2(states, j)
+      end
     end
 
     if should_swap_chains

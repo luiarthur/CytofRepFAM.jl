@@ -24,14 +24,14 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  # nmcmc = 1000
-  # nburn = 10
-  # maxcores = 20
+  nmcmc = 1000
+  nburn = 100
+  maxcores = 20
 
   # For compile tests
-  nmcmc = 3
-  nburn = 3
-  maxcores = 2
+  # nmcmc = 3
+  # nburn = 3
+  # maxcores = 2
 
   if length(workers()) != maxcores
     rmprocs(filter(w -> w > 1, workers()))
@@ -51,7 +51,14 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # tempers = 1.1 .^ collect(0:(maxcores-1))
   # tempers = fill(1.0, maxcores)
   # tempers = 2.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
-  tempers = 10.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
+  # tempers = 10.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
+  # tempers = 100.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
+  function gentempers(maxtemp, ntemps; degree=1)
+    i = collect(1:ntemps)
+    powers = (i.^ degree .- 1) / (ntemps ^ degree - 1)
+    return maxtemp .^ powers
+  end
+  tempers = gentempers(50, maxcores, degree=2)
 
   @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
                                            tempers=tempers,
@@ -68,7 +75,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                            verbose=1)
 
   @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
-                                           inits=[deepcopy(sfs) for _ in tempers],
+                                           # inits=[deepcopy(sfs) for _ in tempers],
                                            swap_freq=.5,
                                            tempers=tempers,
                                            nmcmc=nmcmc, nburn=nburn,
@@ -81,13 +88,17 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
                                            computeDIC=true,
                                            computeLPML=true,
                                            time_updates=false,
-                                           verbose=2)
+                                           verbose=3)
   # rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
 
   outdir = "results/repfam-pt"
   mkpath(outdir)
+
+  open("$(outdir)/tempers.txt", "w") do io
+    writedlm(io, tempers)
+  end
 
   for t in 1:length(out[:lls])
     open(joinpath(outdir, "ll_$(t).txt"), "w") do io
