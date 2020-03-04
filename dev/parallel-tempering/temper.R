@@ -23,7 +23,8 @@ f2 = function(t) exp(lf2(t))
 
 ntemp = 20
 maxtemp = 50
-ts = maxtemp ^ (((1:ntemp) - 1) / (ntemp - 1))
+degree = 1
+ts = maxtemp ^ (((1:ntemp) ^ degree - 1) / (ntemp ^ degree - 1))
 tempstep = maxtemp ^ (1/(ntemp - 1))
 
 # Plots
