@@ -22,6 +22,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
                     Z_marg_lamgam_decay_rate::Float64=100.0,
                     Z_marg_lamgam_min::Float64=0.05,
                     verbose::Int=1,
+                    swap_freq::Float64=1.0,
                     time_updates=false,
                     seed::Int=-1)
 
@@ -36,6 +37,9 @@ function fit_fs_pt!(cfs::ConstantsFS,
   if tfs != nothing
     @assert num_tempers == length(tfs)
   end
+
+  # Assert swap frequency is in unit interval
+  @assert 0 < swap_freq <= 1.0
 
   # Cache for swap counts
   swapcounts = zeros(Int, num_tempers, num_tempers)
@@ -124,9 +128,12 @@ function fit_fs_pt!(cfs::ConstantsFS,
       println()
     end
     llf(s, tuner) = compute_marg_loglike(s, cfs.constants, dfs.data, tuner)
-    swapchains!(states, llf, tempers,
-                paircounts=paircounts, swapcounts=swapcounts,
-                randpair=randpair, verbose=verbose)
+
+    if swap_freq > rand()
+      swapchains!(states, llf, tempers,
+                  paircounts=paircounts, swapcounts=swapcounts,
+                  randpair=randpair, verbose=verbose)
+    end
 
     s = states[1]
     c = args[1][:c]

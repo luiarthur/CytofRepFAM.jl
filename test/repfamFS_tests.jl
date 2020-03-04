@@ -19,7 +19,15 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                      mus=mus, sig2=sig2,
                                      sortLambda=true)
   d = CytofRepFAM.Model.Data(simdat[:y])
-  c = CytofRepFAM.Model.defaultConstants(d, KMCMC, LMCMC)
+  simz = CytofRepFAM.Model.sim_fn_exp_decay_generator(1.0)
+  deltaz_prior = TruncatedNormal(1.0, 0.1, 0.0, Inf)
+  c = CytofRepFAM.Model.defaultConstants(d, KMCMC, LMCMC, 
+                                         # sig2_prior=InverseGamma(11, 5),
+                                         sig2_prior=InverseGamma(3, 2),
+                                         delta0_prior=deltaz_prior,
+                                         delta1_prior=deltaz_prior,
+                                         alpha_prior=Gamma(0.1, 10.0),
+                                         similarity_Z=simz)
   s = CytofRepFAM.Model.genInitialState(c, d)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)

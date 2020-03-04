@@ -91,7 +91,8 @@ function defaultConstants(data::Data, K::Int, L::Dict{Int, Int};
 end
 
 
-function printConstants(c::Constants, preprintln::Bool=true)
+function printConstants(c::Constants, preprintln::Bool=true;
+                        multirow_ygrid=false)
   if preprintln
     println("Constants:")
   end
@@ -99,7 +100,10 @@ function printConstants(c::Constants, preprintln::Bool=true)
   for fname in fieldnames(typeof(c))
     x = getfield(c, fname)
     T = typeof(x)
-    if T <: Number
+    if fname == :y_grid && !multirow_ygrid
+      println("y_grid:")
+      println(c.y_grid)
+    elseif T <: Number
       println("$fname: $x")
     elseif T <: Vector
       N = length(x)

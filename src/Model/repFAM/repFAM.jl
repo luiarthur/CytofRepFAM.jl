@@ -82,6 +82,12 @@ function sim_fn_abs(threshold::Int)::Function
   return (z1::Vector{Bool}, z2::Vector{Bool}) -> sum(abs.(z1 - z2)) <= threshold ? 1.0 : 0.0
 end
 
+function sim_fn_exp_decay_generator(phi::Float64)::Function
+  return (z1::Vector{Bool}, z2::Vector{Bool}) -> begin
+    exp(-sum(abs.(z1 - z2)) / phi)
+  end
+end
+
 
 #= Test
 using RCall, Distributions

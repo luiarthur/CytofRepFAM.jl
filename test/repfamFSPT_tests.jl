@@ -24,7 +24,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  # nmcmc = 10000
+  # nmcmc = 1000
   # nburn = 10
   # maxcores = 20
 
@@ -51,25 +51,37 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
   # tempers = 1.1 .^ collect(0:(maxcores-1))
   # tempers = fill(1.0, maxcores)
   # tempers = 2.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
-  tempers = 50.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
-  out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs, 
-                                     tempers=tempers,
-                                     nmcmc=2, nburn=2,
-                                     printFreq=1, seed=0)
+  tempers = 10.0 .^ ((collect(1:maxcores) .- 1) / (maxcores - 1))
 
   @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
                                            tempers=tempers,
-                                           nmcmc=nmcmc, nburn=nburn,
+                                           nmcmc=3, nburn=3,
                                            Z_marg_lamgam=0.5,
                                            Z_marg_lamgam_decay_rate=10.0,
                                            Z_marg_lamgam_min=0.05,
-                                           randpair=0.3,
+                                           randpair=0.8,
                                            printFreq=1, seed=0,
                                            computedden=true,
                                            computeDIC=true,
                                            computeLPML=true,
-                                           time_updates=true,
+                                           time_updates=false,
                                            verbose=1)
+
+  @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
+                                           inits=[deepcopy(sfs) for _ in tempers],
+                                           swap_freq=.5,
+                                           tempers=tempers,
+                                           nmcmc=nmcmc, nburn=nburn,
+                                           Z_marg_lamgam=0.5,
+                                           Z_marg_lamgam_decay_rate=100.0,
+                                           Z_marg_lamgam_min=0.05,
+                                           randpair=0.33,
+                                           printFreq=1, seed=0,
+                                           computedden=true,
+                                           computeDIC=true,
+                                           computeLPML=true,
+                                           time_updates=false,
+                                           verbose=2)
   # rmprocs(filter(w -> w > 1, workers()))
 
   println("Writing Output ...") 
