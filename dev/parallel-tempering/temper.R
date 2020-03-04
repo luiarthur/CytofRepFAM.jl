@@ -1,6 +1,6 @@
-x = seq(-10, 10, len=1e4)
-ld1 = dnorm(x, -2, .3, log=TRUE)
-ld2 = dnorm(x, 2, .3, log=TRUE)
+x = seq(-5, 5, len=1e4)
+ld1 = dnorm(x, -2, .1, log=TRUE)
+ld2 = dnorm(x, 2, .1, log=TRUE)
 logsumexp = function(logx, logy) {
   lxy = cbind(logx, logy)
   mx = apply(lxy, 1, max)
@@ -22,8 +22,8 @@ f1 = function(t) exp(lf1(t))
 f2 = function(t) exp(lf2(t))
 
 ntemp = 20
-maxtemp = 50
-degree = 1
+maxtemp = 10000
+degree = 4
 ts = maxtemp ^ (((1:ntemp) ^ degree - 1) / (ntemp ^ degree - 1))
 tempstep = maxtemp ^ (1/(ntemp - 1))
 
@@ -36,3 +36,8 @@ for (ti in ts[-1]) {
   lines(x, f2(ti), col='blue', lwd=lwd)
 }
 
+# ntemp=100; maxtemp=100
+# for (d in 1:4) {
+#   ts = maxtemp ^ (((1:ntemp) ^ d - 1) / (ntemp ^ d - 1))
+#   if (d == 1) plot(ts, type='l', lwd=3) else lines(ts)
+# }
