@@ -40,5 +40,5 @@ settings = let
         :outdir_suffix => outdir_suffix(maxtemp, ntemps, degree))
    for maxtemp in [1000]
    for ntemps in [20]
-   for degree in [4]]
+   for degree in [2]]
 end

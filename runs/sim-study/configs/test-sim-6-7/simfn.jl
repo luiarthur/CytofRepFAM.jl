@@ -91,6 +91,8 @@ function simfn(settings::Dict{Symbol, Any})
                                              settings[:ntemps],
                                              degree=settings[:degree])
 
+  println("tempers:")
+  println(tempers)
 
   # Fit model
   @time out = CytofRepFAM.Model.fit_fs_pt!(
