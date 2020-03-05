@@ -58,7 +58,7 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
     powers = (i.^ degree .- 1) / (ntemps ^ degree - 1)
     return maxtemp .^ powers
   end
-  tempers = gentempers(50, maxcores, degree=2)
+  tempers = gentempers(1000, maxcores, degree=4)
 
   @time out = CytofRepFAM.Model.fit_fs_pt!(cfs, dfs,
                                            tempers=tempers,
