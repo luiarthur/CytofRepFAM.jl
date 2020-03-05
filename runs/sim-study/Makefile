@@ -9,7 +9,12 @@ SHELL:=/bin/bash
 # SIM_EXP_NAME = test-sim-6-5-1
 # SIM_EXP_NAME = test-sim-6-5-2
 # SIM_EXP_NAME = test-sim-6-6
-SIM_EXP_NAME = test-sim-6-6-1
+# SIM_EXP_NAME = test-sim-6-6-1
+SIM_EXP_NAME = test-sim-6-7
+
+# Run script
+# RUN_SCRIPT = run.jl
+RUN_SCRIPT = run-pt.jl
 
 # Simulation settings dir
 SIM_CONFIG_DIR = configs/$(SIM_EXP_NAME)
@@ -27,12 +32,12 @@ SIM_AWS_BUCKET = s3://cytof-repfam/$(SIM_EXP_NAME)
 ### Sim Make cmds ###
 run:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
-	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 0 \
+	julia $(RUN_SCRIPT) $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 0 \
 		&> results/$(SIM_EXP_NAME)-master-log.txt &
 
 testrun:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
-	julia run.jl $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 1 \
+	julia $(RUN_SCRIPT) $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 1 \
 		&> results/$(SIM_EXP_NAME)-master-log.txt &
 
 clean:

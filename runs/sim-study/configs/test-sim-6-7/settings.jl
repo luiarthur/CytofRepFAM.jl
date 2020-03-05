@@ -12,8 +12,8 @@ simname = basename("$(@__DIR__)")
 println(simname); flush(stdout)
 
 # NOTE: write to scratchdir
-function outdir_suffix(seed_data, seed_mcmc, scale)
-  return "dataseed_$(seed_data)/mcmcseed_$(seed_mcmc)/scale_$(scale)"
+function outdir_suffix(maxtemp, ntemps, degree)
+  return "maxtemp$(maxtemp)-ntempts$(ntemps)-degree$(degree)"
 end
 
 
@@ -22,7 +22,7 @@ settings = let
   Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
   [Dict(:simname => simname,
-        :repfam_dist_scale => scale,
+        :repfam_dist_scale => 1.0,
         :N => [2000, 2000],
         :Z => Z,
         :W => W,
@@ -31,10 +31,14 @@ settings = let
         :nsamps => 2000,
         :Lmcmc => Dict(0 => 2, 1 => 2),
         :Kmcmc => 10,
-        :dataseed => seed_data,
-        :mcmcseed => seed_mcmc,
-        :outdir_suffix => outdir_suffix(seed_data, seed_mcmc, scale))
-   for scale in [0, 1, 10]
-   for seed_mcmc in 1:3
-   for seed_data in 1:3]
+        :maxtemp => maxtemp,
+        :ntemps => ntemps,
+        :ncores => ntemps,
+        :degree => degree,
+        :dataseed => 1,
+        :mcmcseed => 1,
+        :outdir_suffix => outdir_suffix(maxtemp, ntemps, degree))
+   for maxtemp in [1000]
+   for ntemps in [20]
+   for degree in [4]]
 end

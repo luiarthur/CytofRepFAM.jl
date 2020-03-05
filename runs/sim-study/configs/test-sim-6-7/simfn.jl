@@ -16,19 +16,10 @@ function simfn(settings::Dict{Symbol, Any})
   results_dir = settings[:results_dir]
   mkpath(results_dir)
 
-  function sim_z_generator(phi)::Function
-    #= NOTE:
-    larger phi -> higher similarity -> higher penalty
-    smaller phi -> lower similarity -> lower penalty
-    (phi == 0) -> regular IBP
-    =#
-    return (z1::Vector{Bool}, z2::Vector{Bool}) -> begin
-      exp(-sum(abs.(z1 - z2)) / phi)
-    end
-  end
-
-  sim_z = sim_z_generator(settings[:repfam_dist_scale])
-  use_repulsive = settings[:repfam_dist_scale] > 0
+  # Repulsive FAM penalty scale
+  phi = settings[:repfam_dist_scale]
+  sim_z = CytofRepFAM.Model.sim_fn_exp_decay_generator(phi)
+  use_repulsive = phi > 0
 
   function init_state_const_data(simdat; K, L)
     deltaz_prior = TruncatedNormal(1.0, 0.1, 0.0, Inf)
@@ -95,12 +86,22 @@ function simfn(settings::Dict{Symbol, Any})
   CytofRepFAM.Model.printConstants(config[:cfs])
   flush(stdout)
 
+  # Temperatures
+  tempers = CytofRepFAM.MCMC.WSPT.gentempers(settings[:maxtemp],
+                                             settings[:ntemps],
+                                             degree=settings[:degree])
+
+
   # Fit model
-  @time out = CytofRepFAM.Model.fit_fs!(
-    config[:sfs], config[:cfs], config[:dfs],
-    tuners=config[:tfs], 
-    nmcmc=mcmc_iter,
-    nburn=nburn,
+  @time out = CytofRepFAM.Model.fit_fs_pt!(
+    config[:cfs], config[:dfs],
+    tempers=tempers,
+    nmcmc=mcmc_iter, nburn=nburn,
+    swap_freq=.5,
+    Z_marg_lamgam=0.1,
+    Z_marg_lamgam_decay_rate=100.0,
+    Z_marg_lamgam_min=0.05,
+    randpair=0.3,
     thins=[thin_samps, nsamps_to_thin(10, mcmc_iter)],
     monitors=[monitor1, monitor2],
     computedden=true,
@@ -108,7 +109,7 @@ function simfn(settings::Dict{Symbol, Any})
     printFreq=10, time_updates=false,
     computeDIC=true, computeLPML=true,
     use_repulsive=use_repulsive,
-    Z_thin=1,
+    verbose=2,
     seed=settings[:mcmcseed])
 
   # Dump output

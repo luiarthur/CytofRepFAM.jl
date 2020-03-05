@@ -134,6 +134,13 @@ function fit_fs_pt!(cfs::ConstantsFS,
                   paircounts=paircounts, swapcounts=swapcounts,
                   randpair=randpair, verbose=verbose)
     end
+    if iter == nburn
+      println("swapcounts / paircounts:")
+      println(swapcounts ./ (paircounts .+ 1e-6))
+      println("Resetting swapcounts, paircounts ...")
+      swapcounts .= 0.0
+      paircounts .= 0.0
+    end
 
     s = states[1]
     c = args[1][:c]
@@ -218,6 +225,8 @@ function fit_fs_pt!(cfs::ConstantsFS,
              :c => cfs,
              :d => dfs,
              :tempers => tempers,
+             :swap_freq => swap_freq,
+             :randpair => randpair,
              :paircounts => paircounts,
              :swapcounts => swapcounts)
 
