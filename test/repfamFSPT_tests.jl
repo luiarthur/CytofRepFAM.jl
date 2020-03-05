@@ -24,14 +24,14 @@ printstyled("Test fitting repFAM on simulated data with PT...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  nmcmc = 1000
-  nburn = 100
-  maxcores = 20
+  # nmcmc = 1000
+  # nburn = 100
+  # maxcores = 20
 
   # For compile tests
-  # nmcmc = 3
-  # nburn = 3
-  # maxcores = 2
+  nmcmc = 3
+  nburn = 3
+  maxcores = 2
 
   if length(workers()) != maxcores
     rmprocs(filter(w -> w > 1, workers()))
