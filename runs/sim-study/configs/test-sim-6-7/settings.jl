@@ -13,7 +13,7 @@ println(simname); flush(stdout)
 
 # NOTE: write to scratchdir
 function outdir_suffix(maxtemp, ntemps, degree)
-  return "maxtemp$(maxtemp)-ntempts$(ntemps)-degree$(degree)"
+  return "maxtemp$(maxtemp)-ntempts$(ntemps)-degree$(degree)-N500" # TODO:N2000
 end
 
 
@@ -23,7 +23,7 @@ settings = let
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
   [Dict(:simname => simname,
         :repfam_dist_scale => 1.0,
-        :N => [2000, 2000],
+        :N => [500, 500], # TODO: [2000, 2000],
         :Z => Z,
         :W => W,
         :thin_samps => 2,
