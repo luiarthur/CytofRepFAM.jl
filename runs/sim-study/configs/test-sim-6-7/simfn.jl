@@ -111,7 +111,7 @@ function simfn(settings::Dict{Symbol, Any})
     printFreq=10, time_updates=false,
     computeDIC=true, computeLPML=true,
     use_repulsive=use_repulsive,
-    verbose=2,
+    verbose=3,
     seed=settings[:mcmcseed])
 
   # Dump output
