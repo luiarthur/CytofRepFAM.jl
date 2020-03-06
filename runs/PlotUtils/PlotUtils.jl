@@ -128,10 +128,13 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
   end
 end
 
-function plot_loglike(loglike, imgdir; fname="loglike.pdf")
+function plot_loglike(loglike, imgdir; fname="loglike.pdf", title=nothing)
   plt.plot(loglike)
   plt.xlabel("iter")
   plt.ylabel("log-likelihood")
+  if title != nothing
+    plt.title(title)
+  end
   plt.savefig("$(imgdir)/$(fname)", bbox_inches="tight")
   plt.close()
 end
