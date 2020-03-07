@@ -1,3 +1,6 @@
+# NOTE: This script prints the cooccurence of missing expression levels
+# for the CB data.
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
