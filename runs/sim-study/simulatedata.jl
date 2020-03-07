@@ -128,7 +128,6 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
     end
   end
 
-
   return Dict(:Z => Z, :N => N, :L => L, :mus => mus, :W => W, :seed => seed,
               :lam => lam, :sig2 => sig2, :y => y, :y_complete => y_complete,
               :beta => beta, :eps_mus => eps_mus)
