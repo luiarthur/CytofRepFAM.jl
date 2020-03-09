@@ -7,6 +7,7 @@ function gibbs_pt(init::Vector{T}, args::Vector{Dict{Symbol, Any}},
                   thins::Vector{Int}=deepcopy(thin_default),
                   nmcmc::Int64=1000, nburn::Int=0,
                   printFreq::Int=0,
+                  save_all_states::Bool=false,
                   printlnAfterMsg::Bool=true) where T
 
   @assert printFreq >= -1
@@ -16,6 +17,7 @@ function gibbs_pt(init::Vector{T}, args::Vector{Dict{Symbol, Any}},
   end
 
   states = deepcopy(init)
+  num_chains = length(states)
 
   # Checking number of monitors.
   numMonitors = length(monitors)
@@ -39,8 +41,13 @@ function gibbs_pt(init::Vector{T}, args::Vector{Dict{Symbol, Any}},
   end
 
   # Create object to return
-  @time out = [fill(deepcopyFields(states[1], monitors[i]), numSamps[i])
-               for i in 1:numMonitors]
+  if save_all_states
+    @time out = [fill([deepcopyFields(s, monitors[i]) for s in states],
+                      numSamps[i]) for i in 1:numMonitors]
+  else
+    @time out = [fill(deepcopyFields(states[1], monitors[i]), numSamps[i])
+                 for i in 1:numMonitors]
+  end
 
   function printMsg(i::Int)
     if (printFreq > 0) && (i % printFreq == 0) && (i > 1)
@@ -74,7 +81,11 @@ function gibbs_pt(init::Vector{T}, args::Vector{Dict{Symbol, Any}},
 
     for j in 1:numMonitors
       if i % thins[j] == 0
-        substate = deepcopyFields(states[1], monitors[j])
+        if save_all_states
+          substate = [deepcopyFields(s, monitors[j]) for s in states]
+        else
+          substate = deepcopyFields(states[1], monitors[j])
+        end
         counters[j] += 1
         out[j][counters[j]] = substate
       end

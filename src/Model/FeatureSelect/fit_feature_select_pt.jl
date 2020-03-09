@@ -218,6 +218,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
   samples, states, args = MCMC.gibbs_pt(states, args, update, monitors=monitors,
                                         thins=thins, nmcmc=nmcmc, nburn=nburn,
                                         printFreq=printFreq,
+                                        save_all_states=return_all_states,
                                         printlnAfterMsg=false)
 
   out = Dict(:samples => samples,
