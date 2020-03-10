@@ -6,7 +6,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
                     nmcmc::Int, nburn::Int, 
                     tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                     inits=nothing,
-                    return_all_states=false,
+                    save_all_states=false,
                     remove_current_workers::Bool=true,
                     monitors=[monitor1, monitor2],
                     fix::Vector{Symbol}=Symbol[],
@@ -218,7 +218,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
   samples, states, args = MCMC.gibbs_pt(states, args, update, monitors=monitors,
                                         thins=thins, nmcmc=nmcmc, nburn=nburn,
                                         printFreq=printFreq,
-                                        save_all_states=return_all_states,
+                                        save_all_states=save_all_states,
                                         printlnAfterMsg=false)
 
   out = Dict(:samples => samples,
@@ -263,7 +263,7 @@ function fit_fs_pt!(cfs::ConstantsFS,
   out[:nmcmc] = nmcmc
 
   # Return all states if requested
-  if return_all_states
+  if save_all_states
     out[:all_last_states] = deepcopy(states)
   end
 

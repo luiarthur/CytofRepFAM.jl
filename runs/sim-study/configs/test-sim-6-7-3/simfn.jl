@@ -105,7 +105,7 @@ function simfn(settings::Dict{Symbol, Any})
     config[:cfs], config[:dfs],
     tempers=tempers,
     nmcmc=mcmc_iter, nburn=nburn,
-    inits=[deepcopy(config[:sfs]) for _ in tempers],
+    # inits=[deepcopy(config[:sfs]) for _ in tempers],
     swap_freq=.5,
     save_all_states=true,
     Z_marg_lamgam=0.1,
