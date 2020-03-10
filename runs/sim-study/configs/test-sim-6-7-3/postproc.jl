@@ -1,9 +1,5 @@
-include("../PlotUtils/PlotUtils.jl")
-include("../PlotUtils/imports.jl")
-
-# using Distributed
-# rmprocs(filter(w -> w > 1, workers()))
-# addprocs(2)
+include("../../../PlotUtils/PlotUtils.jl")
+include("../../../PlotUtils/imports.jl")
 
 if length(ARGS) == 0
   results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-3"
@@ -29,21 +25,19 @@ function getsamples(path_to_output)
    end for t in 1:num_tempers]
 end
 
+using Distributed
+rmprocs(filter(w -> w > 1, workers()))
+addprocs(20)
 
-# @everywhere include("../PlotUtils/PlotUtils.jl")
-# @everywhere include("../PlotUtils/imports.jl")
+@everywhere include("../../../PlotUtils/PlotUtils.jl")
+@everywhere include("../../../PlotUtils/imports.jl")
 
-# @everywhere function makeplots(path_to_output)
-function makeplots(path_to_output)
-  output_dir = splitdir(path_to_output)[1]
-  path_to_simdat = joinpath(output_dir, "simdat.bson")
-  simdat = BSON.load(path_to_simdat)[:simdat]
-
-  println(path_to_output)
-  output = BSON.load(path_to_output)
+@everywhere function plot_params(samples, simdat, imgdir)
+  # Create a directory for images / txt if needed.
+  mkpath("$(imgdir)/txt/")
 
   # Extract samples
-  extract(s) = map(o -> o[s], output[:samples][1])
+  extract(s) = map(o -> o[s], samples[1])
   Zs = extract(:theta__Z)
   Ws = extract(:theta__W)
   lams = extract(:theta__lam)
@@ -55,11 +49,6 @@ function makeplots(path_to_output)
 
   # Number of samples
   I = length(sig2s[1])
-
-  # Create a directory for images / txt if needed.
-  dir_to_output, _ = splitdir(path_to_output)
-  imgdir = joinpath(dir_to_output, "img")
-  mkpath("$(imgdir)/txt/")
 
   # Print R
   computeR(w) = vec(sum(w .> 0, dims=2))
@@ -75,7 +64,31 @@ function makeplots(path_to_output)
     writedlm(io, Rcounts)
   end
 
-  # For parallel tempering
+  # Plot parameters
+  PlotUtils.plot_W(Ws, imgdir=imgdir, W_true=simdat[:W])
+  PlotUtils.plot_v(vs, imgdir)
+  PlotUtils.plot_alpha(alphas, imgdir)
+  PlotUtils.plot_mus(deltas, imgdir)
+  PlotUtils.plot_sig2(sig2s, imgdir, sig2_true=simdat[:sig2])
+
+  # Plot y / Z
+  PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
+                    Z_true=simdat[:Z], w_thresh=0.0)
+end
+
+function makeplots(path_to_output, imgdir)
+  mkpath("$(imgdir)/txt")
+
+  output_dir = splitdir(path_to_output)[1]
+  path_to_simdat = joinpath(output_dir, "simdat.bson")
+  simdat = BSON.load(path_to_simdat)[:simdat]
+
+  println(path_to_output)
+  output = BSON.load(path_to_output)
+  samples = output[:samples][1]
+
+  # Swap props
+  println("Making swap proprs ...")
   if :swapcounts in keys(output) && :paircounts in keys(output)
     swapcounts = output[:swapcounts]
     paircounts = output[:paircounts]
@@ -93,6 +106,7 @@ function makeplots(path_to_output)
   nburn = output[:nburn]
 
   # Plot loglikelihood
+  println("Loglikes ...")
   llkey = if :loglike in keys(output)
     PlotUtils.plot_loglike(output[:loglike], imgdir, fname="loglike.pdf")
     PlotUtils.plot_loglike(output[:loglike][(nburn + 1):end],
@@ -112,7 +126,20 @@ function makeplots(path_to_output)
     end
   end
 
+  # Extract samples
+  println("Extracting samples ...")
+  extract(s) = map(o -> o[s], samples[1])
+  Zs = extract(:theta__Z)
+  Ws = extract(:theta__W)
+  deltas = extract(:theta__delta)
+  sig2s = extract(:theta__sig2)
+  etas = extract(:theta__eta)
+
+  # Number of samples
+  I = length(sig2s[1])
+
   # Plot missing mechanism
+  println("Plotting missmechs ...")
   for i in 1:I
     PlotUtils.plot_missmech(output[:c].constants.beta, i, xlim=[-5, 0])
     plt.savefig("$(imgdir)/missmech_$(i).pdf", bbox_inches="tight")
@@ -124,22 +151,12 @@ function makeplots(path_to_output)
     writedlm(io, output[:c].constants.beta, ',')
   end
 
-  # Plot parameters
-  PlotUtils.plot_W(Ws, imgdir=imgdir, W_true=simdat[:W])
-  PlotUtils.plot_v(vs, imgdir)
-  PlotUtils.plot_alpha(alphas, imgdir)
-  PlotUtils.plot_mus(deltas, imgdir)
-  PlotUtils.plot_sig2(sig2s, imgdir, sig2_true=simdat[:sig2])
-
-  # TODO: Plot data density
+  # Plot data density
+  println("Plotting dden ...")
   PlotUtils.plot_dden(ddens=output[:dden],
                       etas=etas, Ws=Ws, Zs=Zs, sig2s=sig2s, deltas=deltas,
                       ygrid=output[:c].constants.y_grid,
                       imgdir=imgdir, simdat=simdat)
-
-  # Plot y / Z
-  PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
-                    Z_true=simdat[:Z], w_thresh=0.0)
 end
 
 ### MAIN ###
@@ -152,14 +169,21 @@ output_paths = [joinpath(root, OUTPUT_FILE)
                 for (root, _, files) in walkdir(results_dir)
                 if OUTPUT_FILE in files]
 
+# Plot the posterior distributions of parameters
+path_to_output = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/output.bson")
+path_to_simdat = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/simdat.bson")
+samples = getsamples(path_to_output);
+simdat = BSON.load(path_to_simdat)[:simdat];
+@everywhere simdat = $simdat
+genimgdir(t) = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/img/temper_$(t)")
+@everywhere plot_params(s, imgdir) = plot_params(s, simdat, imgdir)
+_ = pmap(plot_params, samples, genimgdir.(1:length(samples)))
 
-# Make y, Z plots.
-status = map(makeplots, output_paths)
-println(status)
+# Make general plots
+imgdir = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/img")
+makeplots(path_to_output, imgdir)
 
 # Remove extra processors
 # rmprocs(filter(w -> w > 1, workers()))
 
 println("DONE!")
-
-
