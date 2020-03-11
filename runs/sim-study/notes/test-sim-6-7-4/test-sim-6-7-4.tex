@@ -126,19 +126,6 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 
 \subsection{More on data generation / MCMC setup}
 \begin{itemize}
-  \item temperatures: 
-    \begin{itemize}
-      \item $1000^{(i^2 - 1) / (n^2 - 1)}$, where $n=20$ is the number of
-        temperatures, and $i\in\bc{1,\cdots,n}$.
-      \item 
-        1.0, 1.0, 1.0, 1.084, 1.177
-        1.277, 1.385, 1.503,
-        1.631, 1.769, 1.920,
-        2.083, 2.260, 2.452,
-        2.660, 2.886, 3.131,
-        3.398, 3.686, 4.0
-
-    \end{itemize}
   \item $(\mu_{0,j}^\star)^\true=-2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
   \item $(\mu_{1,j}^\star)^\true=2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
   \item ($\sigma^2_i)^\true=0.5$, $N=(500, 500)$
@@ -153,13 +140,36 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \item $\delta_1 \sim \TN^+(1.0, 0.1)$
     \item $\sigma^2_i \sim \InvGamma^+(1.0, 0.1)$
   \end{itemize}
+\item \textbf{Temperatures}: 
+    \begin{itemize}
+      \item 
+        1, 1, 1, 1.006, 1.017,
+        1.032, 1.052, 1.078,
+        1.108, 1.144, 1.187,
+        1.236, 1.293, 1.359,
+        1.434, 1.519, 1.617,
+        1.728, 1.855, 2
+      \item Note that the first three temperatures are 1.
+      \item The last 17 temperatures are generated from $2^{(i^2 - 1) / (n^2 -
+        1)}$, where $n=17$ is the number of temperatures, and
+        $i\in\bc{1,\cdots,n}$.
+    \end{itemize}
 \end{itemize}
 
 % \newpage
 \section{Swap probabilities (post-burn)}
 \begin{figure}[H]
   \centering
-  \includegraphics[scale=.5]{\imgdir/img/swapprops.pdf}
+  \includegraphics[scale=.7]{\imgdir/img/swapprops.pdf}
+  \caption{This heatmap shows the proportion of instances where two
+  temperature chains were swapped when they were proposed to be swapped. The
+  ticks on the axes indicate the temperatures. Swapping is occurring between
+  most adjacent pairs, and sometimes non-adjacent pairs. But for temperatures
+  (6, 7), (11, 12), (13, 14), and (18, 19), swapping does not occur. The reason
+  for this is that the parameters are in different modes (see $\mu, \sigma^2,
+  Z$). Making the temperature grid finer is necessary to achieve better mixing
+  (propagation of states from hot to cold chains). Note that $\tau=1$ occurs
+  three times. And the probability of swapping is always 1, by construction.}
 \end{figure}
 
 \newpage
