@@ -187,3 +187,28 @@ makeplots(path_to_output, imgdir)
 # rmprocs(filter(w -> w > 1, workers()))
 
 println("DONE!")
+
+# Detailed Analysis
+output = BSON.load(path_to_output);
+last_states = output[:all_last_states];
+tempers = output[:tempers]
+num_tempers = length(tempers)
+
+ll_fn(s, t) = CytofRepFAM.Model.compute_marg_loglike(s,
+                                                     output[:c].constants,
+                                                     output[:d].data, t)
+i, j = 1, 20
+ll_fn(last_states[i].theta, tempers[j]) -
+ll_fn(last_states[i].theta, tempers[i])
+ll_fn(last_states[j].theta, tempers[i]) -
+ll_fn(last_states[j].theta, tempers[j])
+
+
+temper_mat = [MCMC.WSPT.compute_log_accept_ratio(
+  ll_fn, (last_states[i].theta, last_states[j].theta),
+  (tempers[i], tempers[j]), verbose=3)
+for i in 1:num_tempers, j in 1:num_tempers]
+plt.imshow(exp.(temper_mat), vmin=.01, vmax=1.0)
+plt.colorbar()
+plt.savefig("tmp.pdf", bbox_inches="tight")
+plt.close()
