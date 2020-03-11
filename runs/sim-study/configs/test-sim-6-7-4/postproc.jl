@@ -170,17 +170,18 @@ output_paths = [joinpath(root, OUTPUT_FILE)
                 if OUTPUT_FILE in files]
 
 # Plot the posterior distributions of parameters
-path_to_output = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/output.bson")
-path_to_simdat = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/simdat.bson")
+simname = "maxtemp2-ntempts20-degree2-N500"
+path_to_output = joinpath(results_dir, simname, "output.bson")
+path_to_simdat = joinpath(results_dir, simname, "simdat.bson")
 samples = getsamples(path_to_output);
 simdat = BSON.load(path_to_simdat)[:simdat];
 @everywhere simdat = $simdat
-genimgdir(t) = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/img/temper_$(t)")
+genimgdir(t) = joinpath(results_dir, simname, "img/temper_$(t)")
 @everywhere plot_params(s, imgdir) = plot_params(s, simdat, imgdir)
 _ = pmap(plot_params, samples, genimgdir.(1:length(samples)))
 
 # Make general plots
-imgdir = joinpath(results_dir, "maxtemp4-ntempts20-degree1-N500/img")
+imgdir = joinpath(results_dir, simname, "img")
 makeplots(path_to_output, imgdir)
 
 # Remove extra processors
