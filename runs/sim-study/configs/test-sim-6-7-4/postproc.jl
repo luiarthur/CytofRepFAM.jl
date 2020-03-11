@@ -198,18 +198,41 @@ num_tempers = length(tempers)
 ll_fn(s, t) = CytofRepFAM.Model.compute_marg_loglike(s,
                                                      output[:c].constants,
                                                      output[:d].data, t)
-i, j = 1, 20
-ll_fn(last_states[i].theta, tempers[j]) -
+i, j = 6, 7
+ll_fn(last_states[i].theta, tempers[i]*1.001) -
 ll_fn(last_states[i].theta, tempers[i])
 ll_fn(last_states[j].theta, tempers[i]) -
-ll_fn(last_states[j].theta, tempers[j])
+ll_fn(last_states[j].theta, tempers[i]*1.001)
 
 
-temper_mat = [MCMC.WSPT.compute_log_accept_ratio(
-  ll_fn, (last_states[i].theta, last_states[j].theta),
-  (tempers[i], tempers[j]), verbose=3)
-for i in 1:num_tempers, j in 1:num_tempers]
-plt.imshow(exp.(temper_mat), vmin=.01, vmax=1.0)
+log_accept_mat = [if i >= j
+                MCMC.WSPT.compute_log_accept_ratio(
+                  ll_fn, (last_states[i].theta, last_states[j].theta),
+                  (tempers[i], tempers[j]), verbose=0)
+              else
+                0.0
+              end for i in 1:num_tempers, j in 1:num_tempers]
+for i in 1:num_tempers, j in 1:i
+  log_accept_mat[j, i] = log_accept_mat[i, j] 
+end
+
+plt.imshow(exp.(log_accept_mat), vmin=.01, vmax=1.0)
 plt.colorbar()
-plt.savefig("tmp.pdf", bbox_inches="tight")
+plt.savefig(joinpath(results_dir, simname, "img/ll_compare.pdf"),
+            bbox_inches="tight")
+plt.close()
+
+plt.plot(tempers, log_accept_mat[:, 20], marker="o")
+plt.xlabel("temperatures")
+plt.ylabel("log accept ratio (t1 vs others)")
+plt.savefig(joinpath(results_dir, simname, "img/log_accept_compare.pdf"),
+            bbox_inches="tight")
+plt.close()
+
+ll1_vary_tempers = [ll_fn(last_states[1].theta, t) for t in tempers]
+plt.plot(tempers, ll1_vary_tempers, marker="o")
+plt.xlabel("temperatures")
+plt.ylabel("log-likelihood")
+plt.savefig(joinpath(results_dir, simname, "img/ll1_vary_tempers.pdf"),
+            bbox_inches="tight")
 plt.close()
