@@ -16,6 +16,9 @@ using Flux
 include("MCMC_tests.jl")
 
 # tests for feature allocation model (FAM)
+include("Metropolis_tests.jl")
+
+# tests for feature allocation model (FAM)
 include("fam_tests.jl")
 
 # tests for repulsive FAM with feature selection
