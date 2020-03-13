@@ -87,15 +87,9 @@ function simfn(settings::Dict{Symbol, Any})
   flush(stdout)
 
   # Temperatures
-  tempers = let
-    nrep = 2
-    println("nrep: $(nrep)")
-    _tempers = CytofRepFAM.MCMC.WSPT.gentempers(settings[:maxtemp],
-                                                settings[:ntemps] - nrep,
-                                                degree=settings[:degree])
-    append!(_tempers, ones(nrep))
-    sort(_tempers)
-  end
+  tempers = CytofRepFAM.MCMC.WSPT.gentempers(settings[:maxtemp],
+                                             settings[:ntemps],
+                                             degree=settings[:degree])
 
   println("tempers:")
   println(tempers)
