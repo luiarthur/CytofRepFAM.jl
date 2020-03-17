@@ -1,0 +1,359 @@
+\documentclass[10pt]{article} % 12-point font
+
+\usepackage[margin=1.5cm]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\Gam}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+\def\Dir{\text{Dirichlet}}
+\def\TN{\text{TN}}
+% Statistics
+\newcommand{\E}{\text{E}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Uncomment if using bibliography
+% Bibliography
+% \usepackage{natbib}
+% \bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+
+
+% Macros for this project
+\def\true{\text{TRUE}}
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bbh}{\color{blue}\textbf}  % blue bold highlight
+\newcommand{\bch}{\color{blue}\it}  % blue italics
+\newcommand{\ech}{\color{black}\rm}
+\input{imgtemplate.tex}
+\def\imgdir{../../results/test-sim-6-7-5/maxtemp1.05-ntemps20-degree1-N2000}
+
+% Title Settings
+\title{Simulation Study 6.7.5}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+
+\maketitle
+
+% \tableofcontents \newpage % Comment to remove table of contents
+
+% \section{Objective}\label{sec:objective}
+% TODO
+
+\section{Data Generation}\label{sec:data-generation}
+Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} respectively show the true
+$Z$ and $W$ used to generate the simulated data in this study. Note the following:
+\begin{itemize}
+  \item Features (columns) 1, 2, and 3 are similar (maximum difference of 2).
+    In Sample 1, the first two features are rare / absent in one sample, and
+    the third feature is abundant in both samples. Previously, we wanted to
+    know if the first two features are prone to being absorbed into feature 3. We
+    found that using the prior $w^\star_{i,k} \sim \Gam(10, 1)$, and using priors
+    that encouraged $r_{i,k}$ to be sparse, Features 1 and 2 tend to merge
+    (into Feature 2, which is slightly larger), and Feature 3 would be in its
+    own cluster or split into two smaller identical features. We believe this is 
+    due to prior information in $w^\star$ encouraging features to be equally weighted.
+    In this study, we continue to monitor these kinds of behaviour.
+  \item Features 4 and 5 are similar (difference of 1). They are rare / absent
+    in one sample and abundant in another. Previously, we were also curious if
+    these two features will be merged. Although, we didn't expect them to. It was
+    conceivable that they will only be ``selected'' in one sample, but not in
+    another. We found that they were always recovered, in part, we believe, because
+    they had a large presence in one sample. We continue to monitor their behaviour
+    here.
+  \item Feature 6 is abundant in Sample 1 but not in Sample 2. We expect it to be
+    recovered in $Z$ but it is conceivable that it will not be ``selected'' in sample
+    2. It is distinct from other features.
+  \item Feature 7 is rare in Sample 1, and absent in Sample 2. Nevertheless, we
+    expect it to recovered in $Z$ because it is different from the other
+    features.
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \includegraphics[scale=.4]{\imgdir/img/temper_1/Z_true.pdf}
+  \end{center}
+  \caption{$Z^\true$}
+  \label{fig:Z-true}
+\end{figure}
+
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Wed Feb 12 14:53:27 2020
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{rrrrrrrr}
+    \hline
+    & $k=1$ & $k=2$ & $k=3$ & $k=4$ & $k=5$ & $k=6$ & $k=7$ \\
+    \hline
+    Sample 1 & 0.04 & 0.05 & 0.39 & 0.00 & 0.06 & 0.43 & 0.03 \\
+    Sample 2 & 0.00 & 0.05 & 0.54 & 0.20 & 0.14 & 0.07 & 0.00 \\
+    \hline
+  \end{tabular}
+  \caption{$W^\true$}
+  \label{tab:W-true}
+\end{table}
+
+\subsection{More on data generation / MCMC setup}
+\begin{itemize}
+  \item $(\mu_{0,j}^\star)^\true=-2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item $(\mu_{1,j}^\star)^\true=2 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.5, 0.5)$
+  \item ($\sigma^2_i)^\true=0.5$, $N=(500, 500)$
+  \item 10000 burn-in, followed by 4000 iterations, and every other sample was
+    kept (2000 samples total).
+  \item \textbf{Some Priors:}
+  \begin{itemize}
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=10, \text{rate}=1)$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
+    \item $\alpha \sim \Gam(0.1, 0.1)$
+    \item $\delta_0 \sim \TN^-(1.0, 0.1)$
+    \item $\delta_1 \sim \TN^+(1.0, 0.1)$
+    \item $\sigma^2_i \sim \InvGamma^+(1.0, 0.1)$
+  \end{itemize}
+\item \textbf{Temperatures}: 
+    \begin{itemize}
+      \item 
+        1.0, 1.0026, 1.0051, 1.0077,
+        1.0103, 1.0129, 1.0155,
+        1.0181, 1.0207, 1.0233,
+        1.0260, 1.0286, 1.0312,
+        1.0339, 1.0366, 1.0392,
+        1.0419, 1.0446, 1.0473, 1.05]
+      \item Note that the temperatures are generated from $1.05^{(i - 1) / (n -
+        1)}$, where $n=20$ is the number of temperatures, and
+        $i\in\bc{1,\cdots,n}$.
+    \end{itemize}
+\end{itemize}
+
+% \newpage
+\section{Swap probabilities (post-burn)}
+\begin{figure}[H]
+  \centering
+  \includegraphics[scale=.7]{\imgdir/img/swapprops.pdf}
+  \caption{This heatmap shows the proportion of instances where two
+  temperature chains were swapped when they were proposed to be swapped. The
+  ticks on the axes indicate the temperatures. Swapping is occurring between
+  most adjacent pairs, and sometimes non-adjacent pairs. But for temperatures
+  (6, 7), (11, 12), (13, 14), and (18, 19), swapping does not occur. The reason
+  for this is that the parameters are in different modes (see $\mu, \sigma^2,
+  Z$). Making the temperature grid finer is necessary to achieve better mixing
+  (propagation of states from hot to cold chains). Note that $\tau=1$ occurs
+  three times. And the probability of swapping is always 1, by construction.}
+\end{figure}
+
+\newpage
+\section{Log likelihood (post-burn)}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \begin{tabular}{cccc}
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_1.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_2.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_3.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_4.pdf} \\
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_5.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_6.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_7.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_8.pdf} \\
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_9.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_10.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_11.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_12.pdf} \\
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_13.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_14.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_15.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_16.pdf} \\
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_17.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_18.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_19.pdf} &
+      \includegraphics[scale=.25]{\imgdir/img/loglike/loglike_postburn_20.pdf} \\
+    \end{tabular}
+  \end{center}
+  \caption{Post burn-in log likelihoods for each run. Burn in used was 10000.
+    These plots show the log-likelihood evaluations of the 4000 subsequent
+    iterations for each temperature, for $\phi=1$.}
+  \label{fig:ll}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z1.pdf}{.2}
+  \end{center}
+  \caption{Note that for temperatures (6, 7), (11, 12), (13, 14), and (18, 19),
+  the $Z$ matrices are different. Swapping does not occur between those chains.
+  Swapping would occur for those chains if the ratio between the larger and smaller
+  temperatures were about 1.001. To smoothly transition between $\tau=1$ and
+  $\tau=2$ with a temperature granularity of that order would require 700 parallel
+  chains. Note also the merging of two of at least the original features in all of
+  the scenarios. The merging of two features is reasonable given the size of
+  the simulated data. Sometimes Feature 1 is merged into Feature 3, at other times,
+  Feature 2 is merged into Feature 3. The merging of three features is more
+  prevalent in higher temperatures. Features 1 and 2 were merged into Feature 3
+  in those cases. Since Features 1, 2, and 3 are similar, this is conceivable.}
+  \label{fig:z1est}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z2.pdf}{.2}
+  \end{center}
+  \label{fig:z2est}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $y_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1.pdf}{.2}
+  \end{center}
+  \label{fig:yzest}
+  \caption{Note the merging of two of at least the original features in all of
+  the scenarios. The merging of two features is reasonable given the size of
+  the simulated data. The merging of tree features is more prevalent in higher
+  temperatures. Features 1 and 2 were merged into Feature 3 in those
+  cases.}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $y_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2.pdf}{.2}
+  \end{center}
+  \label{fig:yzest}
+\end{figure}
+
+
+\newpage
+\section{Trace plots of $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus_trace.pdf}{.2}
+  \end{center}
+  \label{fig:mustrace}
+  \caption{Note that for temperatures (6, 7), (11, 12), (13, 14), and (18, 19),
+  the $Z$ matrices are different. Swapping does not occur between those chains.
+  Swapping would occur for those chains if the ratio between the larger and smaller
+  temperatures were about 1.001. To smoothly transition between $\tau=1$ and
+  $\tau=2$ with a temperature granularity of that order would require 700 parallel
+  chains.}
+\end{figure}
+
+\newpage
+\section{Posterior Distribution of $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus.pdf}{.2}
+  \end{center}
+  \label{fig:mus}
+  \caption{Note that for temperatures (6, 7), (11, 12), (13, 14), and (18, 19),
+  the $Z$ matrices are different. Swapping does not occur between those chains.
+  Swapping would occur for those chains if the ratio between the larger and smaller
+  temperatures were about 1.001. To smoothly transition between $\tau=1$ and
+  $\tau=2$ with a temperature granularity of that order would require 700 parallel
+  chains.}
+\end{figure}
+
+\newpage
+\section{Trace plots of $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2_trace.pdf}{.2}
+  \end{center}
+  \label{fig:sig2trace}
+  \caption{Note that for temperatures (6, 7), (11, 12), (13, 14), and (18, 19),
+  the $Z$ matrices are different. Swapping does not occur between those chains.
+  Swapping would occur for those chains if the ratio between the larger and smaller
+  temperatures were about 1.001. To smoothly transition between $\tau=1$ and
+  $\tau=2$ with a temperature granularity of that order would require 700 parallel
+  chains.}
+\end{figure}
+
+\newpage
+\section{Posterior Distribution of $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2.pdf}{.2}
+  \end{center}
+  \label{fig:sig2}
+  \caption{Note that for temperatures (6, 7), (11, 12), (13, 14), and (18, 19),
+  the $Z$ matrices are different. Swapping does not occur between those chains.
+  Swapping would occur for those chains if the ratio between the larger and smaller
+  temperatures were about 1.001. To smoothly transition between $\tau=1$ and
+  $\tau=2$ with a temperature granularity of that order would require 700 parallel
+  chains.}
+\end{figure}
+
+
+
+\newpage
+\section{Posterior predictive density for sample 1, marker 1}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \begin{tabular}{ccc}
+      {(a) sample 1, marker 1} &
+      {(b) sample 1, marker 2} &
+      {(c) sample 1, marker 3} \\
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i1_j1.pdf} &
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i1_j2.pdf} &
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i1_j3.pdf} \\
+      {(d) sample 2, marker 1} &
+      {(e) sample 2, marker 2} &
+      {(f) sample 2, marker 3} \\
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i2_j1.pdf} &
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i2_j2.pdf} &
+      \includegraphics[scale=.3]{\imgdir/img/dden/dden_i2_j3.pdf} \\
+    \end{tabular}
+  \end{center}
+  \label{fig:dd11}
+\end{figure}
+ 
+% \newpage
+\section{Missing Mechanism}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \begin{tabular}{cc}
+      \includegraphics[scale=.5]{\imgdir/img/missmech_1.pdf} &
+      \includegraphics[scale=.5]{\imgdir/img/missmech_2.pdf} \\
+    \end{tabular}
+  \end{center}
+\label{fig:sigtrace}
+\end{figure}
+
+
+% Uncomment if using bibliography:
+% \bibliography{bib}
+\end{document}
