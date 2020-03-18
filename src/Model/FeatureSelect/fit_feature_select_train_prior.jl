@@ -86,6 +86,14 @@ function fit_fs_tp!(init::StateFS,
              exp(-iter/Z_marg_lamgam_decay_rate) + 
              Z_marg_lamgam_min) > rand()
 
+    # TODO:
+    # Need to chane this to:
+    # 1. Sample theta given minibatch
+    #     - Note batchsize
+    #     - Note thinning factor
+    # 2. Sample lambda
+    # 3. Sample gamma
+    # 4. Sample missing data
     update_state_feature_select!(state, cfs, dfs, tfs,
                                  ll=ll, fix=fix,
                                  use_repulsive=use_repulsive,
@@ -99,7 +107,7 @@ function fit_fs_tp!(init::StateFS,
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
       # length g.
-      append!(dden, [datadensity(s.theta, c.constants, d.data)])
+      append!(dden, [datadensity(s, c, d)])
     end
 
     if computeLPML && iter > nburn
