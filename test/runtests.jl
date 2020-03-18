@@ -27,6 +27,9 @@ include("repfamFS_tests.jl")
 # tests for repulsive FAM with feature selection (parallel tempering version)
 include("repfamFSPT_tests.jl")
 
+# tests for repulsive FAM via trained priors
+include("repfam_train_prior_tests.jl")
+
 # tests for timing threading for R updates
 include("update_r_tests.jl")
 

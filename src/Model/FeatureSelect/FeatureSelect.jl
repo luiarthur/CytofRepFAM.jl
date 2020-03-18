@@ -15,3 +15,5 @@ include("fit_feature_select.jl")
 
 include("swap_chains.jl")
 include("fit_feature_select_pt.jl")
+
+include("fit_feature_select_train_prior.jl")
