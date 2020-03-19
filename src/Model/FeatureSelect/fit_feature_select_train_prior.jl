@@ -21,6 +21,7 @@ function fit_fs_tp!(init::StateFS,
                     Z_marg_lamgam_min::Float64=0.05,
                     verbose::Int=1,
                     time_updates=false,
+                    temper::Float64=1.0,
                     seed::Int=-1)
 
   printMsg(iter::Int, msg::String) = if printFreq > 0 && iter % printFreq == 0
@@ -31,6 +32,9 @@ function fit_fs_tp!(init::StateFS,
   if seed >= 0
     Random.seed!(seed)
   end
+
+  # Print temperature
+  println("temperature: $(temper)")
 
   # Create Tuners if needed 
   if tfs == nothing
@@ -92,7 +96,7 @@ function fit_fs_tp!(init::StateFS,
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
-                              time_updates=time_updates)
+                              time_updates=time_updates, temper=temper)
 
     # Pull out inner componenets for convenience
     s = state.theta
@@ -100,7 +104,7 @@ function fit_fs_tp!(init::StateFS,
     d = dfs.data
 
     # Append loglike
-    append!(ll, compute_marg_loglike(s, c, d, 1.0))
+    append!(ll, compute_marg_loglike(s, c, d, 1.0) / temper)
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of

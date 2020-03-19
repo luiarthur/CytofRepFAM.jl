@@ -1,7 +1,7 @@
 function update_via_trained_prior!(sfs, dfs, cfs, tfs,
                                    batchprop::Float64, prior_thin::Int;
                                    fix, use_repulsive, Z_marg_lamgam, sb_ibp,
-                                   time_updates)
+                                   time_updates, temper::Float64=1.0)
 
   # TODO:
   # Need to chane this to:
@@ -46,7 +46,7 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
                                    y=y_mega, compute_prob_miss=false)
     print(" -- ll_prop: $(round(ll_prop, digits=2))")
     print(" -- ll_curr: $(round(ll_curr, digits=2))")
-    ll_prop - ll_curr
+    (ll_prop - ll_curr) / temper
   end
 
   print("-- log_acceptance_ratio: $(round(log_accept_ratio, digits=2))")
