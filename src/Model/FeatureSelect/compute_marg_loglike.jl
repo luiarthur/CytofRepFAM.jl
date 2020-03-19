@@ -11,7 +11,15 @@ p(y_complete, m | theta)
 
 where y_complete is the (y_obs, y_mis), for a given iteration.
 """
-function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
+function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64;
+                              y=nothing, compute_prob_miss=true)
+  # Boolean: Whether y was supplied
+  y_supplied = (y != nothing)
+
+  if !y_supplied
+    y = s.y_imputed
+  end
+
   # log-likelihood
   ll = 0.0
 
@@ -27,13 +35,17 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
 
   for i in 1:d.I
     # Dimensions
-    Ni = d.N[i]
+    Ni = if y_supplied
+      size(y[i], 1)
+    else
+      d.N[i]
+    end
     Z = reshape(s.Z, 1, J, K)
     eta0i = s.eta[false][i:i, :, :]
     eta1i = s.eta[true][i:i, :, :]
 
     # Ni x J x 1
-    yi = reshape(s.y_imputed[i], Ni, J, 1)
+    yi = reshape(y[i], Ni, J, 1)
 
     # Ni x J x 1
     kernel0 = MCMC.lpdf_gmm(yi, mus0, sig[i], eta0i, temper, dims=3)
@@ -51,13 +63,18 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64)
     # Ni-dim
     lli = MCMC.logsumexp(f, dims=2)
 
-    # Add probability of missing for only imputed values only, because for
-    # observed values, the probability evaluates to a constant across models.
-    mi = Bool.(d.m[i])
-    pm = [Model.prob_miss(y_inj, c.beta[:, i]) for y_inj in s.y_imputed[i][mi]]
+    if compute_prob_miss
+      # Add probability of missing for only imputed values only, because for
+      # observed values, the probability evaluates to a constant across models.
+      mi = Bool.(d.m[i])
+      pm = [Model.prob_miss(y_inj, c.beta[:, i]) for y_inj in s.y_imputed[i][mi]]
+
+      # Increment loglikelihood with missing prob stuff
+      ll += sum(log.(pm))
+    end
 
     # Increment loglikelihood
-    ll += sum(lli) + sum(log.(pm))
+    ll += sum(lli)
   end  # i loop
 
   return ll

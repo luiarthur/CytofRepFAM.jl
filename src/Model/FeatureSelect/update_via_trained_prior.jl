@@ -18,27 +18,38 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     idx_mini, idx_mega, d_mini, d_mega = sample_minibatch(batchsizes, dfs.data.y)
     dfs_mini = DataFS(d_mini, dfs.X)
     sfs_mini = deepcopy(sfs)
-    sfs_mini.theta.lam = [sfs.theta.lam[i][idx_mini[i]] for i in 1:dfs.data.I]
-    sfs_mini.theta.gam = [sfs.theta.gam[i][idx_mini[i], :] for i in 1:dfs.data.I]
+    for i in 1:dfs.data.I
+      sfs_mini.theta.lam[i] = deepcopy(sfs_mini.theta.lam[i][idx_mini[i]])
+      sfs_mini.theta.gam[i] = deepcopy(sfs_mini.theta.gam[i][idx_mini[i], :])
+      sfs_mini.theta.y_imputed[i] = deepcopy(dfs_mini.data.y[i])
+    end
 
     # Sample theta given minibatch
     for _ in 1:prior_thin
       update_state_feature_select!(sfs_mini, cfs, dfs_mini, tfs,
-                                   ll=zeros(), fix=vcat(fix, :y_imputed),
+                                   ll=zeros(0), fix=vcat(fix, :y_imputed),
                                    use_repulsive=use_repulsive,
                                    Z_marg_lamgam=Z_marg_lamgam,
                                    sb_ibp=sb_ibp, time_updates=time_updates)
     end
 
+    # FIXME!
     # Compute metropolis ratio
     log_accept_ratio = let
       dfs_mega = DataFS(d_mega, dfs.X)
-      ll_prop = compute_marg_loglike(sfs_mini.theta, cfs, dfs_mega.data, 1.0)
-      ll_curr = compute_marg_loglike(sfs.theta, cfs, dfs_mega.data, 1.0)
+      c = cfs.constants
+      ll_prop = compute_marg_loglike(sfs_mini.theta, c, dfs_mega.data, 1.0,
+                                     y=dfs_mega.data.y, compute_prob_miss=false)
+      ll_curr = compute_marg_loglike(sfs.theta, c, dfs_mega.data, 1.0,
+                                     y=dfs_mega.data.y, compute_prob_miss=false)
+      println("ll_prop: $(ll_prop)")
+      println("ll_curr: $(ll_curr)")
       ll_prop - ll_curr
     end
 
+    println("log acceptance ratio: $(log_accept_ratio)")
     if log_accept_ratio > log(rand())
+      println("Accepted joint proposal for theta!")
       curr_lam = deepcopy(sfs.theta.lam)
       curr_gam = deepcopy(sfs.theta.gam)
       curr_y = deepcopy(sfs.theta.y_imputed)
@@ -56,5 +67,5 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
 
     update_lam!(sfs.theta, cfs.constants, dfs.data)
     update_gam!(sfs.theta, cfs.constants, dfs.data)
-    update_y_imputed!(sfs.theta, cfs.constants, dfs.data, dft.tuners)
+    update_y_imputed!(sfs.theta, cfs.constants, dfs.data, tfs.tuners)
 end

@@ -4,7 +4,7 @@ function fit_fs_tp!(init::StateFS,
                     cfs::ConstantsFS,
                     dfs::DataFS;
                     nmcmc::Int, nburn::Int, 
-                    batchprop::Vector{Int}=0.1, prior_thin::Int=2,
+                    batchprop::Float64=0.1, prior_thin::Int=2,
                     tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                     monitors=[monitor1, monitor2],
                     fix::Vector{Symbol}=Symbol[],
@@ -27,14 +27,16 @@ function fit_fs_tp!(init::StateFS,
     print(msg)
   end
 
-  @assert mod(num_tempers, 2) == 0
-  if tfs != nothing
-    @assert num_tempers == length(tfs)
-  end
-
   # Set random seed if needed
   if seed >= 0
     Random.seed!(seed)
+  end
+
+  # Create Tuners if needed 
+  if tfs == nothing
+    tfs = TunersFS(Tuners(dfs.data.y, cfs.constants.K),
+                   init.theta,
+                   dfs.X)
   end
 
   if verbose >= 1
@@ -79,7 +81,7 @@ function fit_fs_tp!(init::StateFS,
   ll = Float64[]
 
   # Update function
-  function update(state, iter::Int)
+  function update!(state, iter::Int, out)
     # Whether or not to marginalize over lambda and gamma.
     # We want to do this more often at the beginning, and less at the end.
     zmarg = ((Z_marg_lamgam - Z_marg_lamgam_min) * 
@@ -89,7 +91,7 @@ function fit_fs_tp!(init::StateFS,
     # Update state using trained prior
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
-                              Z_marg_lamgam=Z_marg_lamgam, sb_ibp=sb_ibp,
+                              Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
                               time_updates=time_updates)
 
     # Pull out inner componenets for convenience
@@ -136,7 +138,7 @@ function fit_fs_tp!(init::StateFS,
   end
 
   println("Running Gibbs sampler ...")
-  samples, state = MCMC.gibbs(deepcopy(init), update, monitors=monitors,
+  samples, state = MCMC.gibbs(deepcopy(init), update!, monitors=monitors,
                               thins=thins, nmcmc=nmcmc, nburn=nburn,
                               printFreq=printFreq, loglike=ll,
                               printlnAfterMsg=false)
@@ -176,7 +178,7 @@ function fit_fs_tp!(init::StateFS,
 
   out[:nburn] = nburn
   out[:nmcmc] = nmcmc
-  out[:batchsize] = batchsize
+  out[:batchprop] = batchprop
   out[:prior_thin] = prior_thin
 
   return out
