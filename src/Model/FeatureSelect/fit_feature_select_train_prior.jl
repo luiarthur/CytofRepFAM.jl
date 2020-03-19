@@ -4,7 +4,7 @@ function fit_fs_tp!(init::StateFS,
                     cfs::ConstantsFS,
                     dfs::DataFS;
                     nmcmc::Int, nburn::Int, 
-                    batchsize::Int=500, prior_thin::Int=2,
+                    batchprop::Vector{Int}=0.1, prior_thin::Int=2,
                     tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                     monitors=[monitor1, monitor2],
                     fix::Vector{Symbol}=Symbol[],
@@ -86,23 +86,19 @@ function fit_fs_tp!(init::StateFS,
              exp(-iter/Z_marg_lamgam_decay_rate) + 
              Z_marg_lamgam_min) > rand()
 
-    # TODO:
-    # Need to chane this to:
-    # 1. Sample theta given minibatch
-    #     - Note batchsize
-    #     - Note thinning factor
-    # 2. Sample lambda
-    # 3. Sample gamma
-    # 4. Sample missing data
-    update_state_feature_select!(state, cfs, dfs, tfs,
-                                 ll=ll, fix=fix,
-                                 use_repulsive=use_repulsive,
-                                 Z_marg_lamgam=zmarg,
-                                 sb_ibp=sb_ibp, time_updates=tu)
+    # Update state using trained prior
+    update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
+                              fix=fix, use_repulsive=use_repulsive,
+                              Z_marg_lamgam=Z_marg_lamgam, sb_ibp=sb_ibp,
+                              time_updates=time_updates)
 
+    # Pull out inner componenets for convenience
     s = state.theta
     c = cfs.constants
     d = dfs.data
+
+    # Append loglike
+    append!(ll, compute_marg_loglike(s, c, d, 1.0))
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
@@ -140,13 +136,14 @@ function fit_fs_tp!(init::StateFS,
   end
 
   println("Running Gibbs sampler ...")
-  samples, state = MCMC.gibbs(init, update, monitors=monitors,
+  samples, state = MCMC.gibbs(deepcopy(init), update, monitors=monitors,
                               thins=thins, nmcmc=nmcmc, nburn=nburn,
                               printFreq=printFreq, loglike=ll,
                               printlnAfterMsg=false)
 
   out = Dict(:samples => samples,
              :lastState => state,
+             :init => init,
              :ll => ll,
              :c => cfs,
              :d => dfs)

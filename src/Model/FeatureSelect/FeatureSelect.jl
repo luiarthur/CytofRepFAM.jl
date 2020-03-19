@@ -16,4 +16,6 @@ include("fit_feature_select.jl")
 include("swap_chains.jl")
 include("fit_feature_select_pt.jl")
 
+include("sample_minibatch.jl")
+include("update_via_trained_prior.jl")
 include("fit_feature_select_train_prior.jl")

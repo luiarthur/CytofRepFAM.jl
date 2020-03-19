@@ -21,7 +21,6 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
   # For algo tests
   # nmcmc = 1000
   # nburn = 100
-  # maxcores = 20
 
   # For compile tests
   nmcmc = 3
@@ -32,7 +31,6 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            Z_marg_lamgam=0.5,
                                            Z_marg_lamgam_decay_rate=10.0,
                                            Z_marg_lamgam_min=0.05,
-                                           randpair=0.8,
                                            printFreq=1, seed=0,
                                            computedden=true,
                                            computeDIC=true,
@@ -40,12 +38,11 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            time_updates=false,
                                            verbose=1)
 
-  @time out = CytofRepFAM.Model.fit_fs_tp!(cfs, dfs,
+  @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
                                            Z_marg_lamgam=0.5,
                                            Z_marg_lamgam_decay_rate=100.0,
                                            Z_marg_lamgam_min=0.05,
-                                           randpair=0.33,
                                            printFreq=1, seed=0,
                                            computedden=true,
                                            computeDIC=true,
