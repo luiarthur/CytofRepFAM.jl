@@ -63,6 +63,9 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64;
     # Ni-dim
     lli = MCMC.logsumexp(f, dims=2)
 
+    # Increment loglikelihood
+    ll += sum(lli)
+
     if compute_prob_miss
       # Add probability of missing for only imputed values only, because for
       # observed values, the probability evaluates to a constant across models.
@@ -72,9 +75,6 @@ function compute_marg_loglike(s::State, c::Constants, d::Data, temper::Float64;
       # Increment loglikelihood with missing prob stuff
       ll += sum(log.(pm))
     end
-
-    # Increment loglikelihood
-    ll += sum(lli)
   end  # i loop
 
   return ll

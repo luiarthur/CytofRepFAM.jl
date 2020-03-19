@@ -40,7 +40,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
-                                           batchprop=0.1,
+                                           batchprop=0.05,
                                            prior_thin=2,
                                            Z_marg_lamgam=1.0,
                                            Z_marg_lamgam_decay_rate=100.0,
