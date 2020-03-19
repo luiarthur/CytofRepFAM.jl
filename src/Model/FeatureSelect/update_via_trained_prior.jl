@@ -21,7 +21,8 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     for i in 1:dfs.data.I
       sfs_mini.theta.lam[i] = deepcopy(sfs_mini.theta.lam[i][idx_mini[i]])
       sfs_mini.theta.gam[i] = deepcopy(sfs_mini.theta.gam[i][idx_mini[i], :])
-      sfs_mini.theta.y_imputed[i] = deepcopy(dfs_mini.data.y[i])
+      sfs_mini.theta.y_imputed[i] = deepcopy(
+        sfs.theta.y_imputed[i][idx_mini[i], :])
     end
 
     # Sample theta given minibatch
@@ -36,20 +37,21 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     # FIXME!
     # Compute metropolis ratio
     log_accept_ratio = let
-      dfs_mega = DataFS(d_mega, dfs.X)
+      y_mega = [deepcopy(sfs.theta.y_imputed[i][idx_mega[i], :])
+                for i in 1:dfs.data.I]
       c = cfs.constants
-      ll_prop = compute_marg_loglike(sfs_mini.theta, c, dfs_mega.data, 1.0,
-                                     y=dfs_mega.data.y, compute_prob_miss=false)
-      ll_curr = compute_marg_loglike(sfs.theta, c, dfs_mega.data, 1.0,
-                                     y=dfs_mega.data.y, compute_prob_miss=false)
-      println("ll_prop: $(ll_prop)")
-      println("ll_curr: $(ll_curr)")
+      ll_prop = compute_marg_loglike(sfs_mini.theta, c, d_mega, 1.0,
+                                     y=y_mega, compute_prob_miss=false)
+      ll_curr = compute_marg_loglike(sfs.theta, c, d_mega, 1.0,
+                                     y=y_mega, compute_prob_miss=false)
+      print(" -- ll_prop: $(round(ll_prop, digits=2))")
+      print(" -- ll_curr: $(round(ll_curr, digits=2))")
       ll_prop - ll_curr
     end
 
-    println("log acceptance ratio: $(log_accept_ratio)")
+    print("-- log_acceptance_ratio: $(round(log_accept_ratio, digits=2))")
     if log_accept_ratio > log(rand())
-      println("Accepted joint proposal for theta!")
+      print(" (accepted)")
       curr_lam = deepcopy(sfs.theta.lam)
       curr_gam = deepcopy(sfs.theta.gam)
       curr_y = deepcopy(sfs.theta.y_imputed)
@@ -63,6 +65,8 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
       sfs.r .= deepcopy(sfs_mini.r)
       sfs.W_star .= deepcopy(sfs_mini.W_star)
       sfs.omega .= deepcopy(sfs_mini.omega)
+    else
+      print(" (rejected)")
     end
 
     update_lam!(sfs.theta, cfs.constants, dfs.data)
