@@ -6,7 +6,7 @@ include("repfamFS_tests.jl")
 
 printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 @testset "repFAM PT" begin
-  config = init_state_const_data(N=[3,2]*10000, L=Dict(0=>1, 1=>1),
+  config = init_state_const_data(N=[3,2]*1000, L=Dict(0=>1, 1=>1),
                                  LMCMC=Dict(0=>3, 1=>3),
                                  mus=Dict(0 => [-2.0], 1 => [2.0]),
                                  sig2=fill(0.7, 2), seed=0)
@@ -30,7 +30,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
   alpha = 10.0
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
-                                           batchprop=0.005,
+                                           batchprop=0.05,
                                            prior_thin=2,
                                            temper=(alpha + N) / alpha,
                                            # batchprop=0.90,
