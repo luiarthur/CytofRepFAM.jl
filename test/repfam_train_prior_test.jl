@@ -19,8 +19,8 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  nmcmc = 1000
-  nburn = 100
+  nmcmc = 400
+  nburn = 400
 
   # For compile tests
   # nmcmc = 3
@@ -38,14 +38,20 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            time_updates=false,
                                            verbose=1)
 
+  N = sum(dfs.data.N)
+  alpha = 50.0
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
-                                           batchprop=0.1,
-                                           prior_thin=4,
-                                           temper=500.0,
+                                           batchprop=0.05,
+                                           prior_thin=16,
+                                           temper=(alpha + N) / alpha,
+                                           # batchprop=0.90,
+                                           # prior_thin=1,
+                                           # temper=1.0,
                                            Z_marg_lamgam=1.0,
                                            Z_marg_lamgam_decay_rate=100.0,
-                                           Z_marg_lamgam_min=0.05,
+                                           # Z_marg_lamgam_min=0.05,
+                                           Z_marg_lamgam_min=1.0,
                                            printFreq=1, seed=0,
                                            computedden=true,
                                            computeDIC=true,
@@ -60,3 +66,43 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
   BSON.bson("$(outdir)/out_fs_pt.bson", out)
   BSON.bson("$(outdir)/data_fs_pt.bson", Dict(:simdat => config[:simdat]))
 end
+
+#= Test
+outdir = "results/repfam-tp"
+out = BSON.load(joinpath(outdir, "out_fs_pt.bson"))
+simdat = BSON.load(joinpath(outdir, "data_fs_pt.bson"))[:simdat]
+samps = out[:samples][1]
+extract(sym) = [s[sym] for s in samps]
+Zs = extract(:theta__Z)
+mean(Zs)
+Ws = extract(:theta__W)
+mean(Ws)
+etas = extract(:theta__eta)
+
+deltas = extract(:theta__delta)
+acceptance_rate = length(unique(deltas)) / length(deltas)
+mus0s = -[cumsum(d[0]) for d in deltas]
+mus1s = [cumsum(d[1]) for d in deltas]
+mus0 = hcat(mus0s...)'
+mus1 = hcat(mus1s...)'
+sig2s = extract(:theta__sig2)
+sig2 = hcat(sig2s...)'
+
+using RCall
+@rimport rcommon
+@rimport grDevices
+begin
+  grDevices.pdf("$(outdir)/results.pdf");
+  rcommon.plotPosts(mus0, cname="mus0");
+  rcommon.plotPosts(mus1, cname="mus1");
+  rcommon.plotPosts(sig2, cname="sig2");
+  grDevices.dev_off();
+end
+
+
+include("../runs/PlotUtils/PlotUtils.jl")
+PlotUtils.plot_dden(ddens=out[:dden],
+                    etas=etas, Ws=Ws, Zs=Zs, sig2s=sig2s, deltas=deltas,
+                    ygrid=out[:c].constants.y_grid,
+                    imgdir=outdir, simdat=simdat)
+=#

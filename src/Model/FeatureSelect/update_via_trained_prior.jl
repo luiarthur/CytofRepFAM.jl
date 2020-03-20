@@ -49,6 +49,16 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     (ll_prop - ll_curr) / temper
   end
 
+  println()
+  println("current mu0: $(-cumsum(sfs.theta.delta[0]))")
+  println("current mu1: $(cumsum(sfs.theta.delta[1]))")
+  println("current sig2: $(sfs.theta.sig2)")
+  println("current w: $(sfs.theta.W)")
+  println("proposed mu0: $(-cumsum(sfs_mini.theta.delta[0]))")
+  println("proposed mu1: $(cumsum(sfs_mini.theta.delta[1]))")
+  println("proposed sig2: $(sfs_mini.theta.sig2)")
+  println("proposed w: $(sfs_mini.theta.W)")
+
   print("-- log_acceptance_ratio: $(round(log_accept_ratio, digits=2))")
   if log_accept_ratio > log(rand())
     print(" (accepted)")

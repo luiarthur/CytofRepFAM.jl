@@ -184,6 +184,7 @@ function fit_fs_tp!(init::StateFS,
   out[:nmcmc] = nmcmc
   out[:batchprop] = batchprop
   out[:prior_thin] = prior_thin
+  out[:temper] = temper
 
   return out
 end
