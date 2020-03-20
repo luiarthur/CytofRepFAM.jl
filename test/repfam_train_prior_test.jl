@@ -39,7 +39,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            verbose=1)
 
   N = sum(dfs.data.N)
-  alpha = 50.0
+  alpha = 10.0
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
                                            batchprop=0.05,
