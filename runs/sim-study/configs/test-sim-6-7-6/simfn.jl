@@ -89,15 +89,15 @@ function simfn(settings::Dict{Symbol, Any})
   # Temperatures
   Nsum = sum(config[:dfs].data.N)
   temper = settings[:alpha] / (settings[:alpha] + Nsum)
-  println("temper: $(temper)")
+  println("iMCMC temper: $(temper)")
 
   # Fit model
   @time out = CytofRepFAM.Model.fit_fs_tp!(
-    sfs, cfs, dfs,
+    config[:sfs], config[:cfs], config[:dfs],
     nmcmc=mcmc_iter,
     nburn=nburn,
     batchprop=settings[:batchprop],
-    prior_thin=settings[:prior_thin],
+    prior_thin=settings[:pthin],
     temper=temper,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
