@@ -21,9 +21,10 @@ end
 settings = let
   Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
+  N = [2000, 2000]
   [Dict(:simname => simname,
         :repfam_dist_scale => 1.0,
-        :N => [2000, 2000],
+        :N => N,
         :Z => Z,
         :W => W,
         :thin_samps => 2,
@@ -38,6 +39,6 @@ settings = let
         :mcmcseed => 1,
         :outdir_suffix => outdir_suffix(pthin, batchprop, alpha))
    for pthin in [2]  # pthin{2,10} didn't work
-   for batchprop in [.05]
-   for alpha in [10000.]]  # alpha{10} didn't work
+   for batchprop in [.8]  # batchprop{.05} didn't work
+   for alpha in [sum(N) * 1.0]]  # alpha{10} didn't work
 end
