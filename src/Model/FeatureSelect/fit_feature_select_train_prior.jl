@@ -105,7 +105,8 @@ function fit_fs_tp!(init::StateFS,
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
-                              time_updates=time_updates, temper=curr_temper)
+                              time_updates=time_updates, temper=curr_temper,
+                              verbose=verbose - 2)
 
     # Pull out inner componenets for convenience
     s = state.theta

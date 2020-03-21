@@ -1,7 +1,8 @@
 function update_via_trained_prior!(sfs, dfs, cfs, tfs,
                                    batchprop::Float64, prior_thin::Int;
                                    fix, use_repulsive, Z_marg_lamgam, sb_ibp,
-                                   time_updates, temper::Float64=1.0)
+                                   time_updates, temper::Float64=1.0,
+                                   verbose::Int=0)
 
   # TODO:
   # Need to chane this to:
@@ -49,15 +50,17 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     (ll_prop - ll_curr) / temper
   end
 
-  println()
-  println("current mu0: $(-cumsum(sfs.theta.delta[0]))")
-  println("current mu1: $(cumsum(sfs.theta.delta[1]))")
-  println("current sig2: $(sfs.theta.sig2)")
-  println("current w: $(sfs.theta.W)")
-  println("proposed mu0: $(-cumsum(sfs_mini.theta.delta[0]))")
-  println("proposed mu1: $(cumsum(sfs_mini.theta.delta[1]))")
-  println("proposed sig2: $(sfs_mini.theta.sig2)")
-  println("proposed w: $(sfs_mini.theta.W)")
+  if verbose > 0
+    println()
+    println("current mu0: $(-cumsum(sfs.theta.delta[0]))")
+    println("current mu1: $(cumsum(sfs.theta.delta[1]))")
+    println("current sig2: $(sfs.theta.sig2)")
+    println("current w: $(sfs.theta.W)")
+    println("proposed mu0: $(-cumsum(sfs_mini.theta.delta[0]))")
+    println("proposed mu1: $(cumsum(sfs_mini.theta.delta[1]))")
+    println("proposed sig2: $(sfs_mini.theta.sig2)")
+    println("proposed w: $(sfs_mini.theta.W)")
+  end
 
   print("-- log_acceptance_ratio: $(round(log_accept_ratio, digits=2))")
   if log_accept_ratio > log(rand())
