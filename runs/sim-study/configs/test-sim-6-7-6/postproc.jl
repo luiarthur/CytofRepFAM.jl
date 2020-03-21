@@ -2,43 +2,18 @@ include("../../../PlotUtils/PlotUtils.jl")
 include("../../../PlotUtils/imports.jl")
 
 if length(ARGS) == 0
-  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-5"
+  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-6"
 else
   results_dir = ARGS[1]  # path to results directory
 end
-simname = "maxtemp1.05-ntemps20-degree1-N2000"
+simname = "pthin8-batchprop0.05-alpha10.0-N2000"
 
-"""
-Returns a list of monitors, where each element is the result from
-one temperature.
-"""
-function getsamples(path_to_output)
-  output = BSON.load(path_to_output)
-  samples = output[:samples]
-  num_tempers = length(output[:tempers])
-  num_monitors = length(samples)
-
-  return [let
-     monitor = [let
-                  num_samples = length(output[:samples][m])
-                  [output[:samples][m][i][t] for i in 1:num_samples]
-                end for m in 1:num_monitors]
-   end for t in 1:num_tempers]
-end
-
-using Distributed
-rmprocs(filter(w -> w > 1, workers()))
-addprocs(20)
-
-@everywhere include("../../../PlotUtils/PlotUtils.jl")
-@everywhere include("../../../PlotUtils/imports.jl")
-
-@everywhere function plot_params(samples, simdat, imgdir)
+function plot_params(samples, simdat, imgdir)
   # Create a directory for images / txt if needed.
   mkpath("$(imgdir)/txt/")
 
   # Extract samples
-  extract(s) = map(o -> o[s], samples[1])
+  extract(s) = map(o -> o[s], samples)
   Zs = extract(:theta__Z)
   Ws = extract(:theta__W)
   lams = extract(:theta__lam)
@@ -88,48 +63,24 @@ function makeplots(path_to_output, imgdir)
   output = BSON.load(path_to_output)
   samples = output[:samples][1]
 
-  # Swap props
-  println("Making swap proprs ...")
-  if :swapcounts in keys(output) && :paircounts in keys(output)
-    swapcounts = output[:swapcounts]
-    paircounts = output[:paircounts]
-    tempers = output[:tempers]
-    ntempers = length(tempers)
-    plt.imshow(swapcounts ./ (paircounts .+ 1e-6))
-    plt.colorbar()
-    plt.xticks(0:(ntempers-1), round.(tempers, digits=2), rotation=45)
-    plt.yticks(0:(ntempers-1), round.(tempers, digits=2))
-    plt.savefig("$(imgdir)/swapprops.pdf", bbox_inches="tight")
-    plt.close()
-  end
+  # Plot parameters
+  plot_params(samples, simdat, imgdir)
 
   # Number of burn in iterations
   nburn = output[:nburn]
 
   # Plot loglikelihood
   println("Loglikes ...")
-  llkey = if :loglike in keys(output)
-    PlotUtils.plot_loglike(output[:loglike], imgdir, fname="loglike.pdf")
-    PlotUtils.plot_loglike(output[:loglike][(nburn + 1):end],
+  if :ll in keys(output)
+    ll = output[:ll]
+    PlotUtils.plot_loglike(ll, imgdir, fname="loglike.pdf")
+    PlotUtils.plot_loglike(ll[(nburn + 1):end],
                            imgdir, fname="loglike_postburn.pdf")
-  elseif :lls in keys(output)
-    lls = output[:lls]
-    for t in 1:ntempers
-      temper = tempers[t]
-      title = "temperature: $(temper)"
-      ll_path = joinpath(imgdir, "loglike")
-      mkpath(ll_path)
-      PlotUtils.plot_loglike(lls[t], ll_path, fname="loglike_$(t).pdf",
-                             title=title)
-      PlotUtils.plot_loglike(lls[t][(nburn + 1):end],
-                             ll_path, fname="loglike_postburn_$(t).pdf",
-                             title=title)
-    end
   end
 
   # Extract samples
   println("Extracting samples ...")
-  extract(s) = map(o -> o[s], samples[1])
+  extract(s) = map(o -> o[s], samples)
   Zs = extract(:theta__Z)
   Ws = extract(:theta__W)
   deltas = extract(:theta__delta)
@@ -173,66 +124,10 @@ output_paths = [joinpath(root, OUTPUT_FILE)
 # Plot the posterior distributions of parameters
 path_to_output = joinpath(results_dir, simname, "output.bson")
 path_to_simdat = joinpath(results_dir, simname, "simdat.bson")
-samples = getsamples(path_to_output);
 simdat = BSON.load(path_to_simdat)[:simdat];
-@everywhere simdat = $simdat
-genimgdir(t) = joinpath(results_dir, simname, "img/temper_$(t)")
-@everywhere plot_params(s, imgdir) = plot_params(s, simdat, imgdir)
-_ = pmap(plot_params, samples, genimgdir.(1:length(samples)))
 
 # Make general plots
 imgdir = joinpath(results_dir, simname, "img")
 makeplots(path_to_output, imgdir)
 
-# Remove extra processors
-# rmprocs(filter(w -> w > 1, workers()))
-
 println("DONE!")
-
-# Detailed Analysis
-output = BSON.load(path_to_output);
-last_states = output[:all_last_states];
-tempers = output[:tempers]
-num_tempers = length(tempers)
-
-ll_fn(s, t) = CytofRepFAM.Model.compute_marg_loglike(s,
-                                                     output[:c].constants,
-                                                     output[:d].data, t)
-i, j = 6, 7
-ll_fn(last_states[i].theta, tempers[i]*1.001) -
-ll_fn(last_states[i].theta, tempers[i])
-ll_fn(last_states[j].theta, tempers[i]) -
-ll_fn(last_states[j].theta, tempers[i]*1.001)
-
-
-log_accept_mat = [if i >= j
-                MCMC.WSPT.compute_log_accept_ratio(
-                  ll_fn, (last_states[i].theta, last_states[j].theta),
-                  (tempers[i], tempers[j]), verbose=0)
-              else
-                0.0
-              end for i in 1:num_tempers, j in 1:num_tempers]
-for i in 1:num_tempers, j in 1:i
-  log_accept_mat[j, i] = log_accept_mat[i, j] 
-end
-
-plt.imshow(exp.(log_accept_mat), vmin=.01, vmax=1.0)
-plt.colorbar()
-plt.savefig(joinpath(results_dir, simname, "img/ll_compare.pdf"),
-            bbox_inches="tight")
-plt.close()
-
-plt.plot(tempers, log_accept_mat[:, 20], marker="o")
-plt.xlabel("temperatures")
-plt.ylabel("log accept ratio (t1 vs others)")
-plt.savefig(joinpath(results_dir, simname, "img/log_accept_compare.pdf"),
-            bbox_inches="tight")
-plt.close()
-
-ll1_vary_tempers = [ll_fn(last_states[1].theta, t) for t in tempers]
-plt.plot(tempers, ll1_vary_tempers, marker="o")
-plt.xlabel("temperatures")
-plt.ylabel("log-likelihood")
-plt.savefig(joinpath(results_dir, simname, "img/ll1_vary_tempers.pdf"),
-            bbox_inches="tight")
-plt.close()

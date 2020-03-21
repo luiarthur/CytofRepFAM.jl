@@ -37,7 +37,7 @@ settings = let
         :dataseed => 1,
         :mcmcseed => 1,
         :outdir_suffix => outdir_suffix(pthin, batchprop, alpha))
-   for pthin in [2]
+   for pthin in [8]  # pthin2 didn't work
    for batchprop in [.05]
    for alpha in [10.]]
 end
