@@ -22,7 +22,8 @@ function fit_fs_tp!(init::StateFS,
                     verbose::Int=1,
                     time_updates=false,
                     temper::Float64=1.0,
-                    seed::Int=-1)
+                    seed::Int=-1,
+                    anneal=false)
 
   printMsg(iter::Int, msg::String) = if printFreq > 0 && iter % printFreq == 0
     print(msg)
@@ -92,11 +93,19 @@ function fit_fs_tp!(init::StateFS,
              exp(-iter/Z_marg_lamgam_decay_rate) + 
              Z_marg_lamgam_min) > rand()
 
+    # Calculate current temperature
+    curr_temper = if anneal
+      iter < nburn ? temper^((nburn - iter + 1) / nburn) : 1.0
+    else
+      temper
+    end
+    print(" -- Current temper: $(curr_temper)")
+
     # Update state using trained prior
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
-                              time_updates=time_updates, temper=temper)
+                              time_updates=time_updates, temper=curr_temper)
 
     # Pull out inner componenets for convenience
     s = state.theta
@@ -185,6 +194,7 @@ function fit_fs_tp!(init::StateFS,
   out[:batchprop] = batchprop
   out[:prior_thin] = prior_thin
   out[:temper] = temper
+  out[:anneal] = anneal
 
   return out
 end
