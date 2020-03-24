@@ -21,9 +21,12 @@ function fit_fs_tp!(init::StateFS,
                     Z_marg_lamgam_min::Float64=0.05,
                     verbose::Int=1,
                     time_updates=false,
-                    temper::Float64=1.0,
                     seed::Int=-1,
+                    temper::Float64=1.0,
+                    mb_update_burn_prop=0.6,
                     anneal=false)
+
+  @assert 0 <= mb_update_burn_prop <= 1
 
   printMsg(iter::Int, msg::String) = if printFreq > 0 && iter % printFreq == 0
     print(msg)
@@ -93,20 +96,28 @@ function fit_fs_tp!(init::StateFS,
              exp(-iter/Z_marg_lamgam_decay_rate) + 
              Z_marg_lamgam_min) > rand()
 
+    # Iterations to do minibatch update
+    iters_mb_update_all_params = round(Int, nburn * mb_update_burn_prop)
+
     # Calculate current temperature
     curr_temper = if anneal
-      iter < nburn ? temper^((nburn - iter + 1) / nburn) : 1.0
+      itmax = iters_mb_update_all_params
+      iter < nburn ? temper^((itmax - iter + 1) / itmax) : 1.0
     else
       temper
     end
-    print(" -- Current temper: $(curr_temper)")
+    if verbose > 0
+      print(" -- Current temper: $(curr_temper)")
+    end
 
     # Update state using trained prior
+    minibatch_update_all_params = iter < iters_mb_update_all_params
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
                               time_updates=time_updates, temper=curr_temper,
-                              verbose=verbose - 2)
+                              minibatch_update_all_params=minibatch_update_all_params,
+                              verbose=verbose-2)
 
     # Pull out inner componenets for convenience
     s = state.theta

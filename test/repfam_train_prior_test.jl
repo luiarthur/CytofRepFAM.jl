@@ -19,23 +19,21 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  nmcmc = 400
-  nburn = 400
+  nmcmc = 40
+  nburn = 40
 
   # For compile tests
   # nmcmc = 3
   # nburn = 3
 
   N = sum(dfs.data.N)
-  alpha = 10.0
+  alpha = 1.0
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
                                            batchprop=0.05,
-                                           prior_thin=2,
+                                           prior_thin=4,
                                            temper=(alpha + N) / alpha,
-                                           # batchprop=0.90,
-                                           # prior_thin=1,
-                                           # temper=1.0,
+                                           anneal=true,
                                            Z_marg_lamgam=1.0,
                                            Z_marg_lamgam_decay_rate=100.0,
                                            # Z_marg_lamgam_min=0.05,

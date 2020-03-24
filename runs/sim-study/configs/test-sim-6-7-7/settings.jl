@@ -39,6 +39,6 @@ settings = let
         :mcmcseed => 1,
         :outdir_suffix => outdir_suffix(pthin, batchprop, alpha))
    for pthin in [2]  # pthin{2,10} didn't work
-   for batchprop in [.8]  # batchprop{.05} didn't work
-   for alpha in [sum(N) * 1000.0]]  # alpha{10} didn't work
+   for batchprop in [.05]  # batchprop{.05} didn't work
+   for alpha in [1.0]]  # alpha{10} didn't work
 end

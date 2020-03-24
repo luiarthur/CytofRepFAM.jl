@@ -16,7 +16,8 @@ SHELL:=/bin/bash
 # SIM_EXP_NAME = test-sim-6-7-3
 # SIM_EXP_NAME = test-sim-6-7-4
 # SIM_EXP_NAME = test-sim-6-7-5
-SIM_EXP_NAME = test-sim-6-7-6
+# SIM_EXP_NAME = test-sim-6-7-6
+SIM_EXP_NAME = test-sim-6-7-7
 
 # Run script
 RUN_SCRIPT = run.jl

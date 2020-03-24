@@ -5,6 +5,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
                                       use_repulsive::Bool,
                                       Z_marg_lamgam::Bool, sb_ibp::Bool, 
                                       time_updates::Bool=false,
+                                      verbose::Int=0,
                                       Z_thin::Int=1)
 
   # NOTE: `@doIf` is defined in "../util.jl"
@@ -62,7 +63,7 @@ function update_state_feature_select!(s::StateFS, c::ConstantsFS, d::DataFS,
     end
   end
 
-  if time_updates
+  if verbose > 1
     println(s.theta.W)
   end
 end
