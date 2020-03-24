@@ -98,7 +98,10 @@ function simfn(settings::Dict{Symbol, Any})
     nburn=nburn,
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
+    # This works if phi=1e-6, batchprop=>.10, alpha=1.0
     temper=1/inv_temper, anneal=true, mb_update_burn_prop=0.6,
+    # TODO: Find right balance between phi, batchprop, and temper(alpha)
+    # temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.6,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,

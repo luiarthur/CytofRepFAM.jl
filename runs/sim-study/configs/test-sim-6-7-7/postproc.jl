@@ -6,8 +6,7 @@ if length(ARGS) == 0
 else
   results_dir = ARGS[1]  # path to results directory
 end
-# simname = "pthin8-batchprop0.05-alpha10.0-N2000"
-simname = "pthin2-batchprop0.8-alpha4.0e6-N2000"
+# simname = "pthin2-batchprop0.05-alpha1.0-N20000"
 
 function plot_params(samples, simdat, imgdir)
   # Create a directory for images / txt if needed.

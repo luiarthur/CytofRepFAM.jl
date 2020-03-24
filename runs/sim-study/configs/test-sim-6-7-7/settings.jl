@@ -12,8 +12,8 @@ simname = basename("$(@__DIR__)")
 println(simname); flush(stdout)
 
 # NOTE: write to scratchdir
-function outdir_suffix(pthin, batchprop, alpha)
-  return "pthin$(pthin)-batchprop$(batchprop)-alpha$(alpha)-N2000" # TODO:N2000
+function outdir_suffix(pthin, batchprop, alpha, Nfac)
+  return "pthin$(pthin)-batchprop$(batchprop)-alpha$(alpha)-N$(Nfac)" # TODO:N2000
 end
 
 
@@ -21,9 +21,10 @@ end
 settings = let
   Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
-  N = [2000, 2000]
+  Nfac = 20000  # for Nfac=2000, wasn't able to recover feature 1.
+  N = [1, 1] *  Nfac
   [Dict(:simname => simname,
-        :repfam_dist_scale => 1.0,
+        :repfam_dist_scale => 1e-6,
         :N => N,
         :Z => Z,
         :W => W,
@@ -37,8 +38,8 @@ settings = let
         :batchprop => batchprop,
         :dataseed => 1,
         :mcmcseed => 1,
-        :outdir_suffix => outdir_suffix(pthin, batchprop, alpha))
-   for pthin in [2]  # pthin{2,10} didn't work
-   for batchprop in [.05]  # batchprop{.05} didn't work
-   for alpha in [1.0]]  # alpha{10} didn't work
+        :outdir_suffix => outdir_suffix(pthin, batchprop, alpha, Nfac))
+   for pthin in [2]  # pthin{2,10} didn't work for Nfac=2000
+   for batchprop in [.05]  # batchprop{.05} didn't work for Nfac=2000
+   for alpha in [1.0]]  # alpha{10} didn't work for Nfac=2000
 end
