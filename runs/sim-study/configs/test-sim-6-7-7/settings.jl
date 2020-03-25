@@ -21,7 +21,7 @@ end
 settings = let
   Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
-  Nfac = 20000  # for Nfac=2000, wasn't able to recover feature 1.
+  Nfac = 2000  # for Nfac=2000, wasn't able to recover feature 1.
   N = [1, 1] *  Nfac
   [Dict(:simname => simname,
         :repfam_dist_scale => 0.1,  # doesn't work for kmeans init when phi=1.0
