@@ -7,6 +7,7 @@ function fit_fs_tp!(init::StateFS,
                     # These args are for iMCMC:
                     batchprop::Float64=0.1, prior_thin::Int=2,
                     temper::Float64=1.0, mb_update_burn_prop=0.6, anneal=false,
+                    min_temper::Float64=1.0,
                     # End of iMCMC args.
                     tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                     monitors=[monitor1, monitor2],
@@ -106,7 +107,7 @@ function fit_fs_tp!(init::StateFS,
       # is less than `nburn`.
       itmax = iters_mb_update_all_params
       power = (itmax - iter + 1) / itmax
-      clamp(temper^power, 1.0, Inf)
+      clamp(temper^power, min_temper, Inf)
     else
       temper
     end

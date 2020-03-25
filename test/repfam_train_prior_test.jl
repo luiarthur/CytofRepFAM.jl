@@ -6,7 +6,7 @@ include("repfamFS_tests.jl")
 
 printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 @testset "repFAM PT" begin
-  config = init_state_const_data(N=[3,2]*200, L=Dict(0=>1, 1=>1),
+  config = init_state_const_data(N=[3,2]*500, L=Dict(0=>1, 1=>1),
                                  LMCMC=Dict(0=>3, 1=>3),
                                  mus=Dict(0 => [-2.0], 1 => [2.0]),
                                  sig2=fill(2.0, 2), seed=0)
@@ -34,7 +34,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            prior_thin=4,
                                            # iMCMC settings
                                            temper=(alpha + Nsum) / alpha,
-                                           anneal=true,
+                                           anneal=false,
                                            mb_update_burn_prop=0.6,
                                            #
                                            Z_marg_lamgam=1.0,
