@@ -1,4 +1,6 @@
-function genInitialState(c::Constants, d::Data, verbose=1)
+function genInitialState(c::Constants, d::Data;
+                         verbose=1, sb_ibp=false,
+                         allow_repeated_Z_columns=false)
   if verbose > 0
     println("Doing random initialization ....")
   end
@@ -36,8 +38,15 @@ function genInitialState(c::Constants, d::Data, verbose=1)
 
   alpha = mean(c.alpha_prior)
   v = [mean(Beta(alpha, 1)) for k in 1:K]
-  b = cumprod(v)
-  Z = [ Bool(rand(Bernoulli(b[k]))) for j in 1:J, k in 1:K ]
+  b = sb_ibp ? cumprod(v) : v
+  init_Z() = [Bool(rand(Bernoulli(b[k]))) for j in 1:J, k in 1:K]
+  Z = init_Z()
+  if !allow_repeated_Z_columns
+    num_unique_cols = size(unique(Z, dims=2), 2)
+    while num_unique_cols < K
+      Z = init_Z()
+    end
+  end
   delta = Dict(false => rand(c.delta_prior[0], L[0]),
                true  => rand(c.delta_prior[1], L[1]))
   sig2 = [rand(c.sig2_prior) for i in 1:I]
