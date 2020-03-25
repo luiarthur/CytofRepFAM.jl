@@ -30,7 +30,9 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                          yQuantiles=[.01, .1, .25],
                                          pBounds=[.4, .8, .05],
                                          similarity_Z=simz)
-  s = CytofRepFAM.Model.genInitialState(c, d, sb_ibp=false)
+  s = CytofRepFAM.Model.genInitialState(c, d,
+                                        sb_ibp=false,
+                                        allow_repeated_Z_columns=true)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)
   println("mu*0 truth: $(simdat[:mus][0])")

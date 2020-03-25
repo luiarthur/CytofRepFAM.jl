@@ -1,6 +1,6 @@
 function genInitialState(c::Constants, d::Data;
-                         verbose=1, sb_ibp=false,
-                         allow_repeated_Z_columns=false)
+                         verbose=1, sb_ibp=true,
+                         allow_repeated_Z_columns=true)
   if verbose > 0
     println("Doing random initialization ....")
   end

@@ -52,8 +52,10 @@ function smartInit(c::Constants, d::Data;
   if modelNames != "kmeans"
     load_or_install_mclust()
     Mclust = R"mclust::Mclust"
+    println("Initialize with Mclust.")
   else
     kmeans = R"kmeans"
+    println("Initialize with kmeans.")
   end
 
   y_imputed = deepcopy(d.y)
