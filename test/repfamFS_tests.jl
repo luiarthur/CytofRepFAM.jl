@@ -8,7 +8,8 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                sig2=fill(0.1, length(N)),
                                mus=Dict(0=>collect(range(-5, length=L[0], stop=-1)),
                                         1=>collect(range(1, length=L[1], stop=5))),
-                               LMCMC=Dict(0=>5, 1=>5), seed=-1)
+                               LMCMC=Dict(0=>5, 1=>5), seed=-1,
+                               allow_repeated_Z_columns=true)
 
   if seed >= 0
     Random.seed!(seed)
@@ -32,7 +33,7 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                          similarity_Z=simz)
   s = CytofRepFAM.Model.genInitialState(c, d,
                                         sb_ibp=false,
-                                        allow_repeated_Z_columns=true)
+                                        allow_repeated_Z_columns=allow_repeated_Z_columns)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)
   X = CytofRepFAM.Model.eye(Float64, d.I)
   println("mu*0 truth: $(simdat[:mus][0])")

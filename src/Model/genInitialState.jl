@@ -42,8 +42,9 @@ function genInitialState(c::Constants, d::Data;
   init_Z() = [Bool(rand(Bernoulli(b[k]))) for j in 1:J, k in 1:K]
   Z = init_Z()
   if !allow_repeated_Z_columns
-    num_unique_cols = size(unique(Z, dims=2), 2)
-    while num_unique_cols < K
+    num_unique_cols(Z) = size(unique(Z, dims=2), 2)
+
+    while num_unique_cols(Z) < K
       Z = init_Z()
     end
   end

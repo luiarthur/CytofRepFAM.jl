@@ -9,8 +9,10 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
   config = init_state_const_data(N=[3,2]*500, L=Dict(0=>1, 1=>1),
                                  LMCMC=Dict(0=>3, 1=>3),
                                  mus=Dict(0 => [-2.0], 1 => [2.0]),
-                                 sig2=fill(2.0, 2), seed=0)
+                                 sig2=fill(2.0, 2), seed=0,
+                                 allow_repeated_Z_columns=false)
   cfs = CytofRepFAM.Model.ConstantsFS(config[:c])
+  # cfs.omega_prior = Normal(0, 1)
   dfs = CytofRepFAM.Model.DataFS(config[:d], config[:X])
   sfs = CytofRepFAM.Model.StateFS{Float64}(config[:s], dfs)
   tfs = CytofRepFAM.Model.TunersFS(config[:t], config[:s], config[:X])
@@ -41,7 +43,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            Z_marg_lamgam_decay_rate=100.0,
                                            # Z_marg_lamgam_min=0.05,
                                            Z_marg_lamgam_min=1.0,
-                                           printFreq=1, seed=0,
+                                           printFreq=1, seed=6,
                                            computedden=true,
                                            computeDIC=true,
                                            computeLPML=true,
