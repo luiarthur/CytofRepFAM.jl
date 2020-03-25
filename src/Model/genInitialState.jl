@@ -1,4 +1,8 @@
-function genInitialState(c::Constants, d::Data)
+function genInitialState(c::Constants, d::Data, verbose=1)
+  if verbose > 0
+    println("Doing random initialization ....")
+  end
+
   J = d.J
   K = c.K
   L = c.L

@@ -28,7 +28,7 @@ function init_state_const_data(; N=[300, 200, 100], J=8, K=4,
                                          delta1_prior=deltaz_prior,
                                          alpha_prior=Gamma(0.1, 10.0),
                                          yQuantiles=[.01, .1, .25],
-                                         pBounds=[.1, .8, .05],
+                                         pBounds=[.4, .8, .05],
                                          similarity_Z=simz)
   s = CytofRepFAM.Model.genInitialState(c, d)
   t = CytofRepFAM.Model.Tuners(d.y, c.K)

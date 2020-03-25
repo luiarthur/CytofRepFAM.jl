@@ -31,6 +31,9 @@ function simfn(settings::Dict{Symbol, Any})
                                       alpha_prior=Gamma(0.1, 10.0),
                                       yQuantiles=[.0, .25, .5], 
                                       pBounds=[.05, .8, .05],
+                                      y_grid=collect(range(-10,
+                                                           stop=4,
+                                                           length=100)),
                                       probFlip_Z=1.0,
                                       similarity_Z=sim_z)
 
@@ -99,7 +102,7 @@ function simfn(settings::Dict{Symbol, Any})
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
     # This works if phi=1e-6, batchprop=>.10, alpha=1.0
-    temper=1/inv_temper, anneal=true, mb_update_burn_prop=0.6,
+    temper=1/inv_temper, anneal=true, mb_update_burn_prop=0.7,
     # TODO: Find right balance between phi, batchprop, and temper(alpha)
     # temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.6,
     Z_marg_lamgam=1.0,

@@ -6,10 +6,10 @@ include("repfamFS_tests.jl")
 
 printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 @testset "repFAM PT" begin
-  config = init_state_const_data(N=[3,2]*1000, L=Dict(0=>1, 1=>1),
+  config = init_state_const_data(N=[3,2]*200, L=Dict(0=>1, 1=>1),
                                  LMCMC=Dict(0=>3, 1=>3),
                                  mus=Dict(0 => [-2.0], 1 => [2.0]),
-                                 sig2=fill(0.7, 2), seed=0)
+                                 sig2=fill(2.0, 2), seed=0)
   cfs = CytofRepFAM.Model.ConstantsFS(config[:c])
   dfs = CytofRepFAM.Model.DataFS(config[:d], config[:X])
   sfs = CytofRepFAM.Model.StateFS{Float64}(config[:s], dfs)
@@ -19,21 +19,24 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
 
   # Fit model.
   # For algo tests
-  nmcmc = 40
-  nburn = 40
+  nmcmc = 200
+  nburn = 100
 
   # For compile tests
   # nmcmc = 3
   # nburn = 3
 
-  N = sum(dfs.data.N)
+  Nsum = sum(dfs.data.N)
   alpha = 1.0
   @time out = CytofRepFAM.Model.fit_fs_tp!(sfs, cfs, dfs,
                                            nmcmc=nmcmc, nburn=nburn,
                                            batchprop=0.05,
                                            prior_thin=4,
-                                           temper=(alpha + N) / alpha,
+                                           # iMCMC settings
+                                           temper=(alpha + Nsum) / alpha,
                                            anneal=true,
+                                           mb_update_burn_prop=0.6,
+                                           #
                                            Z_marg_lamgam=1.0,
                                            Z_marg_lamgam_decay_rate=100.0,
                                            # Z_marg_lamgam_min=0.05,

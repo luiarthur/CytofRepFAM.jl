@@ -4,7 +4,10 @@ function fit_fs_tp!(init::StateFS,
                     cfs::ConstantsFS,
                     dfs::DataFS;
                     nmcmc::Int, nburn::Int, 
+                    # These args are for iMCMC:
                     batchprop::Float64=0.1, prior_thin::Int=2,
+                    temper::Float64=1.0, mb_update_burn_prop=0.6, anneal=false,
+                    # End of iMCMC args.
                     tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                     monitors=[monitor1, monitor2],
                     fix::Vector{Symbol}=Symbol[],
@@ -21,10 +24,7 @@ function fit_fs_tp!(init::StateFS,
                     Z_marg_lamgam_min::Float64=0.05,
                     verbose::Int=1,
                     time_updates=false,
-                    seed::Int=-1,
-                    temper::Float64=1.0,
-                    mb_update_burn_prop=0.6,
-                    anneal=false)
+                    seed::Int=-1)
 
   @assert 0 <= mb_update_burn_prop <= 1
 
@@ -101,8 +101,12 @@ function fit_fs_tp!(init::StateFS,
 
     # Calculate current temperature
     curr_temper = if anneal
+      # Gradually cool the temperature so that it is 1 when
+      # we reach iteration `iters_mb_update_all_params`, which
+      # is less than `nburn`.
       itmax = iters_mb_update_all_params
-      iter < nburn ? temper^((itmax - iter + 1) / itmax) : 1.0
+      power = (itmax - iter + 1) / itmax
+      clamp(temper^power, 1.0, Inf)
     else
       temper
     end
@@ -125,7 +129,7 @@ function fit_fs_tp!(init::StateFS,
     d = dfs.data
 
     # Append loglike
-    append!(ll, compute_marg_loglike(s, c, d, 1.0) / temper)
+    append!(ll, compute_marg_loglike(s, c, d, 1.0) / curr_temper)
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
