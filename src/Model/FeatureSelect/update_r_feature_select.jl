@@ -57,7 +57,7 @@ function update_r_marg_lam!(i::Integer, k::Integer, ldmix::Matrix{Float64},
   # Log likelihood as a function of `r_{i, k}`
   function loglike(r_ik::Bool)::Float64
     # Make a copy of the current (k-dim) vector r_i
-    ri = s.r[i, :]
+    ri = deepcopy(s.r[i, :])
 
     # Replace r_{i, k} with the provided `r_ik`
     ri[k] = r_ik
@@ -105,47 +105,4 @@ function rik_metropolis_update!(i::Integer, k::Integer,
   if log_acceptance_ratio > log(rand())
     s.r[i, k] = cand
   end
-end
-
-
-# FIXME: spitting out NaN's for W!
-#        pretty sure this is wrong!
-# TODO: Deprecate this.
-function update_r!(i::Integer, k::Integer,
-                   s::StateFS, c::ConstantsFS, d::DataFS; verbose::Int=0)
-  function logprob(r_ik::Bool)
-    ri = s.r[i, :]
-    ri[k] = r_ik
-
-    if sum(ri) < 0
-      println("In `update_r!`: This should not happen. Bad ri")
-      return -Inf
-    else
-      p_xi = compute_p(d.X[i, :], s.omega)
-      logprior = logpdf(Bernoulli(p_xi), r_ik)
-
-      loglike = let
-        K = length(ri)
-        wi = compute_w(s.W_star[i, :], ri)
-
-        counts = StatsBase.countmap(s.theta.lam[i])
-
-        keys_counts = keys(counts)
-
-        @assert sum(values(counts)) == d.data.N[i]
-
-        # loglike
-        [let
-           c_ih = (h in keys_counts) ? counts[h] : 0
-           println("(c$((i,h)), w$((i,h)): ($(c_ih), $(wi[h]))")
-           c_ih * log(wi[h])
-         end for h in 1:K if ri[h] > 0]
-      end  # loglike
-
-      return logprior + loglike
-    end
-  end
-
-  # update r_{i, k} with a metropolis step
-  rik_metropolis_update!(i, k, logprob, s)
 end
