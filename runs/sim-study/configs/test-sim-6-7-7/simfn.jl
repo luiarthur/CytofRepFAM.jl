@@ -40,8 +40,9 @@ function simfn(settings::Dict{Symbol, Any})
     # NOTE: This is new. We want to spread weights evenly.
     c.eta_prior = Dict(z => Dirichlet(L[z], 5) for z in 0:1)
 
-    # s = CytofRepFAM.Model.genInitialState(c, d)
-    s = CytofRepFAM.Model.smartInit(c, d)
+    # s = CytofRepFAM.Model.smartInit(c, d)  # mclust init
+    s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans")  # kmeans init
+    # s = CytofRepFAM.Model.genInitialState(c, d)  # random inits
     t = CytofRepFAM.Model.Tuners(d.y, c.K)
     X = CytofRepFAM.Model.eye(Float64, d.I)
 
