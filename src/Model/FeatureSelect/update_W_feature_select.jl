@@ -16,6 +16,7 @@ function update_W_star!(s::StateFS, c::ConstantsFS, d::DataFS, tuners::TunersFS)
     end
   end
 
+  return
 end
 
 

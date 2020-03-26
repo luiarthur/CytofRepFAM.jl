@@ -49,7 +49,7 @@ printstyled("Test fitting repFAM via trained priors...\n", color=:yellow)
                                            computeLPML=true,
                                            thin_dden=2,
                                            time_updates=false,
-                                           verbose=3)
+                                           verbose=4)
   println("Writing Output ...") 
 
   outdir = "results/repfam-tp"

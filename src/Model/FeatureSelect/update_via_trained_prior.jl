@@ -132,4 +132,10 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
                                  Z_marg_lamgam=Z_marg_lamgam,
                                  sb_ibp=sb_ibp, time_updates=time_updates)
   end
+
+  if verbose > 1
+    println("\nomega: $(sfs.omega)")
+    println("W:")
+    Base.show(stdout, "text/plain", sfs.theta.W)
+  end
 end
