@@ -4,10 +4,10 @@ Augments Constants object with new priors:
 W_star_prior, p_prior, and omega_prior.
 Note that only one of p_prior or omega_prior will be used. 
 """
-mutable struct ConstantsFS
-  W_star_prior # W*_ik ~ Gamma(a_W, 1)
-  p_prior # p_c ~ Beta(a_p, b_p)
-  omega_prior # omage_each ~ Normal(m_omega , s_omega)
+mutable struct ConstantsFS{T <: ContinuousDistribution}
+  W_star_prior::Gamma # W*_ik ~ Gamma(a_W, 1)
+  p_prior::Beta # p_c ~ Beta(a_p, b_p)
+  omega_prior::T # omage_each ~ Normal(m_omega , s_omega)
   constants::Constants
 end
 
