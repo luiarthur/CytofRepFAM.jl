@@ -2,11 +2,13 @@ include("../../../PlotUtils/PlotUtils.jl")
 include("../../../PlotUtils/imports.jl")
 
 if length(ARGS) == 0
-  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-6"
+  # results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-7"
+  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-7-test/"
 else
   results_dir = ARGS[1]  # path to results directory
 end
 # simname = "pthin2-batchprop0.05-alpha1.0-N20000"
+simname = "pthin2-batchprop0.05-alpha1.0-N2000"
 
 function plot_params(samples, simdat, imgdir)
   # Create a directory for images / txt if needed.

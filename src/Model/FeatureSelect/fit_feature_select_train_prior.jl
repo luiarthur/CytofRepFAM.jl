@@ -116,7 +116,7 @@ function fit_fs_tp!(init::StateFS,
     end
 
     # Update state using trained prior
-    minibatch_update_all_params = iter < iters_mb_update_all_params
+    minibatch_update_all_params = iter < iters_mb_update_all_params || !anneal
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,

@@ -42,17 +42,13 @@ function simfn(settings::Dict{Symbol, Any})
 
     # Initialize state
     # s = CytofRepFAM.Model.smartInit(c, d)  # mclust init
-    # s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans")  # kmeans init
-    s = CytofRepFAM.Model.genInitialState(c, d)  # random inits
+    s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans")  # kmeans init
+    # s = CytofRepFAM.Model.genInitialState(c, d)  # random inits
 
     t = CytofRepFAM.Model.Tuners(d.y, c.K)
     X = CytofRepFAM.Model.eye(Float64, d.I)
 
     cfs = CytofRepFAM.Model.ConstantsFS(c)
-    # NOTE: We want W to be able to be non-zero
-    cfs.omega_prior = Normal(0, 3)
-    cfs.W_star_prior = Gamma(.1, 10)
-
     dfs = CytofRepFAM.Model.DataFS(d, X)
     sfs = CytofRepFAM.Model.StateFS{Float64}(s, dfs)
     tfs = CytofRepFAM.Model.TunersFS(t, s, X)
@@ -104,18 +100,21 @@ function simfn(settings::Dict{Symbol, Any})
   # Fit model
   @time out = CytofRepFAM.Model.fit_fs_tp!(
     config[:sfs], config[:cfs], config[:dfs],
-    nmcmc=mcmc_iter,
-    nburn=nburn,
+    nmcmc=mcmc_iter, nburn=nburn,
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
-    # This works if phi=1e-6, batchprop=>.10, alpha=1.0
+    # batchprop=.1, #settings[:batchprop],
+    # prior_thin=4, #settings[:pthin],
+    # batchprop=.05, #settings[:batchprop],
+    # prior_thin=4, #settings[:pthin],
+    # This works if phi=1e-6, batchprop=>.10, alpha=1.0, N=20000
     temper=1/inv_temper, anneal=true, mb_update_burn_prop=0.7,
-    # TODO: Find right balance between phi, batchprop, and temper(alpha)
-    # temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.6,
+    # temper=(.01 + Nsum) / .01, anneal=false,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,
-    printFreq=1, seed=settings[:mcmcseed],
+    printFreq=1,
+    seed=settings[:mcmcseed],
     computedden=true,
     computeDIC=true,
     computeLPML=true,
