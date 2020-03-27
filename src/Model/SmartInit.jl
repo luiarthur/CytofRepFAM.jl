@@ -47,7 +47,7 @@ end
 
 function smartInit(c::Constants, d::Data;
                    iterMax::Int=10, modelNames::String="VVI",
-                   warn::Bool=true) where {T <: Number}
+                   warn::Bool=true, seed=0) where {T <: Number}
 
   if modelNames != "kmeans"
     load_or_install_mclust()
@@ -74,6 +74,7 @@ function smartInit(c::Constants, d::Data;
     preimpute!(y_imputed[i], missMean[i])
   end
 
+  R"set.seed($(seed))"
   if modelNames == "kmeans"
     clus = kmeans(vcat(y_imputed...), centers=K, iter=iterMax)
   else
