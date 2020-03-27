@@ -28,6 +28,16 @@ function plot_params(samples, simdat, imgdir)
   # Number of samples
   I = length(sig2s[1])
 
+  # Print Zmean
+  open("$(imgdir)/txt/Zmean.txt", "w") do io
+    writedlm(io, mean(Zs))
+  end
+
+  # Print Wmean
+  open("$(imgdir)/txt/Wmean.txt", "w") do io
+    writedlm(io, mean(Ws))
+  end
+
   # Print R
   computeR(w) = vec(sum(w .> 0, dims=2))
   open("$(imgdir)/txt/Rcounts.txt", "w") do io
