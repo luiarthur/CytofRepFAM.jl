@@ -1,3 +1,5 @@
+# NOTE: Carefully review all the NOTES here.
+
 include(joinpath(@__DIR__, "../../imports.jl"))
 include(joinpath(@__DIR__, "../../simulatedata.jl"))
 
@@ -29,6 +31,7 @@ function simfn(settings::Dict{Symbol, Any})
                                       delta0_prior=deltaz_prior,
                                       delta1_prior=deltaz_prior,
                                       alpha_prior=Gamma(0.1, 10.0),
+                                      # NOTE:  These 3 items are important
                                       yQuantiles=[.0, .25, .5], 
                                       pBounds=[.05, .8, .05],
                                       y_grid=collect(range(-10,
@@ -51,6 +54,8 @@ function simfn(settings::Dict{Symbol, Any})
     X = CytofRepFAM.Model.eye(Float64, d.I)
 
     cfs = CytofRepFAM.Model.ConstantsFS(c)
+
+    # NOTE: These priors are important
     cfs.omega_prior = Normal(0, 1)
     cfs.W_star_prior = Gamma(.5, 1/.5)
 
@@ -108,11 +113,9 @@ function simfn(settings::Dict{Symbol, Any})
     nmcmc=mcmc_iter, nburn=nburn,
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
-    # batchprop=.1, #settings[:batchprop],
-    # prior_thin=4, #settings[:pthin],
-    # batchprop=.05, #settings[:batchprop],
-    # prior_thin=4, #settings[:pthin],
     # This works if phi=1e-6, batchprop=>.10, alpha=1.0, N=20000
+    # NOTE: annealing yields a very narrow (unreaslstic) posterior.
+    # Coaresening (no annealing, just tempering) seems more realistic.
     temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.7,
     # temper=(.01 + Nsum) / .01, anneal=false,
     Z_marg_lamgam=1.0,

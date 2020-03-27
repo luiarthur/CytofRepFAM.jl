@@ -39,6 +39,9 @@ settings = let
         :dataseed => 1,
         :mcmcseed => 1,
         :outdir_suffix => outdir_suffix(pthin, batchprop, alpha, Nfac))
+   # NOTE: these are actually quite important.
+   # Need pthin to be at least 4, but batchprop to be small.
+   # For speed, consider the size of N.
    for pthin in [4]  # pthin{2,10} didn't work for Nfac=2000
    for batchprop in [.01]  # batchprop{.05} didn't work for Nfac=2000
    for alpha in [1.0]]  # alpha{10} didn't work for Nfac=2000
