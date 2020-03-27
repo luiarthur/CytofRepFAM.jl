@@ -21,7 +21,7 @@ end
 settings = let
   Z = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z.txt"), Int, comments=true))
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
-  Nfac = 2000  # for Nfac=2000, wasn't able to recover feature 1.
+  Nfac = 20000  # for Nfac=2000, wasn't able to recover feature 1.
   N = [1, 1] *  Nfac
   [Dict(:simname => simname,
         :repfam_dist_scale => 0.1,  # doesn't work for kmeans init when phi=1.0
@@ -39,7 +39,7 @@ settings = let
         :dataseed => 1,
         :mcmcseed => 1,
         :outdir_suffix => outdir_suffix(pthin, batchprop, alpha, Nfac))
-   for pthin in [2]  # pthin{2,10} didn't work for Nfac=2000
-   for batchprop in [.05]  # batchprop{.05} didn't work for Nfac=2000
+   for pthin in [4]  # pthin{2,10} didn't work for Nfac=2000
+   for batchprop in [.01]  # batchprop{.05} didn't work for Nfac=2000
    for alpha in [1.0]]  # alpha{10} didn't work for Nfac=2000
 end

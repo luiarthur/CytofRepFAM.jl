@@ -42,13 +42,18 @@ function simfn(settings::Dict{Symbol, Any})
 
     # Initialize state
     # s = CytofRepFAM.Model.smartInit(c, d)  # mclust init
-    s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans")  # kmeans init
+    s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans",
+                                    seed=settings[:mcmcseed],
+                                    iterMax=30)  # kmeans init
     # s = CytofRepFAM.Model.genInitialState(c, d)  # random inits
 
     t = CytofRepFAM.Model.Tuners(d.y, c.K)
     X = CytofRepFAM.Model.eye(Float64, d.I)
 
     cfs = CytofRepFAM.Model.ConstantsFS(c)
+    cfs.omega_prior = Normal(0, 1)
+    cfs.W_star_prior = Gamma(.5, 1/.5)
+
     dfs = CytofRepFAM.Model.DataFS(d, X)
     sfs = CytofRepFAM.Model.StateFS{Float64}(s, dfs)
     tfs = CytofRepFAM.Model.TunersFS(t, s, X)
@@ -108,7 +113,7 @@ function simfn(settings::Dict{Symbol, Any})
     # batchprop=.05, #settings[:batchprop],
     # prior_thin=4, #settings[:pthin],
     # This works if phi=1e-6, batchprop=>.10, alpha=1.0, N=20000
-    temper=1/inv_temper, anneal=true, mb_update_burn_prop=0.7,
+    temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.7,
     # temper=(.01 + Nsum) / .01, anneal=false,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
