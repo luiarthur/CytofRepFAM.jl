@@ -48,7 +48,9 @@ function simfn(settings::Dict{Symbol, Any})
     s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans",
                                     seed=settings[:mcmcseed],
                                     iterMax=30)  # kmeans init
-    # s = CytofRepFAM.Model.genInitialState(c, d)  # random inits
+    # s = CytofRepFAM.Model.genInitialState(c, d,  # NOTE: random inits
+    #                                       sb_ibp=false,
+    #                                       allow_repeated_Z_columns=false)
 
     t = CytofRepFAM.Model.Tuners(d.y, c.K)
     X = CytofRepFAM.Model.eye(Float64, d.I)
@@ -57,7 +59,8 @@ function simfn(settings::Dict{Symbol, Any})
 
     # NOTE: These priors are important
     cfs.omega_prior = Normal(0, 1)
-    cfs.W_star_prior = Gamma(.5, 1/.5)
+    cfs.W_star_prior = Gamma(.5, 1/.5) # works
+    # cfs.W_star_prior = Gamma(.5, 1)  # doesn't work
 
     dfs = CytofRepFAM.Model.DataFS(d, X)
     sfs = CytofRepFAM.Model.StateFS{Float64}(s, dfs)
