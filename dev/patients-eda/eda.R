@@ -18,7 +18,8 @@ files = list.files('data')
 data.files = filter.data.files(files)
 
 # Get the dimensions of each data set
-data.sizes = sapply(data.files, function(f) dim(read.csv(f)))
+data.sizes = sapply(data.files,
+                    function(f) dim(read.csv(paste0('data/', f))))
 
 # Plot histogram of the number of observations (Ni)
 hist(t(data.sizes)[,1], breaks=20)
