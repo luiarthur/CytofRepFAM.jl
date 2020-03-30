@@ -65,24 +65,41 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
   }
   stopifnot(all(sort(data.markernames) == sort(cutoff.markernames)))
 
+  markers.sorted = sort(data.markernames)
+
   # Plot data density for each marker
+  trans.data = matrix(NA, data.size[1], data.size[2])
+  colnames(trans.data) = markers.sorted
   pdf(outfile)
   par(mfrow=c(4, 2), mar=c(5, 4, 1, 2))
-  for (j in 1:data.size[2]) {
-    markername = data.markernames[j]
-    cutoff.index = which(cutoff.markernames == markername)
-    marker.trans = log(as.numeric(f.contents[, j])) / as.numeric(cutoff[cutoff.index])
+
+  # Column index for transformed data matrix
+  j = 0
+  for (marker in markers.sorted) {
+    j = j + 1
+    data.index = which(data.markernames == marker)
+    cutoff.index = which(cutoff.markernames == marker)
+    numer = log(as.numeric(f.contents[, data.index]))
+    denom = as.numeric(cutoff[cutoff.index])
+    marker.trans =  numer / denom
     marker.trans = ifelse(is.infinite(marker.trans), NA, marker.trans)
+    trans.data[, j] =-marker.trans
     hist(marker.trans, breaks=20,
-         prob=TRUE, xlab=markername, main='',
+         prob=TRUE, xlab=marker, main='',
          xlim=c(-4, 4))
-    legend('topleft', legend=c(paste0('missing: ', round(prop.miss[j] * 100, 1), '%'),
+    legend('topleft', legend=c(paste0('missing: ',
+                                      round(prop.miss[data.index] * 100, 1), '%'),
                                paste('cells:', data.size[1])),
            text.font=2, text.col='red', cex=.9, bty='n')
   }
   par(mfrow=c(1, 1), mar=rcommon::mar.default(), oma=rcommon::oma.default())
   dev.off()
 
+  # Write transformed data
+  dir.create(paste0(datadir, 'transformed-data/'), showWarn=FALSE)
+  fout = gsub(x=f, pattern=datadir, paste0(datadir, 'transformed-data/'))
+  write.csv(trans.data, file=fout, quote=FALSE, row.names=FALSE)
+  
   c(nrows=data.size[1], ncols=data.size[2], prop.miss=prop.miss)
 }
 
