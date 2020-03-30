@@ -2,6 +2,7 @@
 # open them.
 
 source('read.tcsv.R')
+library(stringr)
 
 # Sanitize marker name
 sanitize.marker = function(marker) {
@@ -37,7 +38,7 @@ filter.data.files = function(files) {
 # Function to get dimensions, percent of missing for each file.
 # Make plots of observed data?
 get.info = function(f, imgdir='img/', datadir=data.dir,
-                    cutoffdir=paste0(datadir, 'cutoff/')) {
+                    cutoffdir=paste0(datadir, 'cutoff/'), verbose=0) {
   f.contents = read.csv(f)
   colnames(f.contents) = sanitize.markers(colnames(f.contents))
   data.size = dim(f.contents)
@@ -58,8 +59,10 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
   data.markernames = colnames(f.contents)
   cutoff.markernames = colnames(cutoff)
 
-  print(sort(data.markernames))
-  print(sort(cutoff.markernames))
+  if (verbose > 0) {
+    print(sort(data.markernames))
+    print(sort(cutoff.markernames))
+  }
   stopifnot(all(sort(data.markernames) == sort(cutoff.markernames)))
 
   # Plot data density for each marker
@@ -71,7 +74,8 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
     marker.trans = log(as.numeric(f.contents[, j])) / as.numeric(cutoff[cutoff.index])
     marker.trans = ifelse(is.infinite(marker.trans), NA, marker.trans)
     hist(marker.trans, breaks=20,
-         prob=TRUE, xlab=markername, main='')
+         prob=TRUE, xlab=markername, main='',
+         xlim=c(-4, 4))
     legend('topleft', legend=c(paste0('missing: ', round(prop.miss[j] * 100, 1), '%'),
                                paste('cells:', data.size[1])),
            text.font=2, text.col='red', cex=.9, bty='n')
@@ -102,5 +106,17 @@ pdf('img/hist_nobs.pdf')
 hist(data.sizes[1,], breaks=20, xlab='data size', main='Histogram of sample size')
 dev.off()
 
-# Number of samples for each patient
-data.files
+# TODO: Number of samples for each patient
+days = as.numeric(str_match(data.files, '(?<=_d)\\d+(?=_)'))
+pdf('img/days.pdf')
+hist(days, breaks=10)
+dev.off()
+
+# TODO: Order patients by days
+cells.and.days = cbind(num_cells=data.sizes[1, ], days)
+{
+  sink('img/samples-ordered-by-day.txt')
+  cat('Samples, ordered by day:\n')
+  print(cells.and.days[order(days), ])
+  sink()
+}
