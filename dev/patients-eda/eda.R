@@ -118,22 +118,27 @@ data.files = data.files[!grepl('005', data.files)]
 # Get the dimensions of each data set
 data.sizes = sapply(data.files, get.info)
 
+# Save data info
+write.csv(data.sizes, file='img/data-info.csv', quote=FALSE, row.names=TRUE)
+
+
 # Plot histogram of the number of observations (Ni)
 pdf('img/hist_nobs.pdf')
 hist(data.sizes[1,], breaks=20, xlab='data size', main='Histogram of sample size')
 dev.off()
 
-# TODO: Number of samples for each patient
+# Number of samples for each patient
 days = as.numeric(str_match(data.files, '(?<=_d)\\d+(?=_)'))
 pdf('img/days.pdf')
 hist(days, breaks=10)
 dev.off()
 
+# Number of patients
+patients = as.numeric(str_match(data.files, '(?<=/)\\d+(?=_)'))
+
 # TODO: Order patients by days
-cells.and.days = cbind(num_cells=data.sizes[1, ], days)
-{
-  sink('img/samples-ordered-by-day.txt')
-  cat('Samples, ordered by day:\n')
-  print(cells.and.days[order(days), ])
-  sink()
-}
+cells.days.patients = cbind(num_cells=data.sizes[1, ],
+                            day=days, patient=patients)
+write.csv(cells.days.patients[order(days), ],
+          file='img/samples-ordered-by-day.csv',
+          quote=FALSE, row.names=TRUE)
