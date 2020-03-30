@@ -101,3 +101,6 @@ data.sizes = sapply(data.files, get.info)
 pdf('img/hist_nobs.pdf')
 hist(data.sizes[1,], breaks=20, xlab='data size', main='Histogram of sample size')
 dev.off()
+
+# Number of samples for each patient
+data.files
