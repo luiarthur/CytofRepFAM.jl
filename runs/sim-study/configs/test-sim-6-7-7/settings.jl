@@ -24,7 +24,7 @@ settings = let
   Nfac = 20000  # for Nfac=2000, wasn't able to recover feature 1.
   N = [1, 1] *  Nfac
   [Dict(:simname => simname,
-        :repfam_dist_scale => 0.1,  # doesn't work for kmeans init when phi=1.0
+        :repfam_dist_scale => 1.0,  # doesn't work for kmeans init when phi=1.0
         :N => N,
         :Z => Z,
         :W => W,

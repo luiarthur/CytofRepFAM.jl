@@ -1,7 +1,8 @@
 include("../../imports.jl")  # Load on main node.
 
 # NOTE: Change this.
-SIMNAME = "$(basename(@__DIR__))-test"
+# SIMNAME = "$(basename(@__DIR__))-test"
+SIMNAME = "$(basename(@__DIR__))"
 SCRATCH_DIR = "/scratchdata/$(ENV["USER"])/cytof/results/repfam"
 RESULTS_DIR_PREFIX = joinpath(SCRATCH_DIR, SIMNAME)
 AWS_BUCKET_PREFIX = "s3://cytof-repfam/$(SIMNAME)"

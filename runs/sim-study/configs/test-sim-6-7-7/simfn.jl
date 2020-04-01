@@ -119,7 +119,8 @@ function simfn(settings::Dict{Symbol, Any})
     # This works if phi=1e-6, batchprop=>.10, alpha=1.0, N=20000
     # NOTE: annealing yields a very narrow (unreaslstic) posterior.
     # Coaresening (no annealing, just tempering) seems more realistic.
-    temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.7,
+    # temper=1/inv_temper, # anneal=true, mb_update_burn_prop=0.7,
+    temper=1.0, anneal=true, mb_update_burn_prop=0.7,
     # temper=(.01 + Nsum) / .01, anneal=false,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
