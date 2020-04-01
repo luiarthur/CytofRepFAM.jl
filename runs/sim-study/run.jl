@@ -31,7 +31,8 @@ for setting in settings
   end
 end
 
-ncores = min(27, length(settings))  # use at most 45 cores on server
+maxcores = 27
+ncores = min(maxcores, length(settings))
 setnumcores(ncores)
 
 println("Sourcing files ..."); flush(stdout)
