@@ -26,7 +26,7 @@ settings = let
   # Need pthin to be at least 4, but batchprop can be small, if N is
   # sufficiently large.
   pthin = 4
-  batchprop = 0.05
+  batchprop = 0.01 # TODO: larger?
   [Dict(:simname => simname,
         :repfam_dist_scale => phi,  # doesn't work for kmeans init when phi=1.0
         :N => N,
