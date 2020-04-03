@@ -1,14 +1,20 @@
 include("../../../PlotUtils/PlotUtils.jl")
 include("../../../PlotUtils/imports.jl")
 
+using Distributed
+rmprocs(filter(w -> w > 1, workers()))
+addprocs(32)
+
 if length(ARGS) == 0
   results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-8/"
 else
   results_dir = ARGS[1]  # path to results directory
 end
-# simname = "pthin8-batchprop0.05-alpha1.0-N2000"
 
-function plot_params(samples, simdat, imgdir)
+@everywhere include("../../../PlotUtils/PlotUtils.jl")
+@everywhere include("../../../PlotUtils/imports.jl")
+
+@everywhere function plot_params(samples, simdat, imgdir)
   # Create a directory for images / txt if needed.
   mkpath("$(imgdir)/txt/")
 
@@ -62,14 +68,19 @@ function plot_params(samples, simdat, imgdir)
                     Z_true=simdat[:Z], w_thresh=0.0)
 end
 
-function makeplots(path_to_output, imgdir)
+@everywhere function makeplots(path_to_output)
+  output_dir = splitdir(path_to_output)[1]
+  println(path_to_output)
+
+  # Create img directory
+  imgdir = joinpath(output_dir, "img")
   mkpath("$(imgdir)/txt")
 
-  output_dir = splitdir(path_to_output)[1]
+  # Load simulated data
   path_to_simdat = joinpath(output_dir, "simdat.bson")
   simdat = BSON.load(path_to_simdat)[:simdat]
 
-  println(path_to_output)
+  # Load outputs
   output = BSON.load(path_to_output)
   samples = output[:samples][1]
 
@@ -126,18 +137,13 @@ end
 # Name of output file
 OUTPUT_FILE = "output.bson"
 
-# PATH TO ALL OUTPUT FILES
+# Path to all output files
 output_paths = [joinpath(root, OUTPUT_FILE)
                 for (root, _, files) in walkdir(results_dir)
                 if OUTPUT_FILE in files]
 
-# Plot the posterior distributions of parameters
-path_to_output = joinpath(results_dir, simname, "output.bson")
-path_to_simdat = joinpath(results_dir, simname, "simdat.bson")
-simdat = BSON.load(path_to_simdat)[:simdat];
-
-# Make general plots
-imgdir = joinpath(results_dir, simname, "img")
-makeplots(path_to_output, imgdir)
+# Make plots in parallel
+error_msg = pmap(makeplots, output_paths, on_error=identity)
+println(error_msg)
 
 println("DONE!")
