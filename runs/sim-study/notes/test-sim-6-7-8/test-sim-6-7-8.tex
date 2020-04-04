@@ -141,7 +141,10 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \item $\delta_0 \sim \TN^-(1.0, 0.1)$
     \item $\delta_1 \sim \TN^+(1.0, 0.1)$
     \item $\sigma^2_i \sim \InvGamma^+(1.0, 0.1)$
-    \item $\phi=0.1$
+    \item $\phi\in\bc{0, 1, 10}$
+    \item Three datasets were generated with same settings, but different
+      random seed.
+    \item Three chains (different random seeds) were run for each $\phi$ and data.
     \item 5\% of data in each sample are used to sample from trained prior, and
       $M=4$ was used.
   \end{itemize}
@@ -155,8 +158,18 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \end{center}
   \caption{Post burn-in log likelihoods for each run. Burn in used was 500.
     The plot shows the log-likelihood evaluations of the 2000 subsequent
-    iterations for the temperature 40001, for $\phi=0.1$.}
+    iterations.}
   \label{fig:ll}
+\end{figure}
+
+\newpage
+\section{Posterior mean of $Z$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Zmean.pdf}{0.15}
+  \end{center}
+  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  \label{fig:z1est}
 \end{figure}
  
 \newpage
