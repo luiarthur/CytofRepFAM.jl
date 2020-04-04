@@ -132,7 +132,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
   \item 500 burn-in, followed by 2000 iterations, and every other sample was
     kept (1000 samples total).
-  \item \textbf{Some Priors:}
+  \item Computation time for each chains was was approximately 14 hours.
+  \item \textbf{Some Priors / Setup:}
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1/2, \text{rate}=1/2)$
     \item $p_c \sim \text{Beta}(1, 1)$
@@ -141,8 +142,12 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \item $\delta_0 \sim \TN^-(1.0, 0.1)$
     \item $\delta_1 \sim \TN^+(1.0, 0.1)$
     \item $\sigma^2_i \sim \InvGamma^+(1.0, 0.1)$
-    \item $\phi=0.1$
-    \item 5\% of data in each sample are used to sample from trained prior, and
+    \item $\phi\in\bc{0, 1, 10}$
+    \item Three datasets were generated with same settings, but different
+      random seed.
+    \item Three chains (different random seeds) were run for each $\phi$ and data.
+
+    \item 1\% of data in each sample are used to sample from trained prior, and
       $M=4$ was used.
   \end{itemize}
 \end{itemize}
@@ -155,7 +160,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \end{center}
   \caption{Post burn-in log likelihoods for each run. Burn in used was 500.
     The plot shows the log-likelihood evaluations of the 2000 subsequent
-    iterations for the temperature 40001, for $\phi=0.1$.}
+    iterations.}
   \label{fig:ll}
 \end{figure}
 
@@ -165,8 +170,9 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{Zmean.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
-  \label{fig:z1est}
+  % TODO
+  \caption{}
+  \label{fig:zmean}
 \end{figure}
  
 \newpage
@@ -175,7 +181,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:z1est}
 \end{figure}
 
@@ -185,7 +192,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:z2est}
 \end{figure}
 
@@ -195,7 +203,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{y1.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:y1est}
 \end{figure}
 
@@ -205,7 +214,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{y2.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:y2est}
 \end{figure}
 
@@ -215,7 +225,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{mus_trace.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:mus-trace}
 \end{figure}
 
@@ -225,10 +236,10 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{mus.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:mus}
 \end{figure}
-
 
 \newpage
 \section{Trace plots for $\sigma^2$}
@@ -236,7 +247,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{sig2_trace.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:sig2-trace}
 \end{figure}
 
@@ -246,7 +258,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{sig2.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:sig2}
 \end{figure}
 
@@ -256,7 +269,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i1_j1.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:ddi1j1}
 \end{figure}
 
@@ -266,7 +280,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i1_j2.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:ddi1j2}
 \end{figure}
 
@@ -276,7 +291,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i2_j1.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:ddi2j1}
 \end{figure}
 
@@ -286,7 +302,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{dden/dden_i2_j2.pdf}{0.15}
   \end{center}
-  \caption{The truth for $Z$ and W are recovered. Acceptance rate: \textbf{98\%}}
+  % TODO
+  \caption{}
   \label{fig:ddi2j2}
 \end{figure}
 
@@ -300,7 +317,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
       \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi0.0/img/missmech_2.pdf} \\
     \end{tabular}
   \end{center}
-\label{fig:sigtrace}
+\label{fig:missmech}
 \end{figure}
 
 
