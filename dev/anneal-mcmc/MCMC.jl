@@ -2,8 +2,7 @@ module MCMC
 
 using Distributions
 using LinearAlgebra
-
-eye(n) = LinearAlgebra.I + zeros(n, n)
+include("PropCov.jl")
 
 function _metropolis(x::Float64, logprob::Function, propsd::Float64)
   cand = curr + randn() * propsd
@@ -13,7 +12,7 @@ function _metropolis(x::Float64, logprob::Function, propsd::Float64)
   return (draw, accept)
 end
 
-function metropolis(x::Float64, logprob, propsd)
+function metropolis(x::Float64, logprob::Function, propsd::Float64)
   return _metropolis(x, logprob, propsd)[1]
 end
 
@@ -28,10 +27,10 @@ end
 function mcmc(init::Vector{T}, ll::Function, lp::Function;
               nmcmc::Int, nburn::Int, batchsize::Int=50,
               thin::Int=1,
-              propcov_factor=1.0,
-              propcov_init=eye(length(init)) * propcov_factor,
-              discount=0.1,
-              min_temper=1.0, max_temper=1.0,
+              propcov=nothing,
+              propcov_init=eye(length(init)),
+              temper_power=1,
+              momentum=0.1, min_temper=1.0, max_temper=1.0,
               verbose=0) where T <: AbstractFloat
   @assert min_temper <= max_temper
 
@@ -51,53 +50,44 @@ function mcmc(init::Vector{T}, ll::Function, lp::Function;
   total_iters = nmcmc + nburn
 
   # proposal covariance
-  propcov = propcov_init
-
-  # buffer
-  buffer = zeros(batchsize, nparam)
+  if propcov == nothing
+    propcov = PropCov(propcov_init, momentum=momentum, batchsize=batchsize)
+  end
 
   # Update function
   function update(s, iter, propcov)
     # Compute temperature
-    power_temper = (nburn - iter + 1) / (nburn - 1)
-    temper = iter < nburn ? max_temper^power_temper : min_temper
+    p = ((nburn - iter)^temper_power + 1) / (nburn^temper_power - 1)
+    temper = iter < nburn ? max_temper^p : min_temper
 
     # Log density of target distribution
     _logprob(s::Vector{Float64}) = logprob(s, temper)
 
     # Update state
     s .= metropolis(s, _logprob, propcov)
+
+    # Build a message
+    msg = "temper: $(round(temper, digits=3))"
+
+    return msg
   end
 
-  PROPCOV_SCALE_FACTOR = 2.38*2.38 / nparam
 
   # Run MCMC
+  msg = ""
   for i in 1:total_iters
     print("\r$(i)/$(total_iters)")
     # Update state
     for t in 1:thin
-      update(state, i, propcov)
+      msg = update(state, i, propcov.value)
     end
-
-    # update buffer
-    buffer_index = let
-      idx = mod(i, batchsize)
-      idx == 0 ? batchsize : idx
-    end
-    buffer[buffer_index, :] .= state
-
+    
     # Update proposal covariance
-    if buffer_index == batchsize
-      # Update propcov
-      propcov .= let
-        a = cov(buffer) * discount 
-        b = propcov * (1-discount) + eye(nparam) * 1e-6
-        (a + b) * PROPCOV_SCALE_FACTOR
-      end
-    end
+    update!(propcov, state)
 
+    # Sanity check
     if verbose > 0 && mod(i, batchsize) == 0
-      println(" | proposal covariance: ", propcov[1])
+      println(" | proposal covariance: $(round.(propcov.value[1], digits=3)) | $(msg)")
     end
 
     # Keep samples

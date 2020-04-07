@@ -32,10 +32,10 @@ logprob(x::Vector{Float64}) = logpdf(mvn, x)
 init = randn(K) 
 
 lp(s::Vector{Float64}) = 0.0
-out, propcov = MCMC.mcmc(init, logprob, lp, thin=10,
-                         propcov_factor=100.0, batchsize=500, 
-                         nburn=5000, nmcmc=2000, max_temper=10000.0,
+out, propcov = MCMC.mcmc(init, logprob, lp, thin=10, batchsize=50, 
+                         nburn=4000, nmcmc=1000, max_temper=100.0,
                          verbose=1)
+
 acc_rate = size(unique(out, dims=1), 1) / size(out, 1)
 println("Acceptance rate: $(acc_rate)")
 
