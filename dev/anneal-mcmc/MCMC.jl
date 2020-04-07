@@ -88,9 +88,8 @@ function mcmc(init::Vector{T}, ll::Function, lp::Function;
       # Update propcov
       propcov .= let
         a = cov(buffer) * discount 
-        b = propcov * (1-discount)
-        c = eye(nparam) * 1e-6
-        a + b + c
+        b = propcov * (1-discount) + eye(nparam) * 1e-6
+        a + b
       end
     end
 
