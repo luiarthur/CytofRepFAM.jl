@@ -22,7 +22,7 @@ if easy
   S[1,2] = S[2,1] = -0.8
   S[1,3] = S[3,1] = 0.5
 else
-  K = 30
+  K = 50
   S = rand(InverseWishart(K, MCMC.eye(K)))
 end
 
@@ -32,12 +32,13 @@ logprob(x::Vector{Float64}) = logpdf(mvn, x)
 init = randn(K) 
 
 lp(s::Vector{Float64}) = 0.0
-out, propcov = MCMC.mcmc(init, logprob, lp, thin=10, batchsize=50, 
-                         nburn=4000, nmcmc=1000, max_temper=100.0,
+out, propcov = MCMC.mcmc(init, logprob, lp, thin=10, batchsize=100, 
+                         temper_power=3,
+                         propcov_init=MCMC.eye(length(init)) * 1e-3,
+                         nburn=10000, nmcmc=1000, max_temper=1000.0,
                          verbose=1)
 
 acc_rate = size(unique(out, dims=1), 1) / size(out, 1)
-println("Acceptance rate: $(acc_rate)")
 
 ll = [logprob(out[i, :]) for i in 1:size(out, 1)]
 R"plot($ll, type='l')"
@@ -51,4 +52,4 @@ prettymat(round.(cov(mvn)[1:G, 1:G], digits=3))
 [mean(out, dims=1)' mean(mvn)]
 
 R"rcommon::plotPosts($(out)[, 1:5])";
-_ = nothing
+println("Acceptance rate: $(acc_rate)")
