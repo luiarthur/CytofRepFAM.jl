@@ -30,8 +30,9 @@ function mcmc(init::Vector{T}, ll::Function, lp::Function;
               thin::Int=1,
               propcov_factor=1.0,
               propcov_init=eye(length(init)) * propcov_factor,
-              discount=0.3,
-              min_temper=1.0, max_temper=1.0) where T <: AbstractFloat
+              discount=0.1,
+              min_temper=1.0, max_temper=1.0,
+              verbose=0) where T <: AbstractFloat
   @assert min_temper <= max_temper
 
   # Initialize MCMC
@@ -68,9 +69,11 @@ function mcmc(init::Vector{T}, ll::Function, lp::Function;
     s .= metropolis(s, _logprob, propcov)
   end
 
+  PROPCOV_SCALE_FACTOR = 2.38*2.38 / nparam
+
   # Run MCMC
   for i in 1:total_iters
-    print("\r $(i)/$(total_iters)")
+    print("\r$(i)/$(total_iters)")
     # Update state
     for t in 1:thin
       update(state, i, propcov)
@@ -89,8 +92,12 @@ function mcmc(init::Vector{T}, ll::Function, lp::Function;
       propcov .= let
         a = cov(buffer) * discount 
         b = propcov * (1-discount) + eye(nparam) * 1e-6
-        a + b
+        (a + b) * PROPCOV_SCALE_FACTOR
       end
+    end
+
+    if verbose > 0 && mod(i, batchsize) == 0
+      println(" | proposal covariance: ", propcov[1])
     end
 
     # Keep samples

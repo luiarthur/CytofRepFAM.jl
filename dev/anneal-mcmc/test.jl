@@ -32,9 +32,10 @@ logprob(x::Vector{Float64}) = logpdf(mvn, x)
 init = randn(K) 
 
 lp(s::Vector{Float64}) = 0.0
-out, propcov = MCMC.mcmc(init, logprob, lp, batchsize=500, thin=10,
-                         propcov_factor=1e-6,
-                         nburn=20000, nmcmc=10000, max_temper=1.0)
+out, propcov = MCMC.mcmc(init, logprob, lp, thin=10,
+                         propcov_factor=100.0, batchsize=500, 
+                         nburn=5000, nmcmc=2000, max_temper=10000.0,
+                         verbose=1)
 acc_rate = size(unique(out, dims=1), 1) / size(out, 1)
 println("Acceptance rate: $(acc_rate)")
 
@@ -42,11 +43,12 @@ ll = [logprob(out[i, :]) for i in 1:size(out, 1)]
 R"plot($ll, type='l')"
 
 G = 8
-prettymat(cov(out[:, 1:G]))
-prettymat(cov(mvn)[1:G, 1:G])
+println("cov(out):")
+prettymat(round.(cov(out[:, 1:G]), digits=3))
+println("cov(mvn):")
+prettymat(round.(cov(mvn)[1:G, 1:G], digits=3))
 
 [mean(out, dims=1)' mean(mvn)]
 
 R"rcommon::plotPosts($(out)[, 1:5])";
-_ = 0
-
+_ = nothing
