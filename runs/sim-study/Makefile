@@ -20,9 +20,10 @@ SHELL:=/bin/bash
 # SIM_EXP_NAME = test-sim-6-7-7
 # SIM_EXP_NAME = test-sim-6-7-8
 # SIM_EXP_NAME = test-sim-6-7-9
+# SIM_EXP_NAME = test-sim-6-7-10
 
-SIM_EXP_NAME = test-sim-6-7-10
 # SIM_EXP_NAME = test-sim-6-7-11
+SIM_EXP_NAME = test-sim-6-7-12
 
 # Run script
 RUN_SCRIPT = run.jl
