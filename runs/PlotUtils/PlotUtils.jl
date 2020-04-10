@@ -170,6 +170,21 @@ function plot_v(vs, imgdir; printmean=true)
   plt.close()
 end
 
+function plot_p(ps, imgdir; printmean=true)
+  ps_mat = Matrix(hcat(ps...)')
+  plt.boxplot(ps_mat)
+  plt.xlabel("sample")
+  plt.ylabel("p")
+  plt.savefig("$(imgdir)/p.pdf", bbox_inches="tight")
+  plt.close()
+
+  if printmean
+    open("$(imgdir)/txt/p_mean.txt", "w") do io
+      writedlm(io, mean(ps))
+    end
+  end
+end
+
 function plot_mus(deltas, imgdir; printmean=true)
   mus0 = Matrix(hcat([-cumsum(d[0]) for d in deltas]...)')
   mus1 = Matrix(hcat([cumsum(d[1]) for d in deltas]...)')

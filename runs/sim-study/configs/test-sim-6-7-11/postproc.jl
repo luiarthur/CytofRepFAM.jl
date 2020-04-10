@@ -28,6 +28,8 @@ end
   deltas = extract(:theta__delta)
   sig2s = extract(:theta__sig2)
   etas = extract(:theta__eta)
+  omegas = extract(:omega)
+  ps = [MCMC.sigmoid.(o) for o in omegas]
 
   # Number of samples
   I = length(sig2s[1])
@@ -62,6 +64,7 @@ end
   PlotUtils.plot_alpha(alphas, imgdir)
   PlotUtils.plot_mus(deltas, imgdir)
   PlotUtils.plot_sig2(sig2s, imgdir, sig2_true=simdat[:sig2])
+  PlotUtils.plot_p(ps, imgdir)
 
   # Plot y / Z
   PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
