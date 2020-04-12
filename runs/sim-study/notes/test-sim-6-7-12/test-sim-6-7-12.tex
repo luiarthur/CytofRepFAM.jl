@@ -156,9 +156,12 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{0.15}
   \end{center}
-  \caption{Post burn-in log likelihoods for each run. Burn in used was 500.
-    The plot shows the log-likelihood evaluations of the 2000 subsequent
-    iterations.}
+  \caption{Post burn-in log likelihoods for each run. Burn in used was 3000.
+  The plot shows the log-likelihood evaluations of the 3000 subsequent
+  iterations. The experiment in Figure (w) has not yet converged. Also, some of
+  log likelihoods are higher for some of the chains (e.g. (e), (h), (i), (k)). These are
+  also the chains that recovered the simulation truth. Experiments (d) and (m) contain
+  one selected feature with $W_{i,k}=0$.}
   \label{fig:ll}
 \end{figure}
 
@@ -169,7 +172,14 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{Zmean.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{Posterior mean of $Z$. For $\phi=0$, the truth is never recovered.}
+  \caption{Posterior mean of $Z$. For $\phi=0$, the truth is never recovered.
+  Three to four columns only are recovered. In the case of Figure (a), the
+  recovered features were features 3, 5, 6, and 7. Even though feature 4 is
+  overall more abundant than feature 7, feature 4 is recovered because it is
+  distinct. It appears feature 4 was merged with feature 5, which is very
+  similar. When only 3 features are recovered, the missing feature is feature
+  7, which makes up only 3\% in sample 1. The truth is sometimes recovered for
+  $\phi=1$, and $\phi=10$.}
   \label{fig:zmean}
 \end{figure}
  
@@ -224,7 +234,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{p.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{The posterior mean of $p_i$ is usually between 0.2 and 0.4, and
+  sometimes between 0.4 and 0.5. The spread is large.}
   \label{fig:ppost}
 \end{figure}
 
@@ -235,7 +246,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{mus_trace.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Sometimes a component of $\mu^\star_0$ is near 0.}
   \label{fig:mus-trace}
 \end{figure}
 
