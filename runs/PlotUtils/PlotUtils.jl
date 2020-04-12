@@ -172,11 +172,21 @@ end
 
 function plot_p(ps, imgdir; printmean=true)
   ps_mat = Matrix(hcat(ps...)')
+
+  # Plot boxplots
   plt.boxplot(ps_mat)
   plt.xlabel("sample")
   plt.ylabel("p")
   plt.savefig("$(imgdir)/p.pdf", bbox_inches="tight")
   plt.close()
+
+  # Traceplot of p
+  pcols = size(ps_mat, 2)
+  for i in 1:pcols
+    plt.plot(ps_mat[:, i])
+    plt.savefig("$(imgdir)/p$(i)_trace.pdf", bbox_inches="tight")
+    plt.close()
+  end
 
   if printmean
     open("$(imgdir)/txt/p_mean.txt", "w") do io
