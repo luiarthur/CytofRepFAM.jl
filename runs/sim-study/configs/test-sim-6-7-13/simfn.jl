@@ -121,6 +121,8 @@ function simfn(settings::Dict{Symbol, Any})
     computedden=true,
     computeDIC=true,
     computeLPML=true,
+    thins=[settings[:thin_samps],
+           nsamps_to_thin(10, mcmc_iter)],
     thin_dden=nsamps_to_thin(200, mcmc_iter),
     time_updates=false,
     verbose=3)
