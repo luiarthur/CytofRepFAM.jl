@@ -31,6 +31,11 @@ output_paths = [joinpath(root, OUTPUT_FILE)
 path_to_output = output_paths[2]
 output = BSON.load(path_to_output)
 samples = output[:samples][1]
+m = output[:d].data.m
+yimps = [o[:theta__y_imputed]
+         for o in output[:samples][2]]
+std(yimps[1][1][Bool.(m[1])])
+std(yimps[10][1][Bool.(m[1])])
 
 extract(sym) = [s[sym] for s in samples]
 
@@ -44,6 +49,7 @@ sig2_mat = Matrix(hcat(sig2s...)')
 
 # W
 Ws = extract(:theta__W)
+Wmat = cat(Ws..., dims=3)
 
 # Z
 Zs = extract(:theta__Z)
@@ -54,21 +60,26 @@ Rs = hcat([vec(sum(W .> 0, dims=2)) for W in Ws]...)
 # eta
 eta0_mat, eta1_mat = etas_tomat(extract(:theta__eta))
 
-# Plot eta vs mu
+# Plot (sig2, mu) vs eta
+ell = 1
 for i in 1:2, j in 1:20
   println((i, j))
 
   plt.subplot(2, 1, 1)
-  plt.plot(mu_mat[:, 1], eta0_mat[i, j, 1, :], lw=0.5)
-  plt.xlabel(L"$\mu^\star_{0, 1}$")
-  plt.ylabel(latexstring("\\eta^0_{1, $(j), 1}"))
+  plt.plot(eta0_mat[i, j, ell, :], mu_mat[:, 1], lw=0.5)
+  plt.ylabel(L"$\mu^\star_{0, 1}$")
+  plt.xlabel(latexstring("\\eta^0_{1, $(j), 1}"))
 
   plt.subplot(2, 1, 2)
-  plt.plot(sig2_mat[:, i], eta0_mat[i, j, 1, :], lw=0.5)
-  plt.xlabel(latexstring("\\sigma^2_{$(i)}"))
-  plt.ylabel(latexstring("\\eta^0_{1, $(j), 1}"))
+  plt.plot(eta0_mat[i, j, ell, :], sig2_mat[:, i], lw=0.5)
+  plt.ylabel(latexstring("\\sigma^2_{$(i)}"))
+  plt.xlabel(latexstring("\\eta^0_{1, $(j), 1}"))
 
-  plt.savefig("img/eta0_$(i)_$(j)_1-vs-mu.pdf", bbox_inches="tight")
+  plt.savefig("img/mu-vseta0_$(i)_$(j)_1.pdf", bbox_inches="tight")
   plt.close()
 end
 
+# plt.plot(output[:dden][10][1, 13])
+# plt.plot(output[:dden][end][1, 13])
+# plt.savefig("img/dden11.pdf")
+# plt.close()
