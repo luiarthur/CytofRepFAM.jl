@@ -50,7 +50,11 @@ function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
             cardinality[i] += 1
 
             dz = s.delta[z][1:gam_inj][1:end .!= l]
-            g_sum[i] += (-1)^(1 - z) * s.y_imputed[i][n, j] - sum(dz)
+            if z == 1
+              g_sum[i] += (s.y_imputed[i][n, j] - sum(dz))
+            else
+              g_sum[i] -= (s.y_imputed[i][n, j] + sum(dz))
+            end
           end
         end
       end
@@ -63,4 +67,6 @@ function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
   new_s = sqrt(s_delta_z^2 / denom)
 
   s.delta[z][l] = rand(TruncatedNormal(new_m, new_s, lower, upper))
+  println("mu0: $(-cumsum(s.delta[0]))")
+  println("mu1: $(cumsum(s.delta[1]))")
 end
