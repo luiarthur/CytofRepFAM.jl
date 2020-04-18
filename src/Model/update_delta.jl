@@ -67,6 +67,7 @@ function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
   new_s = sqrt(s_delta_z^2 / denom)
 
   s.delta[z][l] = rand(TruncatedNormal(new_m, new_s, lower, upper))
-  println("mu0: $(-cumsum(s.delta[0]))")
-  println("mu1: $(cumsum(s.delta[1]))")
+
+  # println("mu0: $(-cumsum(s.delta[0]))")
+  # println("mu1: $(cumsum(s.delta[1]))")
 end
