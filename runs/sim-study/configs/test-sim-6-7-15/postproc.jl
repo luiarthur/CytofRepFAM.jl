@@ -3,7 +3,7 @@ include("../../../PlotUtils/imports.jl")
 
 using Distributed
 rmprocs(filter(w -> w > 1, workers()))
-addprocs(27)
+addprocs(9)
 
 if length(ARGS) == 0
   results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-15/"
