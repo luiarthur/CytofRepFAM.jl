@@ -96,9 +96,22 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
     end
   end
 
+  if length(mus[0]) > 1 ||  length(mus[1]) > 1
+    L0 = length(mus[0])
+    L1 = length(mus[1])
+    mu0 = DiscreteNonParametric(mus[0], fill(1/L0, L0))
+    mu1 = DiscreteNonParametric(mus[1], fill(1/L1, L1))
+    mus_dict = Dict(false => rand(mu0, I, J),
+                    true => rand(mu1, I, J))
+  end
+
   function mu(i::Int, n::Int, j::Int)
     # NOTE: only for L[0]=L[1]=1!
-    return mus[z(i, n, j)][1] + eps_mus[j]
+    if length(mus[0]) == length(mus[1]) == 1
+      return mus[z(i, n, j)][1] + eps_mus[j]
+    else
+      return mus_dict[z(i, n, j)][i, j] + eps_mus[j]
+    end
   end
 
   sig(i::Int) = sqrt(sig2[i])
