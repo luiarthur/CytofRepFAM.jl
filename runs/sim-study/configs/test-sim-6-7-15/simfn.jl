@@ -77,6 +77,7 @@ function simfn(settings::Dict{Symbol, Any})
                                seed=settings[:dataseed],
                                propmissingscale=.6,
                                sortLambda=true, 
+                               L=Dict(0=>2, 1=>2),
                                mus=Dict(0 => -[0.7, 1.3], 
                                         1 => [0.7, 1.3]),
                                eps_mus_dist=nothing);
