@@ -1,0 +1,27 @@
+\newcommand{\imgtemplate}[2]{
+  \begin{tabular}{ccc}
+    {\tiny (a) Data1, MCMC1, $\phi=1$} &
+    {\tiny (b) Data1, MCMC2, $\phi=1$} &
+    {\tiny (c) Data1, MCMC3, $\phi=1$} \\
+    %
+    \includegraphics[scale=#2]{\imgdir/dataseed1-mcmcseed1-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed1-mcmcseed2-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed1-mcmcseed3-phi1.0/img/#1} \\
+    %
+    {\tiny (d) Data2, MCMC1, $\phi=1$} &
+    {\tiny (e) Data2, MCMC2, $\phi=1$} &
+    {\tiny (f) Data2, MCMC3, $\phi=1$} \\
+    %
+    \includegraphics[scale=#2]{\imgdir/dataseed2-mcmcseed1-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed2-mcmcseed2-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed2-mcmcseed3-phi1.0/img/#1} \\
+    %
+    {\tiny (g) Data3, MCMC1, $\phi=1$} &
+    {\tiny (h) Data3, MCMC2, $\phi=1$} &
+    {\tiny (i) Data3, MCMC3, $\phi=1$} \\
+    %
+    \includegraphics[scale=#2]{\imgdir/dataseed3-mcmcseed1-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed3-mcmcseed2-phi1.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/dataseed3-mcmcseed3-phi1.0/img/#1} \\
+  \end{tabular}
+}
