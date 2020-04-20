@@ -137,11 +137,13 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
     \item $p_c \sim \text{Beta}(1, 9)$
     \item $L_0=L_1=1$
-    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
     \item $\alpha \sim \Gam(0.1, 0.1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
-    \item $\sigma^2_i \sim \InvGamma(3, 1)$
+    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$ % Really this.
+    % \item $\sigma^2_i \sim \InvGamma(3, 1)$ % Really this.
+    \item $\sigma^2_i \sim \InvGamma(11, 5)$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
     \item $\phi =1 $
     \item Three datasets were generated with same settings, but different
       random seed.
@@ -157,7 +159,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{.3}
   \end{center}
-  \caption{}
+  \caption{Log-likelihoods for each simulation setup. Burn-in may be
+  insufficient from trace plot in (d).}
   \label{fig:ll}
 \end{figure}
 
@@ -168,7 +171,14 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{Zmean.pdf}{0.4}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{With the exception of (c), none of the runs recover 7 columns, so
+  none of the runs capture the simulation truth completely. The two features
+  that are usually missing are either feature 1 or feature 2, or both. This is
+  reasonable, because these features are less abundant, and are similar to
+  other more abundant features. With only one component for $\mu_{z,\ell}$ in
+  the simulation truth, the posterior mean of $\sigma^2$ is closer to the
+  truth, but since $\sigma^2$ is now larger, it is harder to recover the truth
+  for $Z$.}
   \label{fig:zmean}
 \end{figure}
  
