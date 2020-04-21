@@ -127,8 +127,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 
 \subsection{More on data generation / MCMC setup}
 \begin{itemize}
-  \item $(\mu_{0,j}^\star)^\true=-1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
-  \item $(\mu_{1,j}^\star)^\true=1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
+  \item $(\mu_{0,i,j})^\true = -0.7$ or $-1.3$.
+  \item $(\mu_{1,i,j})^\true = 0.7$ or $1.3$.
   \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
   \item 3000 burn-in, followed by 3000 iterations (no thinning).
   \item Computation time for each chains was was approximately 9.5 hours.
@@ -136,12 +136,12 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
     \item $p_c \sim \text{Beta}(1, 9)$
-    \item $L_0=L_1=1$
-    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    \item $L_0=L_1=2$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
     \item $\alpha \sim \Gam(0.1, 0.1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
-    \item $\sigma^2_i \sim \InvGamma(3, 1)$
+    \item $\sigma^2_i \sim \InvGamma(11, 5)$
     \item $\phi =1 $
     \item Three datasets were generated with same settings, but different
       random seed.
@@ -168,7 +168,10 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{Zmean.pdf}{0.4}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Posterior means of $Z$. The simulation truth is recovered in none of
+  the runs. Each run recovers 6 of 7 features. The features that are missing are
+  either Feature 1 or Feature 2 from the simulation truth. These are features that
+  are rare, but similar to other more abundant features.}
   \label{fig:zmean}
 \end{figure}
  
