@@ -1,4 +1,4 @@
-# Experiment test simulation 6.7.12
+# Experiment test simulation 6.7.14
 
 This experiment tests the performance of intrinsic MCMC (iMCMC).
 
@@ -11,4 +11,4 @@ Notes:
 - iMCMC will be fast, but we also hope it helps with mixing, and recovers the
   simulation truth well.
 - `mu*_{zj} = (-1)^(1-z) + eps_{zj}`, `eps_{zj} ~ Unif(-.3, +.3)`
-
+- This is same as 6.7.14 but this has **no missing data**
