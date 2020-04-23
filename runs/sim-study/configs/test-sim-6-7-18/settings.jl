@@ -20,7 +20,8 @@ end
 settings = let
   Z1 = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z1.txt"), Int, comments=true))
   Z2 = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z2.txt"), Int, comments=true))
-  Z = [Z1, Z2]
+  Z3 = Matrix{Bool}(readdlm(joinpath(@__DIR__, "Z3.txt"), Int, comments=true))
+  Z = [Z1, Z2, Z3]
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
   Nfac = 2000
   N = [1, 1] *  Nfac
@@ -41,7 +42,7 @@ settings = let
         :dataseed => dataseed,
         :mcmcseed => mcmcseed,
         :outdir_suffix => outdir_suffix(dataseed, mcmcseed, phi, Zind))
-   for Zind in 1:2
+   for Zind in 1:3
    for phi in [0.0, 1.0, 10.0]
    for dataseed in 1:3
    for mcmcseed in 1:3]
