@@ -40,7 +40,7 @@ settings = let
         :batchprop => batchprop,
         :dataseed => dataseed,
         :mcmcseed => mcmcseed,
-        :outdir_suffix => outdir_suffix(dataseed, mcmcseed, phi))
+        :outdir_suffix => outdir_suffix(dataseed, mcmcseed, phi, Zind))
    for Zind in 1:2
    for phi in [0.0, 1.0, 10.0]
    for dataseed in 1:3
