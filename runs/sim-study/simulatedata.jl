@@ -137,7 +137,10 @@ function simulatedata1(; Z, N=[300, 300], L=Dict(0=>1, 1=>1),
       idx_missing = Distributions.wsample(1:N[i], p_miss, num_missing,
                                           replace=false)
       y[i][:, j] .= y_complete[i][:, j] .+ 0
-      y[i][idx_missing, j] .= NaN
+
+      if propmissingscale > 0
+        y[i][idx_missing, j] .= NaN
+      end
     end
   end
 

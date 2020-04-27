@@ -75,9 +75,8 @@ function simfn(settings::Dict{Symbol, Any})
                                W=settings[:W],  # Categorical.
                                sig2=[.5, .5],
                                seed=settings[:dataseed],
-                               propmissingscale=.6,
+                               propmissingscale=0, # NOTE: no missing data
                                sortLambda=true, 
-                               beta=[-100.0, 0.0],  # NOTE: no missing data
                                mus=Dict(0=>[-1.0], 1=>[1.0]),
                                eps_mus_dist=Uniform(-.3, .3));
 
