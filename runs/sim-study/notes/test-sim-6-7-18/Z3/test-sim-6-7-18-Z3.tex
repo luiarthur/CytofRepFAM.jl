@@ -81,17 +81,20 @@ and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
 respectively show the true $Z$ and $W$ used to generate the simulated data in
 this study. Note the following:
 \begin{itemize}
-  \item Each columns of $Z$, shown in Figure~\ref{fig:Z-true}, is different
-    from the other columns exactly by exactly two bits. In this sense, all
-    columns are "close" to each other.
-  \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
-    contains feature abundances that are small in both samples, large in both
-    samples, and large in only one sample. For example, feature $k=7$, 
-    has an abundance of $3\%$ in sample 1, and is absent in feature 2. 
-    Moreover, it has the smallest aggregate abundance across both samples. 
-    Hence, we can expect it will be least likely recovered in the analysis. 
-    Feature $k=3$, on the other hand is abundant in both samples, so we expect
-    it to be easily recovered.
+  \item Features (columns) 1, 2, and 3 are similar (maximum difference of 2).
+    In Sample 1, the first two features are rare / absent in one sample, and
+    the third feature is abundant in both samples. We suspect that feature 3 will
+    be easily recovered, and features 1 and 2 will be difficult to recover.
+  \item Features 4 and 5 are similar (difference of 1). They are rare /
+    absent in one sample and abundant in another. It is conceivable that they
+    will be merged, because they are similar. But we anticipate that since
+    they are so abundant, they will be recovered.
+  \item Feature 6 is abundant in Sample 1 but not in Sample 2. We expect it to be
+    recovered in $Z$ but it is conceivable that it will not be ``selected'' in sample
+    2. It is distinct from other features.
+  \item Feature 7 is rare in Sample 1, and absent in Sample 2. Nevertheless,
+    we expect it to recovered in $Z$ when $\phi > 0$ because it is different
+    from the other features.
 \end{itemize}
 
 \begin{figure}[H]
@@ -165,14 +168,10 @@ this study. Note the following:
   % TODO: Write more?
   \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of 
   recovered features is 3 to 6. The features most commonly missing are features
-  1 and 7, which are also the least abundant. For Data 3, when $\phi=0$, the only
-  features that were recovered are features 3, 4, and 6, which are the most
-  abundant features. Feature 5 was not recovered though it has the same aggregate
-  abundance across samples as feature 5. This could be due to feature 5 having
-  a greater abundance in one of the samples. This did not happen when $\phi>0$, 
-  where typically 1 to 2 features (features 1 and 7) were missed. This might
-  suggest that the r-FAM is better suited at identifying small subpopulations 
-  that are similar to other subpopulations.}
+  1, 2 and 7, which are also the least abundant. In addition, features 1 and 2 are 
+  similar to feature 3, which is abundant. When $\phi>0$, in many cases,
+  all seven features were recovered. At times only 6 was recovered. The feature
+  that was missing in those cases was feature 1 or 2.}
   \label{fig:zmean}
 \end{figure}
  
@@ -183,7 +182,8 @@ this study. Note the following:
     \imgtemplate{Z1.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{When $\phi=0$, duplicate features occur, especially for the
+  more abundant features.}
   \label{fig:z1est}
 \end{figure}
 
@@ -194,7 +194,8 @@ this study. Note the following:
     \imgtemplate{Z2.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{When $\phi=0$, duplicate features occur, especially for the
+  more abundant features.}
   \label{fig:z2est}
 \end{figure}
 
