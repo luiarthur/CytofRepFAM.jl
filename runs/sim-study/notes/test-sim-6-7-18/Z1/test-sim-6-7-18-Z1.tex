@@ -123,8 +123,8 @@ this study. Note the following:
   \item $(\mu_{0,j}^\star)^\true=-1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
   \item $(\mu_{1,j}^\star)^\true=1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
   \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
-  \item 3000 burn-in, followed by 3000 iterations (no thinning).
-  \item Computation time for each chains was was approximately 9.5 hours.
+  \item 6000 burn-in, followed by 3000 iterations (no thinning).
+  \item Computation time for each chains was was approximately 12.6 hours.
   \item \textbf{Some Priors / setup:}
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
@@ -133,16 +133,15 @@ this study. Note the following:
     \item $\alpha \sim \Gam(0.1, 0.1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
-    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$ % Really this.
-    % \item $\sigma^2_i \sim \InvGamma(3, 1)$ % Really this.
-    \item $\sigma^2_i \sim \InvGamma(11, 5)$
-    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
-    \item $\phi =1 $
+    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    % \item $\sigma^2_i \sim \InvGamma(3, 1)$
+    \item $\phi \in \bc{0, 1, 10}$
     \item Three datasets were generated with same settings, but different
       random seed.
     \item Three chains (different random seeds) were run for each $\phi$ and data.
     \item 5\% of data in each sample are used to sample from trained prior, and
       $M=5$ was used.
+    \item For simplicity, none of the datasets contain missing values. 
   \end{itemize}
 \end{itemize}
 
