@@ -76,33 +76,22 @@
 % TODO
 
 \section{Data Generation}\label{sec:data-generation}
-Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} respectively show the true
-$Z$ and $W$ used to generate the simulated data in this study. Note the following:
+In this study, we generate data with two samples, each containing 2000 cells,
+and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
+respectively show the true $Z$ and $W$ used to generate the simulated data in
+this study. Note the following:
 \begin{itemize}
-  \item Features (columns) 1, 2, and 3 are similar (maximum difference of 2).
-    In Sample 1, the first two features are rare / absent in one sample, and
-    the third feature is abundant in both samples. Previously, we wanted to
-    know if the first two features are prone to being absorbed into feature 3.
-    We found that using the prior $w^\star_{i,k} \sim \Gam(10, 1)$, and using
-    priors that encouraged $r_{i,k}$ to be sparse, Features 1 and 2 tend to
-    merge (into Feature 2, which is slightly larger), and Feature 3 would be in
-    its own cluster or split into two smaller identical features. We believe
-    this is due to prior information in $w^\star$ encouraging features to be
-    equally weighted.
-    In this study, we continue to monitor these kinds of behaviour.
-  \item Features 4 and 5 are similar (difference of 1). They are rare / absent
-    in one sample and abundant in another. Previously, we were also curious if
-    these two features will be merged. Although, we didn't expect them to. It
-    was conceivable that they will only be ``selected'' in one sample, but not
-    in another. We found that they were always recovered, in part, we believe,
-    because they had a large presence in one sample. We continue to monitor
-    their behaviour here.
-  \item Feature 6 is abundant in Sample 1 but not in Sample 2. We expect it to
-    be recovered in $Z$ but it is conceivable that it will not be ``selected''
-    in sample 2. It is distinct from other features.
-  \item Feature 7 is rare in Sample 1, and absent in Sample 2. Nevertheless, we
-    expect it to recovered in $Z$ because it is different from the other
-    features.
+  \item Each columns of $Z$, shown in Figure~\ref{fig:Z-true}, is different
+    from the other columns exactly by exactly two bits. In this sense, all
+    columns are "close" to each other.
+  \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
+    contains feature abundances that are small in both samples, large in both
+    samples, and large in only one sample. For example, feature $k=7$, 
+    has an abundance of $3\%$ in sample 1, and is absent in feature 2. 
+    Moreover, it has the smallest aggregate abundance across both samples. 
+    Hence, we can expect it will be least likely recovered in the analysis. 
+    Feature $k=3$, on the other hand is abundant in both samples, so we expect
+    it to be easily recovered.
 \end{itemize}
 
 \begin{figure}[H]
