@@ -141,7 +141,7 @@ this study. Note the following:
     \item Three chains (different random seeds) were run for each $\phi$ and data.
     \item 5\% of data in each sample are used to sample from trained prior, and
       $M=5$ was used.
-    \item For simplicity, none of the datasets contain missing values. 
+    \item For simplicity, none of the data sets contain missing values. 
   \end{itemize}
 \end{itemize}
 
@@ -151,8 +151,8 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{.15}{\zind}
   \end{center}
-  \caption{Log-likelihoods for each simulation setup. Burn-in may be
-  insufficient from trace plot in (d).}
+  \caption{Log-likelihood for 3000 iterations after burn-in of 6000 for each
+  simulation setup.}
   \label{fig:ll}
 \end{figure}
 
@@ -163,14 +163,16 @@ this study. Note the following:
     \imgtemplate{Zmean.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{With the exception of (c), none of the runs recover 7 columns, so
-  none of the runs capture the simulation truth completely. The two features
-  that are usually missing are either feature 1 or feature 2, or both. This is
-  reasonable, because these features are less abundant, and are similar to
-  other more abundant features. With only one component for $\mu_{z,\ell}$ in
-  the simulation truth, the posterior mean of $\sigma^2$ is closer to the
-  truth, but since $\sigma^2$ is now larger, it is harder to recover the truth
-  for $Z$.}
+  \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of 
+  recovered features is 3 to 6. The features most commonly missing are features
+  1 and 7, which are also the least abundant. For Data 3, when $\phi=0$, the only
+  features that were recovered are features 3, 4, and 6, which are the most
+  abundant features. Feature 5 was not recovered though it has the same aggregate
+  abundance across samples as feature 5. This could be due to feature 5 having
+  a greater abundance in one of the samples. This did not happen when $\phi>0$, 
+  where typically 1 to 2 features (features 1 and 7) were missed. This might
+  suggest that the r-FAM is better suited at identifying small subpopulations 
+  that are similar to other subpopulations.}
   \label{fig:zmean}
 \end{figure}
  
@@ -259,7 +261,8 @@ this study. Note the following:
     \imgtemplate{mus_trace.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{Sometimes a component of $\mu^\star_0$ is near 0.}
+  \caption{Trace plots for $\mu^\star_z$ Simulation truth for $\mu^\star_z$ 
+  is recovered.}
   \label{fig:mus-trace}
 \end{figure}
 
@@ -282,7 +285,9 @@ this study. Note the following:
     \imgtemplate{sig2_trace.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Trace plots for $\sigma^2_i$. The posterior means for $\sigma^2_i$
+  is slightly greater than that of the truth due to perturbations from the 
+  proposed model in simulating data.}
   \label{fig:sig2-trace}
 \end{figure}
 
@@ -304,7 +309,7 @@ this study. Note the following:
     \imgtemplate{dden/dden_i1_j1.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Data fit is rather good.}
   \label{fig:ddi1j1}
 \end{figure}
 
@@ -342,18 +347,17 @@ this study. Note the following:
 \end{figure}
 
 
-\newpage
-\section{Missing Mechanism}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \begin{tabular}{cc}
-      \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_1.pdf} &
-      \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_2.pdf} \\
-    \end{tabular}
-  \end{center}
-\label{fig:missmech}
-\end{figure}
-
+% \newpage
+% \section{Missing Mechanism}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \begin{tabular}{cc}
+%       \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_1.pdf} &
+%       \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_2.pdf} \\
+%     \end{tabular}
+%   \end{center}
+% \label{fig:missmech}
+% \end{figure}
 
 % % Uncomment if using bibliography:
 % % \bibliography{bib}

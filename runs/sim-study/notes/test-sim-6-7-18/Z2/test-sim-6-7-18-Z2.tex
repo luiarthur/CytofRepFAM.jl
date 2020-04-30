@@ -76,32 +76,22 @@
 % TODO
 
 \section{Data Generation}\label{sec:data-generation}
-Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} respectively show the true
-$Z$ and $W$ used to generate the simulated data in this study. Note the following:
+In this study, we generate data with two samples, each containing 2000 cells,
+and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
+respectively show the true $Z$ and $W$ used to generate the simulated data in
+this study. Note the following:
 \begin{itemize}
-  \item Features (columns) 1, 2, and 3 are similar (maximum difference of 2).
-    In Sample 1, the first two features are rare / absent in one sample, and
-    the third feature is abundant in both samples. Previously, we wanted to
-    know if the first two features are prone to being absorbed into feature 3. We
-    found that using the prior $w^\star_{i,k} \sim \Gam(10, 1)$, and using priors
-    that encouraged $r_{i,k}$ to be sparse, Features 1 and 2 tend to merge
-    (into Feature 2, which is slightly larger), and Feature 3 would be in its
-    own cluster or split into two smaller identical features. We believe this is 
-    due to prior information in $w^\star$ encouraging features to be equally weighted.
-    In this study, we continue to monitor these kinds of behaviour.
-  \item Features 4 and 5 are similar (difference of 1). They are rare / absent
-    in one sample and abundant in another. Previously, we were also curious if
-    these two features will be merged. Although, we didn't expect them to. It was
-    conceivable that they will only be ``selected'' in one sample, but not in
-    another. We found that they were always recovered, in part, we believe, because
-    they had a large presence in one sample. We continue to monitor their behaviour
-    here.
-  \item Feature 6 is abundant in Sample 1 but not in Sample 2. We expect it to be
-    recovered in $Z$ but it is conceivable that it will not be ``selected'' in sample
-    2. It is distinct from other features.
-  \item Feature 7 is rare in Sample 1, and absent in Sample 2. Nevertheless, we
-    expect it to recovered in $Z$ because it is different from the other
-    features.
+  \item Each columns of $Z$, shown in Figure~\ref{fig:Z-true}, is different
+    from the other columns exactly by exactly two bits. In this sense, all
+    columns are "close" to each other.
+  \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
+    contains feature abundances that are small in both samples, large in both
+    samples, and large in only one sample. For example, feature $k=7$, 
+    has an abundance of $3\%$ in sample 1, and is absent in feature 2. 
+    Moreover, it has the smallest aggregate abundance across both samples. 
+    Hence, we can expect it will be least likely recovered in the analysis. 
+    Feature $k=3$, on the other hand is abundant in both samples, so we expect
+    it to be easily recovered.
 \end{itemize}
 
 \begin{figure}[H]
@@ -133,8 +123,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \item $(\mu_{0,j}^\star)^\true=-1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
   \item $(\mu_{1,j}^\star)^\true=1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
   \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
-  \item 3000 burn-in, followed by 3000 iterations (no thinning).
-  \item Computation time for each chains was was approximately 9.5 hours.
+  \item 6000 burn-in, followed by 3000 iterations (no thinning).
+  \item Computation time for each chains was was approximately 12.6 hours.
   \item \textbf{Some Priors / setup:}
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
@@ -143,16 +133,15 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \item $\alpha \sim \Gam(0.1, 0.1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
-    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$ % Really this.
-    % \item $\sigma^2_i \sim \InvGamma(3, 1)$ % Really this.
-    \item $\sigma^2_i \sim \InvGamma(11, 5)$
-    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(5)$
-    \item $\phi =1 $
+    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    % \item $\sigma^2_i \sim \InvGamma(3, 1)$
+    \item $\phi \in \bc{0, 1, 10}$
     \item Three datasets were generated with same settings, but different
       random seed.
     \item Three chains (different random seeds) were run for each $\phi$ and data.
     \item 5\% of data in each sample are used to sample from trained prior, and
       $M=5$ was used.
+    \item For simplicity, none of the data sets contain missing values. 
   \end{itemize}
 \end{itemize}
 
@@ -162,8 +151,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{.15}{\zind}
   \end{center}
-  \caption{Log-likelihoods for each simulation setup. Burn-in may be
-  insufficient from trace plot in (d).}
+  \caption{Log-likelihood for 3000 iterations after burn-in of 6000 for each
+  simulation setup.}
   \label{fig:ll}
 \end{figure}
 
@@ -174,14 +163,16 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{Zmean.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{With the exception of (c), none of the runs recover 7 columns, so
-  none of the runs capture the simulation truth completely. The two features
-  that are usually missing are either feature 1 or feature 2, or both. This is
-  reasonable, because these features are less abundant, and are similar to
-  other more abundant features. With only one component for $\mu_{z,\ell}$ in
-  the simulation truth, the posterior mean of $\sigma^2$ is closer to the
-  truth, but since $\sigma^2$ is now larger, it is harder to recover the truth
-  for $Z$.}
+  \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of 
+  recovered features is 3 to 6. The features most commonly missing are features
+  1 and 7, which are also the least abundant. For Data 3, when $\phi=0$, the only
+  features that were recovered are features 3, 4, and 6, which are the most
+  abundant features. Feature 5 was not recovered though it has the same aggregate
+  abundance across samples as feature 5. This could be due to feature 5 having
+  a greater abundance in one of the samples. This did not happen when $\phi>0$, 
+  where typically 1 to 2 features (features 1 and 7) were missed. This might
+  suggest that the r-FAM is better suited at identifying small subpopulations 
+  that are similar to other subpopulations.}
   \label{fig:zmean}
 \end{figure}
  
@@ -270,7 +261,8 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{mus_trace.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{Sometimes a component of $\mu^\star_0$ is near 0.}
+  \caption{Trace plots for $\mu^\star_z$ Simulation truth for $\mu^\star_z$ 
+  is recovered.}
   \label{fig:mus-trace}
 \end{figure}
 
@@ -293,7 +285,9 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{sig2_trace.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Trace plots for $\sigma^2_i$. The posterior means for $\sigma^2_i$
+  is slightly greater than that of the truth due to perturbations from the 
+  proposed model in simulating data.}
   \label{fig:sig2-trace}
 \end{figure}
 
@@ -315,7 +309,7 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
     \imgtemplate{dden/dden_i1_j1.pdf}{0.15}{\zind}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Data fit is rather good.}
   \label{fig:ddi1j1}
 \end{figure}
 
@@ -353,18 +347,17 @@ $Z$ and $W$ used to generate the simulated data in this study. Note the followin
 \end{figure}
 
 
-\newpage
-\section{Missing Mechanism}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \begin{tabular}{cc}
-      \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_1.pdf} &
-      \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_2.pdf} \\
-    \end{tabular}
-  \end{center}
-\label{fig:missmech}
-\end{figure}
-
+% \newpage
+% \section{Missing Mechanism}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \begin{tabular}{cc}
+%       \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_1.pdf} &
+%       \includegraphics[scale=.5]{\imgdir/dataseed1-mcmcseed1-phi1.0\zind/img/missmech_2.pdf} \\
+%     \end{tabular}
+%   \end{center}
+% \label{fig:missmech}
+% \end{figure}
 
 % % Uncomment if using bibliography:
 % % \bibliography{bib}
