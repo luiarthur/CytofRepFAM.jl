@@ -1,0 +1,20 @@
+.04 .05 .39 .00 .06 .43 .03
+.00 .05 .54 .20 .14 .07 .00
+# Comments:
+# In conjunction with Z.txt,
+# this W, makes the first (similar) 
+# features in sample 1 (first row) absent
+# in the other sample. The first two
+# features in sample 1 are rare, and the
+# third feature is prominant. The first
+# three features are similar. We want
+# to see if the two rare features get merged
+# into the similar but prominant feature (3).
+# Moreover, feature 1 is absent in sample 2.
+# Features 4 and 5 are similar, but not
+# prominant or absent in sample 1.
+# Feature 5 is distinct, and prominant in 
+# sample 1. We expect it to be recovered 
+# easily. Feature 7 is rare (to absent in one
+# sample). We hope it can be recovered because 
+# it is so distinct.
