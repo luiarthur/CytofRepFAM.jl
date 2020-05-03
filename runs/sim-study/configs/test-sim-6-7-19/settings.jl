@@ -35,7 +35,7 @@ settings = let
         :thin_samps => 1,
         :nburn => 6000,
         :nsamps => 3000,
-        :Lmcmc => Dict(0 => 1, 1 => 1),
+        :Lmcmc => Dict(0 => 3, 1 => 3),
         :Kmcmc => 10,
         :pthin => pthin,
         :batchprop => batchprop,
