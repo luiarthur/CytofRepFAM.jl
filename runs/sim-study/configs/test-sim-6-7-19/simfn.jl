@@ -73,13 +73,13 @@ function simfn(settings::Dict{Symbol, Any})
   @time simdat = simulatedata2(Z=settings[:Z],
                                N=settings[:N],
                                W=settings[:W],  # Categorical.
-                               sig2=[.25, .25],
+                               sig2=[.5, .5],
                                mus=Dict(0=>[-1.0], 1=>[1.0]),
-                               skew=-0.97,
+                               skew=-0.9,
                                seed=settings[:dataseed],
                                propmissingscale=0, # NOTE: no missing data
                                sortLambda=true, 
-                               eps_mus_dist=Uniform(-.1, .1));
+                               eps_mus_dist=Uniform(-.3, .3));
 
   # Parameters to monitor
   monitor1 = [:theta__Z, :theta__v, :theta__alpha,

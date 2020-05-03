@@ -15,15 +15,15 @@ function simulatedata2(; Z, W, N::Vector{Int},
   J, K = size(Z)
   I = length(N)
 
+  # Create dict of L
+  L = Dict(0 => length(mus[0]),
+           1 => length(mus[1]))
+
   @assert size(W) == (I, K)
   @assert length(sig2) == I
   @assert all(sig2 .> 0)
   @assert all(length(mus[key]) == L[key] for key in keys(L))
   @assert all(N .> 0)
-
-  # Create dict of L
-  L = Dict(0 => length(mus[0]),
-           1 => length(mus[1]))
 
   # Simulate cell phenotypes (lambda)
   lam = [begin
@@ -42,22 +42,24 @@ function simulatedata2(; Z, W, N::Vector{Int},
 
   eps_mus = let
     if eps_mus_dist != nothing
-      rand(eps_mus_dist, 2, I, J)
+      rand(eps_mus_dist, J)
     else
-      zeros(2, I, J)
+      zeros(J)
     end
   end
 
   function mu(i::Int, n::Int, j::Int)
     @assert L[0] == L[1] == 1
-    return mus[z(i, n, j)][1] + eps_mus[z, i, j]
+    z_inj = z(i, n, j)
+    return mus[z_inj][1] + eps_mus[j]
   end
 
   for i in 1:I
     sig_i = sqrt(sig2[i])
     for j in 1:J
       for n in 1:N[i]
-        y_complete[i][n, j] = rand(Normal(mu(i, n, j), sig_i))
+        # y_complete[i][n, j] = rand(Normal(mu(i, n, j), sig_i))
+        y_complete[i][n, j] = rand_skewnormal(mu(i, n, j), sig_i, skew)
       end
       # Set some y to be missing
       # Using a linear missing mechanism to rate missingness
@@ -82,5 +84,5 @@ function simulatedata2(; Z, W, N::Vector{Int},
 
   return Dict(:Z => Z, :N => N, :L => L, :mus => mus, :W => W, :seed => seed,
               :lam => lam, :sig2 => sig2, :y => y, :y_complete => y_complete,
-              :beta => beta, :eps_mus => eps_mus)
+              :beta => beta, :eps_mus => eps_mus, :skewnormal => true)
 end

@@ -44,6 +44,6 @@ settings = let
         :outdir_suffix => outdir_suffix(dataseed, mcmcseed, phi, Zind))
    for Zind in 1:3
    for phi in [0.0, 1.0, 10.0]
-   for dataseed in 1:3
+   for dataseed in 1:1
    for mcmcseed in 1:3]
 end
