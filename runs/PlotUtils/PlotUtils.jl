@@ -377,7 +377,8 @@ function make_metrics(different_K_runs_dir, outputfname; thresh,
 end
 
 function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
-                   ygrid, imgdir, printmean=true,
+                   ygrid, imgdir, printmean=true, 
+                   plot_true=true,
                    simdat=nothing, xlabel="expression level", ylabel="density",
                    dden_xlim=(-6, 6))
   # Make directories if needed
@@ -469,7 +470,9 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
                               simdat[:Z], simdat[:mus],
                               simdat[:sig2], i=i, j=j)
 
-        p_truth_complete, = plt.plot(ygrid, dgrid, color="grey", ls="--")
+        if plot_true
+          p_truth_complete, = plt.plot(ygrid, dgrid, color="grey", ls="--")
+        end
       else
         # TODO: Plot histogram of data
       end
@@ -498,10 +501,17 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
                                        color="orange")
 
       # TODO: PICK UP HERE
-      plt.legend([p_truth_complete, p_ci_complete,
-                  p_yobs, p_ci_obs, p_mu],
-                 ["truth (complete)", "95% CI (complete)",
-                  "y (obs)", "95% CI (obs)", PyPlot.L"$\mu^\star$"])
+      if plot_true
+        plt.legend([p_truth_complete, p_ci_complete,
+                    p_yobs, p_ci_obs, p_mu],
+                   ["truth (complete)", "95% CI (complete)",
+                    "y (obs)", "95% CI (obs)", PyPlot.L"$\mu^\star$"])
+      else
+        plt.legend([p_ci_complete,
+                    p_yobs, p_ci_obs, p_mu],
+                   ["95% CI (complete)",
+                    "y (obs)", "95% CI (obs)", PyPlot.L"$\mu^\star$"])
+      end
       plt.savefig("$(imgdir)/dden/dden_i$(i)_j$(j).pdf",
                   bbox_inches="tight")
       plt.close()
