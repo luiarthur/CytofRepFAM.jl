@@ -8,6 +8,7 @@ build:
 
 clean:
 	latexmk -c
+	rm -f *.bbl *.synctex.gz
 
 cleanall: clean
 	latexmk -C
