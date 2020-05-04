@@ -28,11 +28,12 @@ SHELL:=/bin/bash
 # SIM_EXP_NAME = test-sim-6-7-16
 # SIM_EXP_NAME = test-sim-6-7-17
 # SIM_EXP_NAME = test-sim-6-7-18
+# SIM_EXP_NAME = test-sim-6-7-19
 
 # NOTE: completed, but unprocessed
 # SIM_EXP_NAME = test-sim-6-7-11
 
-SIM_EXP_NAME = test-sim-6-7-19
+SIM_EXP_NAME = test-sim-6-7-20
 
 # Run script
 RUN_SCRIPT = run.jl
