@@ -39,8 +39,8 @@
 
 % Uncomment if using bibliography
 % Bibliography
-% \usepackage{natbib}
-% \bibliographystyle{plainnat}
+\usepackage{natbib}
+\bibliographystyle{plainnat}
 
 % Adds settings for hyperlinks. (Mainly for table of contents.)
 \usepackage{hyperref}
@@ -80,9 +80,17 @@ and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
 respectively show the true $Z$ and $W$ used to generate the simulated data in
 this study. Note the following:
 \begin{itemize}
-  \item Each columns of $Z$, shown in Figure~\ref{fig:Z-true}, is different
-    from the other columns exactly by exactly two bits. In this sense, all
-    columns are "close" to each other.
+  \item Three $Z$'s, shown in Figure~\ref{fig:Z-true}, were used in this study.
+  \begin{itemize}
+    \item In $Z^{1,\true}$, each column is different from the other columns exactly
+    by exactly two bits. In this sense, all columns are "close" to each
+    other.
+    \item In $Z^{2,\true}$, each column is different from the other columns exactly
+    by exactly six bits. In this sense, all columns are "far" to each
+    other.
+    \item In $Z^{3,\true}$, the first three columns are similar. Columns 4 and 5 are 
+    close to each other. And columns 6 and 7 are distinct from other columns. 
+  \end{itemize}
   \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
     contains feature abundances that are small in both samples, large in both
     samples, and large in only one sample. For example, feature $k=7$, 
@@ -95,9 +103,21 @@ this study. Note the following:
 
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \includegraphics[scale=0.5]{\imgdir/dataseed1-mcmcseed1-phi1.0-Zind1/img/Z_true.pdf}
+    \begin{tabular}{ccc}
+      \includegraphics[scale=0.4]{\imgdir/dataseed1-mcmcseed1-phi1.0-Zind1/img/Z_true.pdf} &
+      \includegraphics[scale=0.4]{\imgdir/dataseed1-mcmcseed1-phi1.0-Zind2/img/Z_true.pdf} &
+      \includegraphics[scale=0.4]{\imgdir/dataseed1-mcmcseed1-phi1.0-Zind3/img/Z_true.pdf} \\
+      %
+      (a) $Z^{1,\true}$ &
+      (b) $Z^{2,\true}$ &
+      (c) $Z^{3,\true}$ \\
+      %
+      column-distances of 2 bits &
+      column-distances of 6 bits &
+      mix of similar and distinct columns \\
+    \end{tabular}
   \end{center}
-  \caption{$Z^\true$}
+  \caption{Simulation truth of $Z$ for three scenarios.}
   \label{fig:Z-true}
 \end{figure}
 
@@ -119,9 +139,14 @@ this study. Note the following:
 
 \subsection{More on data generation / MCMC setup}
 \begin{itemize}
-  \item $(\mu_{0,j}^\star)^\true=-1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
-  \item $(\mu_{1,j}^\star)^\true=1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
-  \item ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
+  \item We generated $y_{inj}$ from skew Normal distributions. Specifically,
+  \begin{itemize}
+    \item Location parameter: $(\mu_{0,j}^\star)^\true=-1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
+    \item Location parameter: $(\mu_{1,j}^\star)^\true=1 + \epsilon_j$, $\epsilon_j \sim \Uniform(-0.3, 0.3)$
+    \item Scale parameter: ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
+    \item The skewness parameter $\zeta$ was set to -0.9. Note that $\zeta$
+          corresponds to $\delta \in \p{-1, 1}$ in \cite{fruhwirth2010bayesian}.
+  \end{itemize}
   \item 6000 burn-in, followed by 3000 iterations (no thinning).
   \item Computation time for each chains was was approximately 12.6 hours.
   \item \textbf{Some Priors / setup:}
@@ -135,9 +160,9 @@ this study. Note the following:
     % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
     % \item $\sigma^2_i \sim \InvGamma(3, 1)$
     \item $\phi \in \bc{0, 1, 10}$
-    \item Three datasets were generated with same settings, but different
-      random seed.
-    \item Three chains (different random seeds) were run for each $\phi$ and data.
+    \item The simulation study was done for each of the true $Z$'s in 
+          Figure~\ref{fig:Z-true}.
+    \item Three chains (different random seeds) were run for each $\phi$ and data set.
     \item 5\% of data in each sample are used to sample from trained prior, and
       $M=5$ was used.
     \item For simplicity, none of the data sets contain missing values. 
@@ -151,7 +176,8 @@ this study. Note the following:
     \imgtemplate{loglike_postburn.pdf}{.15}
   \end{center}
   \caption{Log-likelihood for 3000 iterations after burn-in of 6000 for each
-  simulation setup.}
+  simulation setup. \textbf{More burn-in} is needed in at least three of the runs
+  (e.g. (k), (l), (t)).}
   \label{fig:ll}
 \end{figure}
 
@@ -162,16 +188,28 @@ this study. Note the following:
     \imgtemplate{Zmean.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of 
-  recovered features is 3 to 6. The features most commonly missing are features
-  1 and 7, which are also the least abundant. For Data 3, when $\phi=0$, the only
-  features that were recovered are features 3, 4, and 6, which are the most
-  abundant features. Feature 5 was not recovered though it has the same aggregate
-  abundance across samples as feature 5. This could be due to feature 5 having
-  a greater abundance in one of the samples. This did not happen when $\phi>0$, 
-  where typically 1 to 2 features (features 1 and 7) were missed. This might
-  suggest that the r-FAM is better suited at identifying small subpopulations 
-  that are similar to other subpopulations.}
+  \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of
+  recovered features is 0 to 1, for $Z^{1,\true}$. In contrast, number of
+  recovered features when $\phi > 0$ is between 6 and 7, with the missing
+  feature being feature 7. This is perhaps due to the added left-skew in the observed
+  data, making it more feasible for features to be explained by mixture components
+  with negative means. The $\sigma_2^i$ learned when $\phi=0$ tended to be
+  much larger as well. Again, mixing may also be better when $\phi>0$ because 
+  the exploration of different configurations of $Z$ is encourage. There is a
+  tendency for $Z$ to be extremely sparse when $\phi=0$, due to the IBP prior.
+  %
+  For $Z^{2,\true}$, between 2 and 6 features were recovered when $\phi=0$.
+  When $\phi > 0$, all features were recovered. But in $(n)$, 
+  eight features were recovered, the extra feature being similar to one of the
+  features. However, it's estimated abundance was less than 1\%.
+  %
+  For Data 3, when $\phi=0$, the only features that were recovered are
+  features 3, 5, 6, and 7, which are the most representative features. i.e.
+  Features 1 and 2, which are rare, are merged with feature 3, which is
+  abundant and similar to the former features. When $\phi>0$, 6 to 7 features were
+  recovered. The missing features were either feature 1 or 2, which is similar to 
+  and merged with feature 3. Feature 7, though rare, was recovered, likely because
+  it is distinct.}
   \label{fig:zmean}
 \end{figure}
  
@@ -260,8 +298,9 @@ this study. Note the following:
     \imgtemplate{mus_trace.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{Trace plots for $\mu^\star_z$ Simulation truth for $\mu^\star_z$ 
-  is recovered.}
+  \caption{Trace plots for $\mu^\star_z$. Note that in (a) and (j) the variance
+  for the positive mean components is large because they are not used. Effectively,
+  they are being sampled from the prior.}
   \label{fig:mus-trace}
 \end{figure}
 
@@ -284,9 +323,8 @@ this study. Note the following:
     \imgtemplate{sig2_trace.pdf}{0.15}
   \end{center}
   % TODO: Write more?
-  \caption{Trace plots for $\sigma^2_i$. The posterior means for $\sigma^2_i$
-  is slightly greater than that of the truth due to perturbations from the 
-  proposed model in simulating data.}
+  \caption{Trace plots for $\sigma^2_i$. Note the jump in (t) is similar
+  to the jump in the log likelihood.}
   \label{fig:sig2-trace}
 \end{figure}
 
@@ -345,6 +383,27 @@ this study. Note the following:
   \label{fig:ddi2j2}
 \end{figure}
 
+\newpage
+\section{Posterior distributions for sample 2 marker 6}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i1_j6.pdf}{0.15}
+  \end{center}
+  % TODO: Write more?
+  \caption{}
+  \label{fig:ddi1j6}
+\end{figure}
+
+\newpage
+\section{Posterior distributions for sample 2 marker 6}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{dden/dden_i2_j6.pdf}{0.15}
+  \end{center}
+  % TODO: Write more?
+  \caption{}
+  \label{fig:ddi2j6}
+\end{figure}
 
 % \newpage
 % \section{Missing Mechanism}
@@ -358,7 +417,7 @@ this study. Note the following:
 % \label{fig:missmech}
 % \end{figure}
 
-% % Uncomment if using bibliography:
-% % \bibliography{bib}
+% Uncomment if using bibliography:
+\bibliography{sim}
 
 \end{document}
