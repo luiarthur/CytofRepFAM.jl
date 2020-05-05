@@ -42,16 +42,18 @@ function simulatedata2(; Z, W, N::Vector{Int},
 
   eps_mus = let
     if eps_mus_dist != nothing
-      rand(eps_mus_dist, J)
+      Dict(0 => rand(eps_mus_dist, I, J),
+           1 => rand(eps_mus_dist, I, J))
     else
-      zeros(J)
+      Dict(0 => zeros(I, J),
+           1 => zeros(I, J))
     end
   end
 
   function mu(i::Int, n::Int, j::Int)
     @assert L[0] == L[1] == 1
     z_inj = z(i, n, j)
-    return mus[z_inj][1] + eps_mus[j]
+    return mus[z_inj][1] + eps_mus[z_inj][i, j]
   end
 
   for i in 1:I
