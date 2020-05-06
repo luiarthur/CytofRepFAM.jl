@@ -11,6 +11,9 @@
 #   - `transformed-data/`: transformed data used in analysis
 #   - `data/`: cleaned raw data (consistent marker names and file naming)
 #   - `img/`: some pdf of the distribution of each marker expression
+#   - Put downloaded data in data/. For example:
+#       - data/data/
+#       - data/transformed-data/
 convert:
 	python3 sanitize.py
 	libreoffice --headless --convert-to csv --outdir data/cutoff data/*.xlsx
