@@ -1,6 +1,7 @@
 # Load imports
 include(joinpath(@__DIR__, "../../imports.jl"))
 include(joinpath(@__DIR__, "../../../PlotUtils/PlotUtils.jl"))
+using DataFrames, CSV
 import StatsBase
 const plt = PlotUtils.plt
 import Seaborn
@@ -47,3 +48,19 @@ df_stacked = stack(df, Not(:feature), variable_name=:marker, value_name=:y)
 CSV.write("img/df.csv", df_stacked)
 
 # Do the rest in python: dev.py
+
+### Check simdat ###
+
+# Read simulation data
+simdat = BSON.load(joinpath(path_to_results, "simdat.bson"))[:simdat]
+complete_data = vcat([begin
+  y = simdat[:y_complete][1][lam_best[1] .== k, 7:9]
+  cluster = fill(k, size(y, 1))
+  [y cluster]
+end for k in 7:10]...)
+
+df = DataFrame(complete_data, [:m7, :m8, :m9, :feature])
+df_stacked = stack(df, Not(:feature), variable_name=:marker, value_name=:y)
+CSV.write("img/df_complete.csv", df_stacked)
+
+
