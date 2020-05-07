@@ -1,4 +1,4 @@
-data_dir = ../data
+data_dir = ../data/patients
 aws_bucket = s3://cytof-repfam/data/patients
 
 send-data:
