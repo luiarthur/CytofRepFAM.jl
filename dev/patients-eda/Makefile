@@ -1,3 +1,6 @@
+data_dir = data
+aws_bucket = s3://cytof-repfam/data/patients
+
 # NOTE: I manu8ally did the following:
 # - download data from Google Drivbe
 # - Ignore patient all patient 5 data because it is in Excel 2007 format,
@@ -14,7 +17,13 @@
 #   - Put downloaded data in data/. For example:
 #       - data/data/
 #       - data/transformed-data/
+# - From now on, pull and push data using S3!
 convert:
 	python3 sanitize.py
 	libreoffice --headless --convert-to csv --outdir data/cutoff data/*.xlsx
 
+send-data:
+	aws s3 sync $(data_dir) $(aws_bucket)
+
+get-data:
+	aws s3 sync $(aws_bucket) $(data_dir)

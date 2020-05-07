@@ -79,17 +79,19 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
     j = j + 1
     data.index = which(data.markernames == marker)
     cutoff.index = which(cutoff.markernames == marker)
-    numer = log(as.numeric(f.contents[, data.index]))
+    numer = as.numeric(f.contents[, data.index])
     denom = as.numeric(cutoff[cutoff.index])
-    marker.trans =  numer / denom
+    marker.trans =  log(numer) - log(denom)
     marker.trans = ifelse(is.infinite(marker.trans), NA, marker.trans)
-    trans.data[, j] =-marker.trans
-    hist(marker.trans, breaks=20,
+    trans.data[, j] = -marker.trans
+    hist(marker.trans, breaks=30,
          prob=TRUE, xlab=marker, main='',
-         xlim=c(-4, 4))
+         xlim=c(-1, 1) * 6)
     legend('topleft', legend=c(paste0('missing: ',
                                       round(prop.miss[data.index] * 100, 1), '%'),
-                               paste('cells:', data.size[1])),
+                               paste('cells:', data.size[1]),
+                               paste('sd: ', 
+                                     round(sd(marker.trans, na.rm=TRUE), 2))),
            text.font=2, text.col='red', cex=.9, bty='n')
   }
   par(mfrow=c(1, 1), mar=rcommon::mar.default(), oma=rcommon::oma.default())
