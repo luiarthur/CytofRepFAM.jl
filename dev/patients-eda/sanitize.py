@@ -7,11 +7,8 @@ def sanitize(fpath):
         os.rename(fpath, fpath_clean)
 
 if __name__ == '__main__':
-    datadir = 'data/'
+    datadir = 'data/raw'
 
     for f in os.listdir(datadir):
         sanitize('{}/{}'.format(datadir, f))
-
-
-
 

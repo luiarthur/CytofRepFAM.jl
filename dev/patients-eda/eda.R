@@ -38,20 +38,23 @@ filter.data.files = function(files) {
 # Function to get dimensions, percent of missing for each file.
 # Make plots of observed data?
 get.info = function(f, imgdir='img/', datadir=data.dir,
-                    cutoffdir=paste0(datadir, 'cutoff/'), verbose=0) {
+                    rawdatadir=paste0(datadir, 'raw/'),
+                    cutoffdir=paste0(datadir, 'cutoff/'),
+                    transdatadir=paste0(datadir, 'transformed-data/'),
+                    verbose=0) {
   f.contents = read.csv(f)
   colnames(f.contents) = sanitize.markers(colnames(f.contents))
   data.size = dim(f.contents)
   prop.miss = apply(f.contents, 2, function(x) mean(x==0))
 
   # Create names of output if needed
-  outfile = gsub(x=f, pattern=datadir, replacement='')
+  outfile = gsub(x=f, pattern=rawdatadir, replacement='')
   outfile = gsub(x=outfile, pattern='.csv', replacement='.pdf')
   outfile = paste0(imgdir, outfile)
   cat('Processing: ', outfile, '\n')
 
   # Cutoff filepath
-  cutoff.path = gsub(x=f, pattern=datadir, replacement=cutoffdir)
+  cutoff.path = gsub(x=f, pattern=rawdatadir, replacement=cutoffdir)
   cutoff = read.tcsv(cutoff.path)
   colnames(cutoff) = sanitize.markers(colnames(cutoff))
 
@@ -98,8 +101,8 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
   dev.off()
 
   # Write transformed data
-  dir.create(paste0(datadir, 'transformed-data/'), showWarn=FALSE)
-  fout = gsub(x=f, pattern=datadir, paste0(datadir, 'transformed-data/'))
+  dir.create(transdatadir, showWarn=FALSE)
+  fout = gsub(x=f, pattern=rawdatadir, transdatadir)
   write.csv(trans.data, file=fout, quote=FALSE, row.names=FALSE)
   
   c(nrows=data.size[1], ncols=data.size[2], prop.miss=prop.miss)
@@ -107,9 +110,10 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
 
 # Data directory
 data.dir = 'data/'
+raw.data.dir = paste0(data.dir, 'raw/')
 
 # List files in current directory
-files = paste0(data.dir, list.files(data.dir))
+files = paste0(raw.data.dir, list.files(raw.data.dir))
 
 # Filter out the expression-level files 
 data.files = filter.data.files(files)
