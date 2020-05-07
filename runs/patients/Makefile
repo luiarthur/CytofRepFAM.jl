@@ -1,11 +1,8 @@
 data_dir = ../data
-aws_bucket = s3://cytof-repfam/data
+aws_bucket = s3://cytof-repfam/data/patients
 
-path_to_transformed_patients_data = $(data_dir)/transformed-patients-data
-aws_path_to_transformed_patients_data = $(aws_bucket)/transformed-patients-data
+send-data:
+	aws s3 sync $(data_dir) $(aws_bucket)
 
-send-transformed-patients-data:
-	aws s3 sync $(path_to_transformed_patients_data) $(aws_path_to_transformed_patients_data)
-
-get-transformed-patients-data:
-	aws s3 sync $(aws_path_to_transformed_patients_data) $(path_to_transformed_patients_data) 
+get-data:
+	aws s3 sync $(aws_bucket) $(data_dir)
