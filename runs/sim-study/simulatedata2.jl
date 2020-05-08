@@ -6,6 +6,7 @@ function simulatedata2(; Z, W, N::Vector{Int},
                        skew::Float64,
                        sortLambda=false, seed=nothing,
                        propmissingscale=0.3,
+                       expressed_not_missing=false,
                        beta=[-9.2, -2.3],  # linear missing mechanism
                        eps_mus_dist=Uniform(-.3, .3))
   if seed != nothing
@@ -67,6 +68,14 @@ function simulatedata2(; Z, W, N::Vector{Int},
       # Using a linear missing mechanism to rate missingness
       p_miss = [CytofRepFAM.Model.prob_miss(y_complete[i][n, j], beta)
                 for n in 1:N[i]]
+
+      # If I want to truly expressed cells to not be missing:
+      if expressed_not_missing
+        # If Z_inj == 1, then p_miss = 0
+        # Otherwise, p_miss = p_miss
+        p_miss .* = [1 - z(i, n, j) for n in 1:N[i]]
+      end
+
       # If this is not used, then many positive markers may be missing too.
       prop_not_expressed = sum(W[i,:] .* (1 .- Z[j,:]))
       # If propmissingscale is 1, about all the non-expressed observations
