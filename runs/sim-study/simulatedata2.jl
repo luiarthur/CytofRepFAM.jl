@@ -73,7 +73,7 @@ function simulatedata2(; Z, W, N::Vector{Int},
       if expressed_not_missing
         # If Z_inj == 1, then p_miss = 0
         # Otherwise, p_miss = p_miss
-        p_miss .* = [1 - z(i, n, j) for n in 1:N[i]]
+        p_miss .*= [1 - z(i, n, j) for n in 1:N[i]]
       end
 
       # If this is not used, then many positive markers may be missing too.
