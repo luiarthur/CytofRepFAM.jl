@@ -36,12 +36,13 @@ cm2 = StatsBase.countmap(lam_best[2])
 [k => v / output[:d].data.N[1] for (k, v) in cm1]
 [k => v / output[:d].data.N[2] for (k, v) in cm2]
 
-
+i = 2
+features = (1, 2, 8)
 data = vcat([begin
-  y = output[:lastState].theta.y_imputed[1][lam_best[1] .== k, 7:9]
+  y = output[:lastState].theta.y_imputed[i][lam_best[i] .== k, 7:9]
   cluster = fill(k, size(y, 1))
   [y cluster]
-end for k in 7:10]...)
+end for k in features]...)
 
 df = DataFrame(data, [:m7, :m8, :m9, :feature])
 df_stacked = stack(df, Not(:feature), variable_name=:marker, value_name=:y)
@@ -54,10 +55,10 @@ CSV.write("img/df.csv", df_stacked)
 # Read simulation data
 simdat = BSON.load(joinpath(path_to_results, "simdat.bson"))[:simdat]
 complete_data = vcat([begin
-  y = simdat[:y_complete][1][lam_best[1] .== k, 7:9]
+  y = simdat[:y_complete][i][lam_best[i] .== k, 7:9]
   cluster = fill(k, size(y, 1))
   [y cluster]
-end for k in 7:10]...)
+end for k in features]...)
 
 df = DataFrame(complete_data, [:m7, :m8, :m9, :feature])
 df_stacked = stack(df, Not(:feature), variable_name=:marker, value_name=:y)
