@@ -41,7 +41,7 @@ end
 function preimpute!(y::Matrix{T}, missMean::AbstractFloat,
                     missSD::AbstractFloat=0.2) where {T <: Number}
   num_missing = sum(isnan.(y))
-  y[isnan.(y)] .= randn(num_missing) .- missMean
+  y[isnan.(y)] .= missMean .+ randn(num_missing) * missSD
 end
 
 
