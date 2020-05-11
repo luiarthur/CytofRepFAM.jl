@@ -41,7 +41,8 @@ end
 function preimpute!(y::Matrix{T}, missMean::AbstractFloat,
                     missSD::AbstractFloat=0.2) where {T <: Number}
   num_missing = sum(isnan.(y))
-  y[isnan.(y)] .= missMean .+ randn(num_missing) * missSD
+  # y[isnan.(y)] .= missMean .+ randn(num_missing) * missSD
+  y[isnan.(y)] .= rand(TruncatedNormal(missMean, missSD, -Inf, 0))
 end
 
 
