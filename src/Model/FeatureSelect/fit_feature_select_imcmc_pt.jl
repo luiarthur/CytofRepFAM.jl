@@ -7,12 +7,12 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
                           tempers::Vector{Float64},
                           inits=nothing,
                           save_all_states=false,
-                          remove_current_workers::Bool=true,
                           randpair=0.0,
                           # End of PT Args.
                           # Args are for iMCMC:
                           batchprop::Float64=0.1, prior_thin::Int=2,
                           imcmc_burn_prop=0.6,
+                          swap_freq::Float64=1.0,
                           # End of iMCMC args.
                           tfs::Union{Nothing, Vector{TunersFS}}=nothing,
                           monitors=[monitor1, monitor2],
@@ -138,6 +138,7 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
     if verbose > 0
       println()
     end
+
     llf(s, tuner) = compute_marg_loglike(s, cfs.constants, dfs.data, tuner)
 
     if swap_freq > rand()
@@ -159,19 +160,19 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
     d = dfs
     ll = args[1][:ll]
 
-    # Append loglike
-    append!(ll, compute_marg_loglike(s, c, d, 1.0))
+    # # Append loglike
+    append!(ll, compute_marg_loglike(s.theta, c.constants, d.data, 1.0))
 
     if computedden && iter > nburn && (iter - nburn) % thin_dden == 0
       # NOTE: `datadensity(s, c, d)` returns an (I x J) matrix of vectors of
       # length g.
-      append!(dden, [datadensity(s, c, d)])
+      append!(dden, [datadensity(s.theta, c.constants, d.data)])
     end
 
     if computeLPML && iter > nburn
       # Inverse likelihood for each data point
-      like = [[compute_like(i, n, s, c, d)
-               for n in 1:d.N[i]] for i in 1:d.I]
+      like = [[compute_like(i, n, s.theta, c.constants, d.data)
+               for n in 1:d.data.N[i]] for i in 1:d.data.I]
 
       # Update (or initialize) CPO
       MCMC.updateCPO(cpoStream, vcat(like...))
@@ -182,7 +183,7 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
 
     if computeDIC && iter > nburn
       # Update DIC
-      MCMC.updateDIC(dicStream, s, updateParams,
+      MCMC.updateDIC(dicStream, s.theta, updateParams,
                      loglikeDIC, convertStateToDicParam)
 
       # Add to printMsg
@@ -214,7 +215,7 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
 
   # Create Args
   args = [let
-            ll = Float64[]
+            ll = Float64[]  # FIXME
             c = deepcopy(cfs)
             c.constants.temper = tempers[i]
             t = if tfs == nothing
@@ -238,8 +239,8 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
   end
 
   out = Dict(:samples => samples,
-             :lastState => state,
-             :init => init,
+             :lastState => states[1],
+             :inits => inits,
              :c => cfs,
              :d => dfs,
              :lls => [arg[:ll] for arg in args],
