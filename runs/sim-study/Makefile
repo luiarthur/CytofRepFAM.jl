@@ -39,8 +39,8 @@ SHELL:=/bin/bash
 SIM_EXP_NAME = test-sim-6-8-1
 
 # Run script
-RUN_SCRIPT = run.jl
-# RUN_SCRIPT = run-pt.jl
+# RUN_SCRIPT = run.jl
+RUN_SCRIPT = run-pt.jl
 
 # Simulation settings dir
 SIM_CONFIG_DIR = configs/$(SIM_EXP_NAME)
