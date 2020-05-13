@@ -29,6 +29,7 @@ settings = let
   batchprop = 0.05
   dataseed = 1
   mcmcseed = 1
+  temperatures = [1.0, 1.003, 1.006, 1.01]
 
   [Dict(:simname => simname,
         :repfam_dist_scale => phi,
@@ -41,6 +42,8 @@ settings = let
         :Lmcmc => Dict(0 => 3, 1 => 3),
         :Kmcmc => 10,
         :pthin => pthin,
+        :temperatures => temperatures,
+        :ntemps => length(temperatures),
         :batchprop => batchprop,
         :dataseed => dataseed,
         :mcmcseed => mcmcseed,

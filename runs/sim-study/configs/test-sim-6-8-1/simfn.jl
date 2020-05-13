@@ -46,13 +46,10 @@ function simfn(settings::Dict{Symbol, Any})
 
     # Initialize state.
     # s = rfam.smartInit(c, d)  # mclust init
-    s = rfam.smartInit(c, d, modelNames="kmeans",
-                                    seed=settings[:mcmcseed],
-                                    iterMax=30)  # kmeans init
-    # NOTE: Random inits.
-    # s = rfam.genInitialState(c, d,
-    #                          sb_ibp=false,
-    #                          allow_repeated_Z_columns=false)
+    states = [rfam.smartInit(c, d, modelNames="kmeans",
+                             seed=settings[:mcmcseed] + s,
+                             iterMax=30)  # kmeans init
+              for s in 1:settings[:ntemps]]
 
     t = rfam.Tuners(d.y, c.K)
     X = rfam.eye(Float64, d.I)
@@ -65,10 +62,10 @@ function simfn(settings::Dict{Symbol, Any})
     cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
 
     dfs = rfam.DataFS(d, X)
-    sfs = rfam.StateFS{Float64}(s, dfs)
-    tfs = rfam.TunersFS(t, s, X)
+    sfss = [rfam.StateFS{Float64}(s, dfs) for s in states]
+    tfs = rfam.TunersFS(t, states[1], X)
 
-    return Dict(:dfs => dfs, :cfs => cfs, :sfs => sfs, :tfs => tfs,
+    return Dict(:dfs => dfs, :cfs => cfs, :sfss => sfss, :tfs => tfs,
                 :simdat => simdat)
   end
 
@@ -113,11 +110,13 @@ function simfn(settings::Dict{Symbol, Any})
 
   # Fit model
   @time out = rfam.fit_fs_tp!(
-    config[:sfs], config[:cfs], config[:dfs],
+    config[:cfs], config[:dfs],
+    inits=[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
-    temper=1.0, anneal=true, mb_update_burn_prop=0.7,
+    tempers=settings[:temperatures],
+    randpair=1.0, swap_freq=1.0,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,
@@ -128,7 +127,7 @@ function simfn(settings::Dict{Symbol, Any})
     computeLPML=true,
     thins=[settings[:thin_samps],
            nsamps_to_thin(10, mcmc_iter)],
-    thin_dden=nsamps_to_thin(200, mcmc_iter),
+    ndden=200,
     time_updates=false,
     verbose=3)
 
