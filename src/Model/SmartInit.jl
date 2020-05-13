@@ -50,6 +50,9 @@ end
 function smartInit(c::Constants, d::Data;
                    iterMax::Int=10, modelNames::String="VVI",
                    warn::Bool=true, seed=0) where {T <: Number}
+  if seed > 0
+    Random.seed!(seed)
+  end
 
   if modelNames != "kmeans"
     load_or_install_mclust()
