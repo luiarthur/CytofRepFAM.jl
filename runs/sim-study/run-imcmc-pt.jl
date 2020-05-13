@@ -64,5 +64,5 @@ end
 # - f::Function: A function which takes one argument of type Dict{Any}
 # - settings::Vector{Dict}): A vector of settings
 println("Starting jobs ..."); flush(stdout)
-_ = asyncmap(sim, settings);
+@time _ = asyncmap(sim, settings);
 println("DONE with all runs!")
