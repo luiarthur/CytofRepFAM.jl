@@ -44,6 +44,7 @@ settings = let
         :pthin => pthin,
         :temperatures => temperatures,
         :ntemps => length(temperatures),
+        :propmissingscale => propmissingscale,
         :batchprop => batchprop,
         :dataseed => dataseed,
         :mcmcseed => mcmcseed,
