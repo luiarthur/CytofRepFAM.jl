@@ -127,7 +127,7 @@ function simfn(settings::Dict{Symbol, Any})
     computeLPML=true,
     thins=[settings[:thin_samps],
            nsamps_to_thin(10, mcmc_iter)],
-    ndden=200,
+    ndden_samps=200,
     time_updates=false,
     verbose=3)
 
