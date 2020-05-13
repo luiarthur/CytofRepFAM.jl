@@ -36,9 +36,10 @@ setnumcores(ncores)
 @everywhere include("imports.jl")  # Load on main node.
 
 println("Sourcing files ..."); flush(stdout)
-include("$(SIMDIR)/simfn.jl")
+@everywhere SIMDIR = $SIMDIR
+@everywhere include("$(SIMDIR)/simfn.jl")
 
-function sim(setting)
+@everywhere function sim(setting)
   results_dir = setting[:results_dir]
   aws_bucket = setting[:aws_bucket]
   mkpath(results_dir)
