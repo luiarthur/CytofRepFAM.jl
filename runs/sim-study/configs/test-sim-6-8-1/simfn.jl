@@ -109,7 +109,7 @@ function simfn(settings::Dict{Symbol, Any})
   flush(stdout)
 
   # Fit model
-  @time out = rfam.fit_fs_tp!(
+  @time out = rfam.fit_fs_imcmc_pt!(
     config[:cfs], config[:dfs],
     inits=[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
