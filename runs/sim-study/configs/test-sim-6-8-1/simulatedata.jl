@@ -93,7 +93,8 @@ function simulatedata(; Z, W, N::Vector{Int},
     end
   end
 
-  return Dict(:Z => Z, :N => N, :L => L, :mus => mus, :W => W, :seed => seed,
-              :lam => lam, :sig2 => sig2, :y => y, :y_complete => y_complete,
-              :beta => beta, :eps_mus => eps_mus, :skew => skew)
+  return Dict(:Z => Z, :N => N, :L => L, :mus => mus, :W => W,
+              :seed => seed, :lam => lam, :sig2 => sig2, :y => y,
+              :y_complete => y_complete, :beta => beta,
+              :eps_mus => eps_mus, :skew => skew)
 end

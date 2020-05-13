@@ -2,6 +2,7 @@
 
 include(joinpath(@__DIR__, "../../imports.jl"))
 include(joinpath(@__DIR__, "simulatedata.jl"))
+const rfam = CytofRepFAM.Model
 
 function simfn(settings::Dict{Symbol, Any})
   println("pid: $(getpid())")
@@ -20,51 +21,52 @@ function simfn(settings::Dict{Symbol, Any})
 
   # Repulsive FAM penalty scale
   phi = settings[:repfam_dist_scale]
-  sim_z = CytofRepFAM.Model.sim_fn_exp_decay_generator(phi)
+  sim_z = rfam.sim_fn_exp_decay_generator(phi)
   use_repulsive = phi > 0
 
   function init_state_const_data(simdat; K, L)
     deltaz_prior = TruncatedNormal(1.0, 0.1, 0.0, Inf)
-    d = CytofRepFAM.Model.Data(simdat[:y])
-    c = CytofRepFAM.Model.defaultConstants(d, K, L,
-                                      sig2_prior=InverseGamma(3, 1),
-                                      delta0_prior=deltaz_prior,
-                                      delta1_prior=deltaz_prior,
-                                      alpha_prior=Gamma(0.1, 10.0),
-                                      # NOTE:  These 3 items are important
-                                      yQuantiles=[.0, .25, .5], 
-                                      pBounds=[.05, .8, .05],
-                                      y_grid=collect(range(-10,
-                                                           stop=4,
-                                                           length=100)),
-                                      probFlip_Z=1.0,
-                                      similarity_Z=sim_z)
+    d = rfam.Data(simdat[:y])
+    c = rfam.defaultConstants(d, K, L,
+                              sig2_prior=InverseGamma(3, 1),
+                              delta0_prior=deltaz_prior,
+                              delta1_prior=deltaz_prior,
+                              alpha_prior=Gamma(0.1, 10.0),
+                              # NOTE:  These 3 items are important
+                              yQuantiles=[.0, .25, .5], 
+                              pBounds=[.05, .8, .05],
+                              y_grid=collect(range(-10,
+                                                   stop=4,
+                                                   length=100)),
+                              probFlip_Z=1.0,
+                              similarity_Z=sim_z)
 
-    # NOTE: This is new. We want to spread weights evenly.
+    # NOTE: To spread weights evenly.
     c.eta_prior = Dict(z => Dirichlet(L[z], 1) for z in 0:1)
 
-    # Initialize state
-    # s = CytofRepFAM.Model.smartInit(c, d)  # mclust init
-    s = CytofRepFAM.Model.smartInit(c, d, modelNames="kmeans",
+    # Initialize state.
+    # s = rfam.smartInit(c, d)  # mclust init
+    s = rfam.smartInit(c, d, modelNames="kmeans",
                                     seed=settings[:mcmcseed],
                                     iterMax=30)  # kmeans init
-    # s = CytofRepFAM.Model.genInitialState(c, d,  # NOTE: random inits
-    #                                       sb_ibp=false,
-    #                                       allow_repeated_Z_columns=false)
+    # NOTE: Random inits.
+    # s = rfam.genInitialState(c, d,
+    #                          sb_ibp=false,
+    #                          allow_repeated_Z_columns=false)
 
-    t = CytofRepFAM.Model.Tuners(d.y, c.K)
-    X = CytofRepFAM.Model.eye(Float64, d.I)
+    t = rfam.Tuners(d.y, c.K)
+    X = rfam.eye(Float64, d.I)
 
-    cfs = CytofRepFAM.Model.ConstantsFS(c)
+    cfs = rfam.ConstantsFS(c)
 
     # NOTE: These priors are important
     # similar to p ~ Beta(1, 9), weakly informative
     cfs.omega_prior = Normal(-3, 1.3)
     cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
 
-    dfs = CytofRepFAM.Model.DataFS(d, X)
-    sfs = CytofRepFAM.Model.StateFS{Float64}(s, dfs)
-    tfs = CytofRepFAM.Model.TunersFS(t, s, X)
+    dfs = rfam.DataFS(d, X)
+    sfs = rfam.StateFS{Float64}(s, dfs)
+    tfs = rfam.TunersFS(t, s, X)
 
     return Dict(:dfs => dfs, :cfs => cfs, :sfs => sfs, :tfs => tfs,
                 :simdat => simdat)
@@ -91,7 +93,8 @@ function simfn(settings::Dict{Symbol, Any})
   # MCMC Specs
   nsamps_to_thin(nsamps::Int, nmcmc::Int) = max(1, div(nmcmc, nsamps))
   nsamps = settings[:nsamps]  # Number of samples
-  thin_samps = settings[:thin_samps]  # Factor to thin the primary parameters
+  thin_samps = settings[:thin_samps]  # Factor to thin the
+                                      # primary parameters
   mcmc_iter = nsamps * thin_samps  # Number of MCMC iterations
 
   # LPML / DIC are computed based on `mcmc_iter` samples
@@ -105,11 +108,11 @@ function simfn(settings::Dict{Symbol, Any})
   # Print constants
   println("N: $(config[:dfs].data.N)")
   println("J: $(config[:dfs].data.J)")
-  CytofRepFAM.Model.printConstants(config[:cfs])
+  rfam.printConstants(config[:cfs])
   flush(stdout)
 
   # Fit model
-  @time out = CytofRepFAM.Model.fit_fs_tp!(
+  @time out = rfam.fit_fs_tp!(
     config[:sfs], config[:cfs], config[:dfs],
     nmcmc=mcmc_iter, nburn=nburn,
     batchprop=settings[:batchprop],
@@ -131,7 +134,8 @@ function simfn(settings::Dict{Symbol, Any})
 
   # Dump output
   BSON.bson("$(results_dir)/output.bson", out)
-  BSON.bson("$(results_dir)/simdat.bson", Dict(:simdat => config[:simdat]))
+  BSON.bson("$(results_dir)/simdat.bson",
+            Dict(:simdat => config[:simdat]))
 
   println("Completed!")
 end  # simfn
