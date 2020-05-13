@@ -12,8 +12,8 @@ simname = basename("$(@__DIR__)")
 println(simname); flush(stdout)
 
 # NOTE: write to scratchdir
-function outdir_suffix(dataseed, mcmcseed, phi, Zind)
-  return "dataseed$(dataseed)-mcmcseed$(mcmcseed)-phi$(phi)-Zind$(Zind)"
+function outdir_suffix(pmiss, phi, zind)
+  return "pmiss$(pmiss)-phi$(phi)-zind$(zind)"
 end
 
 # NOTE: modify
@@ -34,7 +34,7 @@ settings = let
   [Dict(:simname => simname,
         :repfam_dist_scale => phi,
         :N => N,
-        :Z => Z[Zind],
+        :Z => Z[zind],
         :W => W,
         :thin_samps => 1,
         :nburn => 6000,
@@ -48,8 +48,8 @@ settings = let
         :batchprop => batchprop,
         :dataseed => dataseed,
         :mcmcseed => mcmcseed,
-        :outdir_suffix => outdir_suffix(dataseed, mcmcseed, phi, Zind))
+        :outdir_suffix => outdir_suffix(propmissingscale, phi, zind))
    for propmissingscale in [0.6, 0.0]
    for phi in [1.0, 0.0, 10.0, 25.0]
-   for Zind in 1:3]
+   for zind in 1:3]
 end
