@@ -47,9 +47,12 @@ println("Sourcing files ..."); flush(stdout)
   println("Running $(results_dir)")
   flush(stdout)
 
-  CytofRepFAM.Model.redirect_stdout_to_file("$(results_dir)/log.txt") do
-    simfn(setting)
-  end
+  # FIXME: Can't do `asyncmap` and redirect outputs.
+  # CytofRepFAM.Model.redirect_stdout_to_file("$(results_dir)/log.txt") do
+  #   simfn(setting)
+  # end
+
+  simfn(setting)
 
   # Send to S3.
   CytofRepFAM.Model.s3sync(from=results_dir, to=aws_bucket,
@@ -64,5 +67,6 @@ end
 # - f::Function: A function which takes one argument of type Dict{Any}
 # - settings::Vector{Dict}): A vector of settings
 println("Starting jobs ..."); flush(stdout)
-@time _ = asyncmap(sim, settings);
+ntasks = 6  # 6 runs at a time, because each run does 4-core PT
+@time _ = asyncmap(sim, settings, ntasks=ntasks);
 println("DONE with all runs!")

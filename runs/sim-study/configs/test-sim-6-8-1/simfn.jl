@@ -48,7 +48,7 @@ function simfn(settings::Dict{Symbol, Any})
     # s = rfam.smartInit(c, d)  # mclust init
     states = [rfam.smartInit(c, d, modelNames="kmeans",
                              seed=settings[:mcmcseed] + s,
-                             iterMax=30)  # kmeans init
+                             iterMax=100)  # kmeans init
               for s in 1:settings[:ntemps]]
 
     t = rfam.Tuners(d.y, c.K)
@@ -111,7 +111,7 @@ function simfn(settings::Dict{Symbol, Any})
   # Fit model
   @time out = rfam.fit_fs_imcmc_pt!(
     config[:cfs], config[:dfs],
-    inits=[:sfss],
+    inits=config[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
