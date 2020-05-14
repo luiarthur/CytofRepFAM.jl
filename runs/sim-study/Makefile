@@ -60,7 +60,7 @@ SIM_AWS_BUCKET = s3://cytof-repfam/$(SIM_EXP_NAME)
 run:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
 	julia $(RUN_SCRIPT) $(SIM_CONFIG_DIR) $(SIM_RESULTS_DIR) $(SIM_AWS_BUCKET) 0 \
-		&> $(SIM_RESULTS_DIR)/master-log.txt
+		&> $(SIM_RESULTS_DIR)/master-log.txt &
 
 testrun:
 	@echo "Printing results to results/$(SIM_EXP_NAME)-master-log.txt"
