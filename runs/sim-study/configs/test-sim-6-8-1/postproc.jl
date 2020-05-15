@@ -6,7 +6,7 @@ rmprocs(filter(w -> w > 1, workers()))
 addprocs(27)
 
 if length(ARGS) == 0
-  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-7-22/"
+  results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-8-1/"
 else
   results_dir = ARGS[1]  # path to results directory
 end
