@@ -1,20 +1,13 @@
 include("../../../PlotUtils/PlotUtils.jl")
 include("../../../PlotUtils/imports.jl")
 
-using Distributed
-rmprocs(filter(w -> w > 1, workers()))
-addprocs(27)
-
 if length(ARGS) == 0
   results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-8-1/"
 else
   results_dir = ARGS[1]  # path to results directory
 end
 
-@everywhere include("../../../PlotUtils/PlotUtils.jl")
-@everywhere include("../../../PlotUtils/imports.jl")
-
-@everywhere function plot_params(samples, simdat, imgdir)
+function plot_params(samples, simdat, imgdir)
   # Create a directory for images / txt if needed.
   mkpath("$(imgdir)/txt/")
 
@@ -71,7 +64,7 @@ end
                     Z_true=simdat[:Z], w_thresh=0.0)
 end
 
-@everywhere function makeplots(path_to_output)
+function makeplots(path_to_output)
   output_dir = splitdir(path_to_output)[1]
   println(path_to_output)
 
@@ -157,8 +150,8 @@ output_paths = [joinpath(root, OUTPUT_FILE)
                 for (root, _, files) in walkdir(results_dir)
                 if OUTPUT_FILE in files]
 
-# Make plots in parallel
-error_msg = pmap(makeplots, output_paths, on_error=identity)
-println(error_msg)
+# Make plots
+path1 = joinpath(results_dir, "pmiss0.6-phi0.0-zind1/output.bson")
+makeplots(path1)
 
 println("DONE!")

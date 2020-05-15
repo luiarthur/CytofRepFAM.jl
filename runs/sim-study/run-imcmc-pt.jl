@@ -1,3 +1,6 @@
+import Dates
+println(Dates.now())
+
 using Distributed
 include("imports.jl")  # Load on main node.
 
@@ -70,3 +73,4 @@ println("Starting jobs ..."); flush(stdout)
 ntasks = 6  # 6 runs at a time, because each run does 4-core PT
 @time _ = asyncmap(sim, settings, ntasks=ntasks);
 println("DONE with all runs!")
+println(Dates.now())

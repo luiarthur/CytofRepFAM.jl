@@ -129,6 +129,7 @@ function simfn(settings::Dict{Symbol, Any})
            nsamps_to_thin(10, mcmc_iter)],
     ndden_samps=200,
     time_updates=false,
+    save_all_states=true,
     verbose=3)
 
   # Dump output
