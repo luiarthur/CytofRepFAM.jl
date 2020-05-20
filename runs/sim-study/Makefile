@@ -72,7 +72,8 @@ clean:
 
 getoutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR) \
-		--exclude "*/output.bson" --exclude "*/simdat.bson"
+		--exclude "*/output.bson" --exclude "*/simdat.bson" \
+		--exclude "*/master-log.txt"
 
 getalloutput:
 	aws s3 sync $(SIM_AWS_BUCKET) $(SIM_RESULTS_DIR)
