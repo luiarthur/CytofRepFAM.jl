@@ -149,8 +149,25 @@ this study. Note the following:
           corresponds to $\delta \in \p{-1, 1}$ in \cite{fruhwirth2010bayesian}.
   \end{itemize}
   \item 6000 burn-in, followed by 3000 iterations (no thinning).
-  \item Computation time for each chain was was approximately 12.6 hours.
-  \item \textbf{Some Priors / setup:}
+  \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
+        $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
+        proposed at each MCMC iteration.
+  \item Computation time for each chain was was approximately 25 hours, but this can
+        be reduced to 12.5 hours with an improved (more tedious) implementation.
+        Particularly, currently if only one WPPT run is done at a time (as opposed
+        to 6 WPPT runs at a time), the computation time would be 12.5 hours, which
+        is approximately the time it takes to do a single non-WPPT run.
+  \item 5\% of data in each sample are used to sample from trained prior, and
+    $M=5$ was used.
+  \item We did each analysis with $\phi \in \bc{0, 1, 10}$
+  \item The simulation study was done for each of the true $Z$'s in 
+        Figure~\ref{fig:Z-true}.
+  \item For each true $Z$, we generated a full data set with no missing values,
+        and a data set with missing values (which is a subset of the former). Cells
+        that truly express a marker were never marked as missing.
+  \item In total, there were 24 runs, each run doing parallel tempering on 4
+        temperatures.
+  \item \textbf{Some Priors:}
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
     \item $p_c \sim \text{Beta}(1, 9)$
@@ -158,15 +175,8 @@ this study. Note the following:
     \item $\alpha \sim \Gam(0.1, 0.1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
-    % \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
-    % \item $\sigma^2_i \sim \InvGamma(3, 1)$
-    \item $\phi \in \bc{0, 1, 10}$
-    \item The simulation study was done for each of the true $Z$'s in 
-          Figure~\ref{fig:Z-true}.
-    \item Three chains (different random seeds) were run for each $\phi$ and data set.
-    \item 5\% of data in each sample are used to sample from trained prior, and
-      $M=5$ was used.
-    \item This dataset contains missing data
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    \item $\sigma^2_i \sim \InvGamma(3, 1)$
   \end{itemize}
 \end{itemize}
 
@@ -177,8 +187,13 @@ this study. Note the following:
     \imgtemplate{loglike_postburn.pdf}{\imscale}
   \end{center}
   \caption{Log-likelihood for 3000 iterations after burn-in of 6000 for each
-  simulation setup. \textbf{More burn-in} is needed in at least three of the runs
-  (e.g. (k), (l), (t)).}
+  simulation setup. The first three columns are the runs with no missing
+  data. The last three columns are the runs with missing data. The first and
+  fourth, second and third, and third and fifth columns are run with $Z^1$,
+  $Z^2$, and $Z^3$, respectively. Each row is run with a different $\phi$.
+  This arrangement is used in subsequent figures. The mixing appears decent
+  from these figures. We see that in some cases (b, e), swaps between chains
+  resulted in very different states in the main chain.}
   \label{fig:ll}
 \end{figure}
 
