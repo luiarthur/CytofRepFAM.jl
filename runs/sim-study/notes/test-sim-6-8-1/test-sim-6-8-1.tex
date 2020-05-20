@@ -203,8 +203,10 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{swapprops.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{These figures summarize proportion of instances that swaps were
+  made when proposed between the various chains for each setup. It seems that
+  swapping is more difficult when $\phi=0$, though I'm uncertain why that
+  might be the case.}
   \label{fig:swapproprs}
 \end{figure}
 
@@ -247,8 +249,9 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Posterior estimate of $Z_1$. Features were duplicated in all runs 
+  where $\phi=0$. Zero to one features were not recovered. It appears except for
+  (x), all features were recovered when $\phi > 0$.}
   \label{fig:z1est}
 \end{figure}
 
@@ -258,8 +261,10 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Posterior estimate of $Z_2$. Features were duplicated in most runs
+  where $\phi=0$, and all features were recovered. For $\phi>0$, all runs
+  recovered all features. In (h) and (k), trace amounts (< 1\%) of a feature
+  resembling one of the identified features was also learned.}
   \label{fig:z2est}
 \end{figure}
 
@@ -325,10 +330,11 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{mus_trace.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{Trace plots for $\mu^\star_z$. Note that in (a) and (j) the variance
-  for the positive mean components is large because they are not used. Effectively,
-  they are being sampled from the prior.}
+  \caption{Trace plots for $\mu^\star_z$. The trends are very similar within
+  columns (i.e. for the same data, but different $\phi$). In (e), there is a
+  jump in $\mu^\star_0$ which results from a swap proposed between the main
+  chain and the next chain. In this run, helper chains usually did not swap
+  with the main chain.}
   \label{fig:mus-trace}
 \end{figure}
 
@@ -338,8 +344,7 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{mus.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Box plots of $\mu^\star$.}
   \label{fig:mus}
 \end{figure}
 
@@ -351,8 +356,11 @@ this study. Note the following:
     \imgtemplate{sig2_trace.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{Trace plots for $\sigma^2_i$. Note the jump in (t) is similar
-  to the jump in the log likelihood.}
+  \caption{Trace plots for $\sigma^2$. The trends are very similar within
+  columns (i.e. for the same data, but different $\phi$) when $\phi>0$.
+  Again, In (e), there is a jump in $\sigma^2$ which results from a swap
+  proposed between the main chain and the next chain. In this run, helper
+  chains usually did not swap with the main chain.}
   \label{fig:sig2-trace}
 \end{figure}
 
