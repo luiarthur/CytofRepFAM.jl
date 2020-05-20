@@ -93,7 +93,12 @@ end
     swapprops = output[:swapcounts] ./ (output[:paircounts] .+ 1e-6)
     PlotUtils.plt.imshow(swapprops)
     PlotUtils.plt.colorbar()
-    plt.savefig(joinpath(imgdir, "swapprops.pdf"))
+    ntempers = length(output[:tempers])
+    plt.xticks(PlotUtils.pyrange(ntempers), output[:tempers])
+    plt.yticks(PlotUtils.pyrange(ntempers), output[:tempers])
+    plt.xlabel("temperatures")
+    plt.ylabel("temperatures", rotation=90)
+    plt.savefig(joinpath(imgdir, "swapprops.pdf"), bbox_inches="tight")
     plt.close()
   end
 
