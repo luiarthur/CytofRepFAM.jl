@@ -7,7 +7,7 @@ AWS_BUCKET = s3://cytof-repfam/patients-data-results/run1
 
 run:
 	for phi in "0 1 10 25"; do \
-		julia run.jl $$phi $(data_dir) $(results_dir); \
+		julia run.jl $$phi $(data_dir) $(results_dir) &; \
 		done; \
 		aws s3 sync $(results_dir) $(AWS_BUCKET) --exclude '*.nfs'
 
