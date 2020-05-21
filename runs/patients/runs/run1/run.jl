@@ -12,7 +12,7 @@ addprocs(4)
 
 @everywhere function run(phi, path_to_data::Vector{String},
                          results_dir, aws_bucket;
-                         burn=10000, nsamps=5000, thin=1,
+                         nburn=10000, nsamps=5000, thin=1,
                          K=20, L=Dict(0=>5, 1=>5),
                          tempers=[1, 1.003, 1.006, 1.01],
                          batchprop=0.05, pthin=5)
