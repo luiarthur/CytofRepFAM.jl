@@ -9,6 +9,7 @@
     - phi = (0, 1, 10, 25) (command line arg)
     - Temperatures = (1, 1.003, 1.006, 1.01)
     - Save all states?
+    - Patients Data: (001_d31, 007_d35, 010_d35)
 
 - Visualizations
     - [ ] TSNE
