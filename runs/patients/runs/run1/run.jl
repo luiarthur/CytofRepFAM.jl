@@ -10,7 +10,8 @@ addprocs(4)
 @everywhere include(joinpath(@__DIR__, "imports.jl"))
 @everywhere const rfam = CytofRepFAM.Model
 
-@everywhere function run(phi, path_to_data::Vector{String}, results_dir;
+@everywhere function run(phi, path_to_data::Vector{String},
+                         results_dir, aws_bucket;
                          burn=10000, nsamps=5000, thin=1,
                          K=20, L=Dict(0=>5, 1=>5),
                          tempers=[1, 1.003, 1.006, 1.01],
@@ -140,31 +141,40 @@ addprocs(4)
     verbose=3)
 
   # Dump output
-  BSON.bson("$(results_dir)/phi$(phi)/output.bson", out)
+  BSON.bson("$(results_dir)/output.bson", out)
 
   println("Completed!")
   println(Dates.now())
+
+  # Send results to aws
+  rfam.s3sync(from=results_dir, to=aws_bucket, tags=`--exclude '*.nfs'`)
+
+  return
 end  # simfn
+
+### MAIN ###
 
 # READ COMMAND ARGS
 phi = parse(Float64, ARGS[1])
-path_to_data = split(ARGS[2], ",")
+path_to_data = String.(split(ARGS[2], ","))
 results_dir = ARGS[3]
+aws_bucket = ARGS[4]
+istest = Bool(parse(Int, ARGS[5]))
 
 println("phi: $phi")
 println("data path: $path_to_data")
 println("results dir: $results_dir")
+println("AWS bucket: $aws_bucket")
+println("is test: $istest")
+flush(stdout)
 
+if istest
+  nsamps = 20
+  nburn = 10
+else
+  nsamps = 5000
+  nburn = 10000
+end
 
-# MAIN
-# run(phi, path_to_data, results_dir)
-
-# TEST
-# data_dir = "../../../data/patients/transformed-data/"
-# path_to_data = [joinpath(data_dir, p) for p in [
-#   "001_d31_clean.csv",
-#   "007_d35_clean.csv",
-#   "010_d35_clean.csv"
-# ]]
-
-
+@time run(phi, path_to_data, results_dir, aws_bucket,
+          nsamps=nsamps, nburn=nburn)
