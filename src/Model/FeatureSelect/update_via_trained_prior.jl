@@ -1,5 +1,7 @@
 function update_via_trained_prior!(sfs, dfs, cfs, tfs,
-                                   batchprop::Float64, prior_thin::Int;
+                                   batchprop::Float64,
+                                   prior_thin::Int;
+                                   batchsizes=nothing,
                                    fix, use_repulsive, Z_marg_lamgam, sb_ibp,
                                    time_updates, temper::Float64=1.0,
                                    verbose::Int=0,
@@ -16,7 +18,9 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
   # 5. Sample missing data
 
   # Generate minibatch
-  batchsizes = round.(Int, dfs.data.N * batchprop)
+  if batchsizes == nothing
+    batchsizes = round.(Int, dfs.data.N * batchprop)
+  end
   idx_mini, idx_mega, d_mini, d_mega = sample_minibatch(batchsizes, dfs.data.y)
   dfs_mini = DataFS(d_mini, dfs.X)
   sfs_mini = deepcopy(sfs)

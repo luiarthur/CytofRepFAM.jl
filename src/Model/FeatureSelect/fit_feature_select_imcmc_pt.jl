@@ -10,7 +10,9 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
                           randpair=0.0,
                           # End of PT Args.
                           # Args are for iMCMC:
-                          batchprop::Float64=0.1, prior_thin::Int=2,
+                          batchprop::Float64=0.1,
+                          batchsizes=nothing,
+                          prior_thin::Int=2,
                           imcmc_burn_prop=0.6,
                           swap_freq::Float64=1.0,
                           # End of iMCMC args.
@@ -123,6 +125,7 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
 
       update_via_trained_prior!(s, dfs, arg[:c], arg[:t],
                                 batchprop, prior_thin,
+                                batchsizes=batchsizes,
                                 fix=fix, use_repulsive=use_repulsive,
                                 Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
                                 time_updates=time_updates, temper=1.0,
@@ -281,6 +284,7 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
   out[:nburn] = nburn
   out[:nmcmc] = nmcmc
   out[:batchprop] = batchprop
+  out[:batchsizes] = batchsizes
   out[:prior_thin] = prior_thin
 
   # Return all states if requested
