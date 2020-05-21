@@ -5,7 +5,9 @@ function fit_fs_tp!(init::StateFS,
                     dfs::DataFS;
                     nmcmc::Int, nburn::Int, 
                     # These args are for iMCMC:
-                    batchprop::Float64=0.1, prior_thin::Int=2,
+                    batchprop::Float64=0.1, 
+                    batchsizes=nothing,
+                    prior_thin::Int=2,
                     temper::Float64=1.0, mb_update_burn_prop=0.6, anneal=false,
                     min_temper::Float64=1.0,
                     # End of iMCMC args.
@@ -118,6 +120,7 @@ function fit_fs_tp!(init::StateFS,
     # Update state using trained prior
     minibatch_update_all_params = iter < iters_mb_update_all_params || !anneal
     update_via_trained_prior!(state, dfs, cfs, tfs, batchprop, prior_thin,
+                              batchsizes=batchsizes,
                               fix=fix, use_repulsive=use_repulsive,
                               Z_marg_lamgam=zmarg, sb_ibp=sb_ibp,
                               time_updates=time_updates, temper=curr_temper,
@@ -209,6 +212,7 @@ function fit_fs_tp!(init::StateFS,
   out[:nburn] = nburn
   out[:nmcmc] = nmcmc
   out[:batchprop] = batchprop
+  out[:batchsizes] = batchsizes
   out[:prior_thin] = prior_thin
   out[:temper] = temper
   out[:anneal] = anneal
