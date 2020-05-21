@@ -74,6 +74,8 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
     println("Z_marg_lamgam_decay_rate: $(Z_marg_lamgam_decay_rate)")
     println("Z_marg_lamgam_min: $(Z_marg_lamgam_min)")
     println("use_repulsive: $(use_repulsive)")
+    println("batchprop: $(batchprop)")
+    println("batchsizes: $(batchsizes)")
     flush(stdout)
   end
 
