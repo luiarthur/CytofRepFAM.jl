@@ -15,7 +15,10 @@ addprocs(4)
                          nburn=10000, nsamps=5000, thin=1,
                          K=20, L=Dict(0=>5, 1=>5),
                          tempers=[1, 1.003, 1.006, 1.01],
-                         batchprop=0.05, pthin=5)
+                         batchsizes=[200, 200, 200], pthin=5)
+
+  @assert length(path_to_data) == length(batchsizes)
+
   # Print setup
   println(Dates.now())
   println("pid: $(getpid())")
@@ -57,7 +60,7 @@ addprocs(4)
                               sig2_prior=InverseGamma(3, 1),
                               delta0_prior=deltaz_prior,
                               delta1_prior=deltaz_prior,
-                              alpha_prior=Gamma(0.1, 10.0),
+                              alpha_prior=Gamma(1, 1),  # shape, scale
                               # NOTE:  These 3 items are important
                               yQuantiles=[.0, .25, .5], 
                               pBounds=[.05, .8, .05],
@@ -71,10 +74,13 @@ addprocs(4)
     c.eta_prior = Dict(z => Dirichlet(L[z], 1) for z in 0:1)
 
     # Initialize state.
-    # s = rfam.smartInit(c, d)  # mclust init
-    states = [rfam.smartInit(c, d, modelNames="kmeans",
-                             seed=1 + s,
-                             iterMax=100)  # kmeans init
+    # NOTE: Kmeans init
+    # states = [rfam.smartInit(c, d, modelNames="kmeans",
+    #                          seed=1 + s,
+    #                          iterMax=100)  # kmeans init
+    #           for s in 1:ntemps]
+    # NOTE: Mclust init
+    states = [rfam.smartInit(c, d, modelNames="VVI", seed=1 + s)  # Mclust init
               for s in 1:ntemps]
 
     t = rfam.Tuners(d.y, c.K)
@@ -122,7 +128,7 @@ addprocs(4)
     config[:cfs], config[:dfs],
     inits=config[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
-    batchprop=batchprop,
+    batchsizes=batchsizes,
     prior_thin=pthin,
     tempers=tempers,
     randpair=1.0, swap_freq=1.0,
