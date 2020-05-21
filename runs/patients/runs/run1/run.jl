@@ -167,14 +167,15 @@ println("results dir: $results_dir")
 println("AWS bucket: $aws_bucket")
 println("is test: $istest")
 flush(stdout)
+rfam.s3sync(from=results_dir, to=aws_bucket, tags=`--exclude '*.nfs'`)
 
-if istest
-  nsamps = 20
-  nburn = 10
-else
-  nsamps = 5000
-  nburn = 10000
-end
-
-@time run(phi, path_to_data, results_dir, aws_bucket,
-          nsamps=nsamps, nburn=nburn)
+# if istest
+#   nsamps = 20
+#   nburn = 10
+# else
+#   nsamps = 5000
+#   nburn = 10000
+# end
+# 
+# @time run(phi, path_to_data, results_dir, aws_bucket,
+#           nsamps=nsamps, nburn=nburn)

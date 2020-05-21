@@ -11,7 +11,7 @@ run:
 		rdir=$(results_dir)/phi$$phi; \
 		mkdir -p $$rdir; \
 		sleep 3; \
-		julia run.jl $$phi $(data_paths) $$rdir $(AWS_BUCKET)/$$rdir 0 \
+		julia run.jl $$phi $(data_paths) $$rdir $(AWS_BUCKET)/phi$$phi 0 \
 			&> $$rdir/log.txt & \
 	done
 
