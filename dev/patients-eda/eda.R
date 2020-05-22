@@ -86,7 +86,7 @@ get.info = function(f, imgdir='img/', datadir=data.dir,
     denom = as.numeric(cutoff[cutoff.index])
     marker.trans =  log(numer) - log(denom)
     marker.trans = ifelse(is.infinite(marker.trans), NA, marker.trans)
-    trans.data[, j] = -marker.trans
+    trans.data[, j] = marker.trans
     hist(marker.trans, breaks=30,
          prob=TRUE, xlab=marker, main='',
          xlim=c(-1, 1) * 6)
