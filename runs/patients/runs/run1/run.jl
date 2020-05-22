@@ -20,7 +20,7 @@ addprocs(4)
   @assert length(path_to_data) == length(batchsizes)
 
   # Print setup
-  println(Dates.now())
+  println("Start time: ", Dates.now())
   println("pid: $(getpid())")
   println("Threads: $(Threads.nthreads())")
   println("pwd: $(pwd())")
@@ -149,8 +149,7 @@ addprocs(4)
   # Dump output
   BSON.bson("$(results_dir)/output.bson", out)
 
-  println("Completed!")
-  println(Dates.now())
+  println("Completed! ", Dates.now())
 
   # Send results to aws
   rfam.s3sync(from=results_dir, to=aws_bucket, tags=`--exclude '*.nfs'`)
