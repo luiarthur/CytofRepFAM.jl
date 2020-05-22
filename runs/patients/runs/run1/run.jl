@@ -75,13 +75,13 @@ addprocs(4)
 
     # Initialize state.
     # NOTE: Kmeans init
-    # states = [rfam.smartInit(c, d, modelNames="kmeans",
-    #                          seed=1 + s,
-    #                          iterMax=100)  # kmeans init
-    #           for s in 1:ntemps]
-    # NOTE: Mclust init
-    states = [rfam.smartInit(c, d, modelNames="VVI", seed=1 + s)  # Mclust init
+    states = [rfam.smartInit(c, d, modelNames="kmeans",
+                             seed=1 + s,
+                             iterMax=100)  # kmeans init
               for s in 1:ntemps]
+    # NOTE: Mclust init
+    # states = [rfam.smartInit(c, d, modelNames="VVI", seed=1 + s)  # Mclust init
+    #           for s in 1:ntemps]
 
     t = rfam.Tuners(d.y, c.K)
     X = rfam.eye(Float64, d.I)
