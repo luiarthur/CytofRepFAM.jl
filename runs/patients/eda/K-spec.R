@@ -43,15 +43,15 @@ abline(v=0:32 + .5, h=0:nrow(ucenters) + .5)
 dev.off()
 
 # mclust
-BIC = mclust::mclustBIC(Ysub)
-pdf('img/bic.pdf')
-plot(BIC)
-dev.off()
-
-BIC_big = mclust::mclustBIC(Ysub, 1:30)
-pdf('img/bic-big.pdf')
-plot(BIC_big)
-dev.off()
+# BIC = mclust::mclustBIC(Ysub)
+# pdf('img/bic.pdf')
+# plot(BIC)
+# dev.off()
+# 
+# BIC_big = mclust::mclustBIC(Ysub, 1:30)
+# pdf('img/bic-big.pdf')
+# plot(BIC_big)
+# dev.off()
 
 # Requries n <= d
 # BIC_all = mclust::mclustBIC(Y, c(1, seq(5, 50, by=5)), modelNames="VII")
@@ -76,5 +76,3 @@ cytof3::my.image(as.matrix(Y[order(mclus), ]),
                  col=cytof3::blueToRed(9), zlim=c(-4, 4))
 cytof3::add.cut(clus=mclus)
 dev.off()
-
-
