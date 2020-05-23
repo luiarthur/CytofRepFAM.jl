@@ -1,6 +1,6 @@
 .PHONY: run getresults getallresults test-run
 
-simname = run1
+simname = run2
 data_dir = ../../../data/patients/transformed-data
 data_paths = "$(data_dir)/001_d31_clean.csv,$(data_dir)/007_d35_clean.csv,$(data_dir)/010_d35_clean.csv"
 results_dir = /scratchdata/$(USER)/cytof/results/repfam/patients-data/$(simname)
