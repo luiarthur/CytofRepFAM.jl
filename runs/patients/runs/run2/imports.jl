@@ -6,5 +6,5 @@ import Pkg; Pkg.activate(joinpath(@__DIR__, "../../../../"))  # CytofRepFAM
 using CytofRepFAM
 using Random, Distributions, BSON, Dates, DataFrames, CSV
 
-println("Finished loading packages. This may take a few minutes ...")
+println("Finished loading packages.")
 flush(stdout)
