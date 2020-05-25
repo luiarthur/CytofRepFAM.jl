@@ -54,15 +54,13 @@ function smartInit(c::Constants, d::Data;
     Random.seed!(seed)
   end
 
-  if modelNames == "mclust"
+  if modelNames != "kmeans"
     load_or_install_mclust()
     Mclust = R"mclust::Mclust"
     println("Initialize with Mclust.")
-  elseif modelNames == "kmeans"
+  else
     kmeans = R"kmeans"
     println("Initialize with kmeans.")
-  else
-    throw(ErrorException("modelNames must be 'kmeans' or 'mclust', but '$(modelNames)' was provided."))
   end
 
   y_imputed = deepcopy(d.y)
@@ -82,21 +80,17 @@ function smartInit(c::Constants, d::Data;
   end
 
   R"set.seed($(seed))"
-  if modelNames == "mclust"
-    clus = Mclust(vcat(y_imputed...), G=K, modelNames=modelNames, warn=warn)
-  elseif modelNames == "kmeans"
+  if modelNames == "kmeans"
     clus = kmeans(vcat(y_imputed...), centers=K, iter=iterMax)
   else
-    # NOTE: Currently, this should not happen.
+    clus = Mclust(vcat(y_imputed...), G=K, modelNames=modelNames, warn=warn)
   end
 
   # Get order of class labels
   if modelNames == "kmeans"
     lam = [Int.(clus[:cluster])[idx[i]] for i in 1:I]
-  elseif modelNames == "mclust"
-    lam = [Int.(clus[:classification])[idx[i]] for i in 1:I]
   else
-    # NOTE: Currently, this should not happen.
+    lam = [Int.(clus[:classification])[idx[i]] for i in 1:I]
   end
   lam = [Int8.(lam[i]) for i in 1:I]
   ord = [sortperm(lam[i]) for i in 1:I]
