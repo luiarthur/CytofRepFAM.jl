@@ -83,13 +83,15 @@ function smartInit(c::Constants, d::Data;
   if modelNames == "kmeans"
     clus = kmeans(vcat(y_imputed...), centers=K, iter=iterMax)
   else
-    clus = Mclust(vcat(y_imputed...), G=K, modelNames=[modelNames], warn=warn)
+    clus = Mclust(vcat(y_imputed...), G=K, modelNames=modelNames, warn=warn)
   end
 
   # Get order of class labels
   if modelNames == "kmeans"
     lam = [Int.(clus[:cluster])[idx[i]] for i in 1:I]
   else
+    println(clus)
+    println(clus[:classification])
     lam = [Int.(clus[:classification])[idx[i]] for i in 1:I]
   end
   lam = [Int8.(lam[i]) for i in 1:I]
