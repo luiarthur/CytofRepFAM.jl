@@ -80,7 +80,8 @@ addprocs(4)
                              iterMax=100)  # kmeans init
               for s in 1:ntemps]
     # NOTE: Mclust init
-    # states = [rfam.smartInit(c, d, modelNames="VVI", seed=1 + s)  # Mclust init
+    # VII: spherical, unequal volume
+    # states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s)  # Mclust init
     #           for s in 1:ntemps]
 
     t = rfam.Tuners(d.y, c.K)
