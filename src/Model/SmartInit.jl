@@ -90,8 +90,7 @@ function smartInit(c::Constants, d::Data;
   if modelNames == "kmeans"
     lam = [Int.(clus[:cluster])[idx[i]] for i in 1:I]
   else
-    println(clus)
-    println(clus[:classification])
+    # println(clus[:classification])
     lam = [Int.(clus[:classification])[idx[i]] for i in 1:I]
   end
   lam = [Int8.(lam[i]) for i in 1:I]
