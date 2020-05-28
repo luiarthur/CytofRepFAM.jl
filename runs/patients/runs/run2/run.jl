@@ -12,7 +12,7 @@ addprocs(4)
 
 @everywhere function preprocess(y, lower, upper)
   @assert lower < upper
-  idx_keep = .!vec(any(y .< lower, dims=2) .&
+  idx_keep = .!vec(any(y .< lower, dims=2) .|
                    any(y .> upper, dims=2))
   return y[idx_keep, :]
 end
@@ -85,14 +85,13 @@ end
 
     # Initialize state.
     # NOTE: Kmeans init
-    states = [rfam.smartInit(c, d, modelNames="kmeans",
-                             seed=1 + s,
-                             iterMax=100)  # kmeans init
-              for s in 1:ntemps]
+    # states = [rfam.smartInit(c, d, modelNames="kmeans",
+    #                          seed=1 + s, iterMax=100)
+    #           for s in 1:ntemps]
     # NOTE: Mclust init
     # VII: spherical, unequal volume
-    # states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s)  # Mclust init
-    #           for s in 1:ntemps]
+    states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s)
+              for s in 1:ntemps]
 
     t = rfam.Tuners(d.y, c.K)
     X = rfam.eye(Float64, d.I)
