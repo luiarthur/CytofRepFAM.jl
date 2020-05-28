@@ -12,14 +12,9 @@ addprocs(4)
 
 @everywhere function preprocess(y, lower, upper)
   @assert lower < upper
-
-  I = length(y)
-
-  return [let
-            yi = y[i]
-            idx_keep = all(yi .> lower, dims=2) .& all(yi .< upper, dims=2)
-            yi[vec(idx_keep), :]
-          end for i in 1:I]
+  idx_keep = vec(all(y .> lower, dims=2) .&
+                 all(y .< upper, dims=2))
+  return y[idx_keep, :]
 end
 
 @everywhere function run(phi, path_to_data::Vector{String},
