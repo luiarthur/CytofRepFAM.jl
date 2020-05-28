@@ -12,8 +12,8 @@ addprocs(4)
 
 @everywhere function preprocess(y, lower, upper)
   @assert lower < upper
-  idx_keep = vec(all(y .> lower, dims=2) .&
-                 all(y .< upper, dims=2))
+  idx_keep = .!vec(any(y .< lower, dims=2) .&
+                   any(y .> upper, dims=2))
   return y[idx_keep, :]
 end
 
@@ -44,6 +44,7 @@ end
   end
   data = read_and_format.(path_to_data)
   y = [d[1] for d in data]
+  println("data sizes: ", size.(y))
   markers = let
     _markers = [d[2] for d in data]
     @assert length(unique(_markers)) == 1
