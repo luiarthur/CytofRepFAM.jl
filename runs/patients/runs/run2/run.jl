@@ -10,12 +10,25 @@ addprocs(4)
 @everywhere include(joinpath(@__DIR__, "imports.jl"))
 @everywhere const rfam = CytofRepFAM.Model
 
+@everywhere function preprocess(y)
+  @assert lower < upper
+
+  I = length(y)
+
+  return [let
+            yi = y[i]
+            idx_keep = all(yi .> lower, dims=2) .& all(yi .< upper, dims=2)
+            yi[vec(idx_keep), :]
+          end for i in 1:I]
+end
+
 @everywhere function run(phi, path_to_data::Vector{String},
                          results_dir, aws_bucket;
                          nburn=10000, nsamps=5000, thin=1,
-                         K=15, L=Dict(0=>5, 1=>5),
+                         K=15, L=Dict(0=>6, 1=>3),
                          tempers=[1, 1.003, 1.006, 1.01],
-                         batchsizes=[200, 200, 200], pthin=5)
+                         batchsizes=[200, 200, 200], pthin=5,
+                         y_lower=-7, y_upper=4)
 
   @assert length(path_to_data) == length(batchsizes)
 
@@ -31,7 +44,8 @@ addprocs(4)
   # TODO: Make y
   function read_and_format(path::String)
     df = CSV.read(path, missingstring="NA")
-    return Matrix(coalesce.(df, NaN)), names(df)
+    mat = Matrix(coalesce.(df, NaN))
+    return preprocess(mat, y_lower, y_upper), names(df)
   end
   data = read_and_format.(path_to_data)
   y = [d[1] for d in data]
