@@ -10,7 +10,7 @@ addprocs(4)
 @everywhere include(joinpath(@__DIR__, "imports.jl"))
 @everywhere const rfam = CytofRepFAM.Model
 
-@everywhere function preprocess(y)
+@everywhere function preprocess(y, lower, upper)
   @assert lower < upper
 
   I = length(y)
