@@ -216,6 +216,9 @@ function fit_fs_imcmc_pt!(cfs::ConstantsFS,
   else
     @assert length(inits) == num_tempers
     inits
+    for _init in inits
+      _init.theta.eps .= 0.0
+    end
   end
 
   # Create Args
