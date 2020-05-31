@@ -26,9 +26,10 @@ istest=1
 module load R/R-3.6.1
 
 # Make sure Mclust is installed
-echo "Install mclust in R if needed ..."
-R -e "install.packages('mclust')"
-julia -e 'import Pkg; Pkg.activate("../../../../"); Pkg.build("RCall")'
+# You can install mclust if needed by first loading the module 
+# as done above, and then in (the loaded version of) R:
+#`install.packages('mclust')`.
+julia -e 'import Pkg; Pkg.activate(joinpath(@__DIR__, "../../../../")); Pkg.build("RCall")'
 
 echo "Doing test run"
 for phi in ${phi}
@@ -36,8 +37,17 @@ do
   rdir=${results_dir}/phi${phi}
   mkdir -p ${rdir}
 	sleep 3
-	julia run.jl $phi $data_paths $rdir $AWS_BUCKET/phi$phi $istest
-		&> $rdir/log.txt &
+	julia run.jl $phi $data_paths $rdir $AWS_BUCKET/phi$phi $istest &> $rdir/log.txt &
 done
 
 echo "Done submitting jobs."
+echo "Job submission time:"
+date
+
+echo "Jobs are now running. A message will be printed and emailed when jobs are done."
+
+wait
+
+echo "Jobs are completed."
+echo "Job completion time:"
+date
