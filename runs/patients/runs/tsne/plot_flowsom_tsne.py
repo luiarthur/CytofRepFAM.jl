@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+import os
+
+os.makedirs('img/tsne', exist_ok=True)
 
 path_to_flowsom = 'img/flowsom-clusterings.csv'
 path_to_tsne = ['img/tsne-{}.txt'.format(i) for i in (1, 2, 3)]
@@ -28,7 +31,7 @@ for i in range(num_sampels):
                  hue="flowsom",
                  plot_kws=dict(linewidth=0, s=markersize),
                  aspect=1, height=5)
-    plt.savefig("img/flowsom-tsne-combined-{}.pdf".format(i + 1),
+    plt.savefig("img/tsne/flowsom-tsne-combined-{}.pdf".format(i + 1),
                 bbox_inches="tight")
     plt.close();
 
