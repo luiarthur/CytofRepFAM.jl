@@ -3,7 +3,7 @@
 # Run this script with: sbatch submit-job.sh
 
 #SBATCH -p 128x24   # Partition name
-#SBATCH -J run1-cytof  # Job name
+#SBATCH -J run2-cytof  # Job name
 #SBATCH --mail-user=alui2@ucsc.edu
 #SBATCH --mail-type=ALL
 #SBATCH -o out/slurm-job.out    # Name of stdout output file
@@ -14,7 +14,7 @@
 
 echo "SCRATCH_DIR: $SCRATCH_DIR"
 
-simname="run1"
+simname="run2"
 data_dir="../../../data/patients/transformed-data"
 data_paths="${data_dir}/001_d31_clean.csv,${data_dir}/007_d35_clean.csv,${data_dir}/010_d35_clean.csv"
 results_dir="${SCRATCH_DIR}/cytof/results/repfam/patients-data/${simname}"
