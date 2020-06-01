@@ -13,7 +13,7 @@ num_clusters = 7
 
 # Indices
 N = sapply(y, nrow)
-idx_lower = cumsum(c(1, idx[-length(N)]))
+idx_lower = cumsum(c(1, N[-length(N)]))
 idx_upper = cumsum(N)
 # idx_upper - idx_lower + 1
 
