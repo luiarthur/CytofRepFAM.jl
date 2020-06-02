@@ -54,10 +54,11 @@
 % MAIN %
 \begin{document}
 
-% \maketitle
-\section{Mclust and FlowSOM on Patients Data Visualized via TSNE}
+\def\imgdir{../img}
 
-\def\imgdir{../img/tsne}
+% \maketitle
+
+\section{Mclust and FlowSOM on Patients Data Visualized via TSNE}
 
 \begin{figure}[H]
   \begin{centering}
@@ -77,11 +78,37 @@
     \end{tabular}
   \end{centering}
   \caption{Clusterings from Mclust (VII) and FlowSOM on three patient samples,
-  visualized using TSNE. Both the clustering and TSNE was performed jointly on
+  visualized using TSNE. Both the clustering and TSNE were performed jointly on
   the three samples. For both Mclust and FlowSOM, the optimal number of
   clusters learned was 7. The maximum number of clusters was set to 20 for
   both clustering algorithms.}
 \end{figure}
 
+
+\section{Mclust and FlowSOM on Patients Data Visualized via Heatmaps}
+
+\begin{figure}[H]
+  \begin{centering}
+    \begin{tabular}{ccc}
+      (a) FlowSOM sample 1 &
+      (b) FlowSOM sample 2 &
+      (c) FlowSOM sample 3 \\
+      \includegraphics[scale=0.35]{\imgdir/flowsom-heatmap-1.pdf} &
+      \includegraphics[scale=0.35]{\imgdir/flowsom-heatmap-2.pdf} &
+      \includegraphics[scale=0.35]{\imgdir/flowsom-heatmap-3.pdf} \\
+      (d) Mclust sample 1 &
+      (e) Mclust sample 2 &
+      (f) Mclust sample 3 \\
+      \includegraphics[scale=0.35]{\imgdir/mclust-heatmap-1.pdf} &
+      \includegraphics[scale=0.35]{\imgdir/mclust-heatmap-2.pdf} &
+      \includegraphics[scale=0.35]{\imgdir/mclust-heatmap-3.pdf} \\
+    \end{tabular}
+  \end{centering}
+  \caption{Clusterings from Mclust (VII) and FlowSOM on three patient samples,
+  visualized using heatmaps. Both the clustering and TSNE were performed jointly on
+  the three samples. For both Mclust and FlowSOM, the optimal number of
+  clusters learned was 7. The maximum number of clusters was set to 20 for
+  both clustering algorithms.}
+\end{figure}
 
 \end{document}
