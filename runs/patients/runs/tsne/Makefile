@@ -1,7 +1,7 @@
 SHELL:=/bin/bash
 
 imgdir = img
-awsbucket = s3://cytof-repfam/patients-data-results/tsne/patients/
+awsbucket = s3://cytof-repfam/patients-data-results/clustering-viz
 
 all: flowsom mclust tsne sendimg
 
@@ -27,8 +27,8 @@ img/y*-prepped.csv:
 	Rscript prepare-data.R
 
 sendimg:
-	aws s3 sync img/tsne $(awsbucket)
+	aws s3 sync img $(awsbucket)
 
 getimg:
-	aws s3 sync $(awsbucket) img/tsne
+	aws s3 sync $(awsbucket) img
 

@@ -25,3 +25,9 @@ for (i in 1:length(y)) {
   # Write data.
   write.csv(yi, file=paste0("img/y", i, "-prepped.csv"), quote=F, row.names=F)
 }
+
+for (i in 1:length(y)) {
+  yi = round(as.matrix(y[[i]]), 5)
+  write.csv(yi, file=paste0("img/y", i, "-prepped-with-missing.csv"),
+            quote=F, row.names=F)
+}
