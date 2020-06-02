@@ -17,14 +17,22 @@ idx_lower = cumsum(c(1, N[-length(N)]))
 idx_upper = cumsum(N)
 # idx_upper - idx_lower + 1
 
+# Get sample index
+I = length(N)
+sample_idx = unlist(sapply(1:I, function(i) rep(i, N[i])))
+
 # Stack into one matrix 
 Y = Reduce(rbind, y)
 
 # Do Mclust on all samples
 mclust.result = Mclust(Y, G=num_clusters, model="VII")
 
-for (i in 1:length(y)) {
-  write.table(mclust.result$class[idx_lower[i]:idx_upper[i]],
-              file=paste0("img/mclust-", i, ".csv"),
-              quote=F, row.names=F, col.names=F)
-}
+# for (i in 1:length(y)) {
+#   write.table(mclust.result$class[idx_lower[i]:idx_upper[i]],
+#               file=paste0("img/mclust-", i, ".csv"),
+#               quote=F, row.names=F, col.names=F)
+# }
+
+write.table(cbind(mclust.result$class, sample_idx),
+            file=paste0("img/mclust-clusterings.csv"),
+            quote=F, row.names=F, col.names=F)
