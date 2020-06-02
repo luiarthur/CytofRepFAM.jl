@@ -7,7 +7,6 @@ import os
 os.makedirs('img/tsne', exist_ok=True)
 
 path_to_flowsom = 'img/flowsom-clusterings.csv'
-path_to_tsne = ['img/tsne-{}.txt'.format(i) for i in (1, 2, 3)]
 flowsom = np.loadtxt(path_to_flowsom).astype(int)
 fs = flowsom[:, 0]
 sample_idx = flowsom[:, 1]
@@ -17,7 +16,7 @@ path_to_tsne_combined = 'img/tsne-combined.txt'
 tsne = np.loadtxt(path_to_tsne_combined, delimiter=',')
 
 # number of samples
-num_sampels = len(path_to_tsne)
+num_sampels = np.unique(sample_idx).size
 
 for i in range(num_sampels):
     print('Making figure {}'.format(i + 1))
