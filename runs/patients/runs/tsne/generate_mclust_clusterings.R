@@ -11,11 +11,8 @@ y = {
 # For VII, the marginal increase in BIC starts decreasing at G=7.
 num_clusters = 7
 
-# Indices
+# Number of cells per sample
 N = sapply(y, nrow)
-idx_lower = cumsum(c(1, N[-length(N)]))
-idx_upper = cumsum(N)
-# idx_upper - idx_lower + 1
 
 # Get sample index
 I = length(N)
@@ -27,12 +24,7 @@ Y = Reduce(rbind, y)
 # Do Mclust on all samples
 mclust.result = Mclust(Y, G=num_clusters, model="VII")
 
-# for (i in 1:length(y)) {
-#   write.table(mclust.result$class[idx_lower[i]:idx_upper[i]],
-#               file=paste0("img/mclust-", i, ".csv"),
-#               quote=F, row.names=F, col.names=F)
-# }
-
+# Write results
 write.table(cbind(mclust.result$class, sample_idx),
             file=paste0("img/mclust-clusterings.csv"),
             quote=F, row.names=F, col.names=F)

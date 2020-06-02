@@ -13,11 +13,8 @@ y = {
   lapply(as.list(paste0(prefix, 1:3, suffix)), read.csv)
 }
 
-# Indices
+# Number of cells in each sample
 N = sapply(y, nrow)
-idx_lower = cumsum(c(1, N[-length(N)]))
-idx_upper = cumsum(N)
-# idx_upper - idx_lower + 1
 
 # Get sample index
 I = length(N)
@@ -38,15 +35,6 @@ flowsom.result = FlowSOM(ff_Y,
 # Get cluster labels
 fsmeta = flowsom.result$meta
 fsclus = fsmeta[flowsom.result$FlowSOM$map$mapping[, 1]]
-
-# Print clusterings for each sample
-for (i in 1:length(y)) {
-  idx_i = idx_lower[i]:idx_upper[i]
-  cluster_i = as.numeric(fsclus)[idx_i]
-  write.table(cbind(cluster_i, i),
-              file=paste0("img/flowsom-", i, ".csv"),
-              quote=F, row.names=F, col.names=F)
-}
 
 # Print clusterings for all samples
 write.table(cbind(fsclus, sample_idx),
