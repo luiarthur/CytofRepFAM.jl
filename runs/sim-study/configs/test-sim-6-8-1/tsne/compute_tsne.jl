@@ -32,7 +32,7 @@ for zind in 1:3
     # Write output to file.
     csvdir = "out/csv"
     mkpath(csvdir)
-    CSV.write("$(csvdir)/$(simname).csv", df)
+    CSV.write("$(csvdir)/tsne-$(simname).csv", df)
   end
 end
 
