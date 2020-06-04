@@ -1,5 +1,5 @@
 %{{{1
-\documentclass[10pt]{article} % 12-point font
+\documentclass[11pt]{article} % 11-point font
 
 \usepackage[margin=1in]{geometry} % set page to 1-inch margins
 \usepackage{amsmath} % for math
@@ -97,12 +97,11 @@ seeds were tried, and the most representative (and best) results were used.
 The TSNE embeddings were colored by clusterings from the two clustering
 methods. \\
 
-In each page of the document, there are 8 graphs. The left and right columns
-are the TSNEs for samples 1 and 2, respectively. First 2 rows are with the
-complete data; the next two rows are with the imputed missing data. The method
-alternate in the rows (i.e. FlowSOM, then Mclust). I separated the first 2 rows
-from the last two rows with a divider to indicate that those figures are for
-different datasets; different in the sense that one has missing data. \\
+In each page of the document, there are 12 graphs. The left, middle, and
+right columns are the TSNEs marked by the clusterings from FlowSOM, Mclust,
+and the true labels respectively. Rows 1 and 3 are for sample 1; whereas
+rows 2 and 4 are for sample 2. The first two rows are with complete data;
+while the next rows are with imputed missing data. \\
 
 Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} show, respectively, the
 matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
