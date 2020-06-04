@@ -13,6 +13,8 @@ def graph_tsne(tsne_df, clust, i, method):
     
 if __name__ == "__main__":
     path_to_csv = 'viz/csv'
+    # methods = ['mclust', 'flowsom', 'rfam']
+    methods = ['mclust', 'flowsom']
 
     tsne_df = '{}/pmiss0.6-phi0.0-zind1.csv'.format(path_to_csv)
 
