@@ -1,0 +1,180 @@
+%{{{1
+\documentclass[10pt]{article} % 12-point font
+
+\usepackage[margin=1in]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\G}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+% Statistics
+\newcommand{\E}{ \text{E} }
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Uncomment if using bibliography
+% Bibliography
+% \usepackage{natbib}
+% \bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+%}}}1
+
+\def\imgdir{../viz/img}
+\newcommand{\imgtemplate}[2]{
+  \begin{tabular}{cc}
+    (a) FlowSOM, Sample 1, Complete &
+    (b) FlowSOM, Sample 2, Complete \\
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.0-phi0.0-zind#2.pdf} \\
+    (c) Mclust, Sample 1, Complete &
+    (d) Mclust, Sample 2, Complete \\
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.0-phi0.0-zind#2.pdf} \\
+    \hline \\
+    (e) FlowSOM, Sample 1, Imputed &
+    (f) FlowSOM, Sample 2, Imputed \\
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.6-phi0.0-zind#2.pdf} \\
+    (g) Mclust, Sample 1, Imputed &
+    (h) Mclust, Sample 2, Imputed \\
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.6-phi0.0-zind#2.pdf} \\
+  \end{tabular}
+}
+
+\def\true{\text{true}}
+
+% Title Settings
+\title{TSNE for Mclust and FlowSOM on Simulated Data}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+\maketitle
+For each dataset $(Z_1, Z_2, Z_3)$, there were two versions -- one with
+complete data, one where missing values were present and imputed as in the
+MCMC. So in total, there are 6 TSNE embeddings. Before computing the
+embeddings, the (two) samples were concatenated into one matrix. \\
+
+Mclust and FlowSOM were each set to use 10 clusters at most. And they each
+learned the number of clusters. Mclust used the VII model. Different random
+seeds were tried, and the most representative (and best) results were used.
+The TSNE embeddings were colored by clusterings from the two clustering
+methods. \\
+
+In each page of the document, there are 8 graphs. The left and right columns
+are the TSNEs for samples 1 and 2, respectively. First 2 rows are with the
+complete data; the next two rows are with the imputed missing data. The method
+alternate in the rows (i.e. FlowSOM, then Mclust). I separated the first 2 rows
+from the last two rows with a divider to indicate that those figures are for
+different datasets; different in the sense that one has missing data. \\
+
+Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} show, respectively, the
+matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
+
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \begin{tabular}{ccc}
+      \includegraphics[scale=0.25]{\imgdir/Z1.pdf} &
+      \includegraphics[scale=0.25]{\imgdir/Z2.pdf} &
+      \includegraphics[scale=0.25]{\imgdir/Z3.pdf} \\
+      %
+      (a) $Z^{1,\true}$ &
+      (b) $Z^{2,\true}$ &
+      (c) $Z^{3,\true}$ \\
+      %
+      column-distances of 2 bits &
+      column-distances of 6 bits &
+      mix of similar and distinct columns \\
+    \end{tabular}
+  \end{center}
+  \caption{Simulation truth of $Z$ for three scenarios.}
+  \label{fig:Z-true}
+\end{figure}
+
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Wed Feb 12 14:53:27 2020
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{rrrrrrrr}
+    \hline
+    & $k=1$ & $k=2$ & $k=3$ & $k=4$ & $k=5$ & $k=6$ & $k=7$ \\
+    \hline
+    Sample 1 & 0.04 & 0.05 & 0.39 & 0.00 & 0.06 & 0.43 & 0.03 \\
+    Sample 2 & 0.00 & 0.05 & 0.54 & 0.20 & 0.14 & 0.07 & 0.00 \\
+    \hline
+  \end{tabular}
+  \caption{$W^\true$}
+  \label{tab:W-true}
+\end{table}
+
+
+% \tableofcontents \newpage % Comment to remove table of contents
+
+\section{TSNE for Mclust and FlowSOM for $Z_1$}  % 8 figs
+\begin{figure}[H]
+  \begin{center}
+    \imgtemplate{0.3}{1}
+  \end{center}
+  \caption{The clusterings are very reasonable. But in the complete data
+  setting, FlowSOM learns only 5 clusters (when there are 7). Mclust learns
+  8 clusters for the complete data. FlowSOM and Mclust learn 9 and 10 clusters
+  respectively for the missing-values dataset. Different random seeds were
+  tried. For FlowSOM, 5 clusters was the maximum number of clusters learned
+  in the complete-data scenario.}
+\end{figure}
+\newpage
+
+\section{TSNE for Mclust and FlowSOM for $Z_2$}  % 8 figs
+\begin{figure}[H]
+  \begin{center}
+    \imgtemplate{0.3}{2}
+  \end{center}
+  \caption{FlowSOM learns the right number of clusters here. Probably because
+  the clusters are distinct enough. Mclust struggles to find the correct
+  number of clusters. It learns 8 and 10 clusters respectively in the complete
+  and imputed datasets. It appears the largest group is being broken down.}
+\end{figure}
+\newpage
+
+\section{TSNE for Mclust and FlowSOM for $Z_3$}  % 8 figs
+\begin{figure}[H]
+  \begin{center}
+    \imgtemplate{0.3}{3}
+  \end{center}
+  \caption{In this scenario, FlowSOM learns fewer than 7 clusters and Mclust
+  learns more than 7 clusters. FlowSOM tends to recover high-level features,
+  whereas Mclust can find smaller discrepancies between the cells, as shown by
+  its breaking down larger groups into smaller clusters.}
+\end{figure}
+\newpage
+
+\end{document}
