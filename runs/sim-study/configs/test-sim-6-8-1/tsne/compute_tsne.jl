@@ -14,7 +14,7 @@ for zind in 1:3
     path = joinpath(results_dir, simname, "simdat.bson")
 
     # Fit TSNE jointly on all samples.
-    tsne, sample_ind, Y, M = let
+    tsne, sample_ind, Y, M, true_labels = let
       use_complete_data = (pmiss == 0.0)
       compute_combined_tsne(path, use_complete_data=use_complete_data,
                             seed=0, verbose=2)
@@ -25,12 +25,13 @@ for zind in 1:3
       num_markers = size(Y, 2)
       Ynames = [Symbol("Y$(j)") for j in 1:num_markers]
       Mnames = [Symbol("M$(j)") for j in 1:num_markers]
-      colnames = [:tsne1, :tsne2, :sample_ind, Ynames..., Mnames...]
-      DataFrame([tsne sample_ind Y M], colnames)
+      colnames = [:tsne1, :tsne2, :sample_ind, :true_labels,
+                  Ynames..., Mnames...]
+      DataFrame([tsne sample_ind true_labels Y M], colnames)
     end
 
     # Write output to file.
-    csvdir = "out/csv"
+    csvdir = "viz/csv"
     mkpath(csvdir)
     CSV.write("$(csvdir)/tsne-$(simname).csv", df)
   end

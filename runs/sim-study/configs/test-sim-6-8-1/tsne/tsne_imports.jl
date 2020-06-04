@@ -95,8 +95,11 @@ function compute_combined_tsne(path_to_simdat; use_complete_data=true, seed=0,
   # Fit TSNE for samples combined
   tsne.fit(Y)
 
+  # Get true labels
+  true_labels = vcat(simdat[:lam]...)
+
   return (round.(tsne.embedding_, digits=digits), sample_ind,
-          round.(Y, digits=digits), Int.(M))
+          round.(Y, digits=digits), Int.(M), true_labels)
 end
 
 function gen_imgdir(path_to_output, suffix)
