@@ -17,7 +17,7 @@ for zind in 1:3
     tsne, sample_ind, Y, M, true_labels = let
       use_complete_data = (pmiss == 0.0)
       compute_combined_tsne(path, use_complete_data=use_complete_data,
-                            seed=0, verbose=2)
+                            seed=1, verbose=2)
     end
 
     # Create data frame

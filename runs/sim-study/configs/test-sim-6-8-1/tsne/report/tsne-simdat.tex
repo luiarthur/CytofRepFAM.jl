@@ -48,24 +48,31 @@
 
 \def\imgdir{../viz/img}
 \newcommand{\imgtemplate}[2]{
-  \begin{tabular}{cc}
+  \begin{tabular}{ccc}
     (a) FlowSOM, Sample 1, Complete &
-    (b) FlowSOM, Sample 2, Complete \\
+    (b) Mclust, Sample 1, Complete &
+    (c) Truth, Sample 1, Complete \\
     \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.0-phi0.0-zind#2.pdf} \\
-    (c) Mclust, Sample 1, Complete &
-    (d) Mclust, Sample 2, Complete \\
     \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.0-phi0.0-zind#2.pdf} \\
-    \hline \\
-    (e) FlowSOM, Sample 1, Imputed &
-    (f) FlowSOM, Sample 2, Imputed \\
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.0-phi0.0-zind#2.pdf} \\
+    (d) FlowSOM, Sample 2, Complete &
+    (e) Mclust, Sample 2, Complete &
+    (f) Truth, Sample 2, Complete \\
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels2-pmiss0.0-phi0.0-zind#2.pdf} \\
+    (g) FlowSOM, Sample 1, Missing &
+    (h) Mclust, Sample 1, Missing &
+    (i) Truth, Sample 1, Missing \\
     \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.6-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.6-phi0.0-zind#2.pdf} \\
-    (g) Mclust, Sample 1, Imputed &
-    (h) Mclust, Sample 2, Imputed \\
     \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.6-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.6-phi0.0-zind#2.pdf} \\
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.6-phi0.0-zind#2.pdf} \\
+    (j) FlowSOM, Sample 2, Missing &
+    (k) Mclust, Sample 2, Missing &
+    (l) Truth, Sample 2, Missing \\
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels2-pmiss0.6-phi0.0-zind#2.pdf} \\
   \end{tabular}
 }
 

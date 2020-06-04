@@ -9,7 +9,10 @@ import os
 # plt.show()
 
 def graph_tsne(tsne_df, clust, i, method, outpath):
-    tsne_df[method] = clust.astype(int)
+    if clust is None:
+        tsne_df[method] = tsne_df[method].astype(int)
+    else:
+        tsne_df[method] = clust.astype(int)
     mask_i = (tsne_df.sample_ind == i)
     df = tsne_df[mask_i]
     markersize = 20
@@ -18,13 +21,13 @@ def graph_tsne(tsne_df, clust, i, method, outpath):
                  plot_kws=dict(linewidth=0, s=markersize),
                  aspect=1, height=5)
     plt.savefig(outpath, bbox_inches="tight")
-    plt.close();
+    plt.close()
     
     
 if __name__ == "__main__":
     path_to_csv = 'viz/csv'
     # methods = ['mclust', 'flowsom', 'rfam']
-    methods = ['mclust', 'flowsom']
+    methods = ['mclust', 'flowsom', 'true_labels']
     os.makedirs('viz/img', exist_ok=True)
 
     method = methods[0]
@@ -33,9 +36,12 @@ if __name__ == "__main__":
         for zind in [1, 2, 3]:
             simname = 'pmiss{}-phi0.0-zind{}'.format(pmiss, zind)
             for method in methods:
-                clust_path = '{}/{}-{}.csv'.format(path_to_csv, method, simname)
-                print(clust_path)
-                clust = np.loadtxt(clust_path)
+                if method == 'true_labels':
+                    clust = None
+                else:
+                    clust_path = '{}/{}-{}.csv'.format(path_to_csv, method, simname)
+                    print(clust_path)
+                    clust = np.loadtxt(clust_path)
                 tsne_path = '{}/tsne-{}.csv'.format(path_to_csv, simname)
                 tsne_df = pd.read_csv(tsne_path)
                 for i in range(2):
