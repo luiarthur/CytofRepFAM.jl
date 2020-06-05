@@ -1,12 +1,16 @@
-SCRATCH_DIR = /scratchdata/$(USER)/cytof/results/repfam
+RESULTS_DIR_PREFIX = $(SCRATCH_DIR)/cytof/results/repfam
 SIM_EXP_NAME = test-sim-6-8-2
-tsne_dir = $(SCRATCH_DIR)/$(SIM_EXP_NAME)/tsne
-aws_dir = s3://cytof-repfam/$(SIM_EXP_NAME)/tsne
+RESULTS_DIR = $(RESULTS_DIR_PREFIX)/$(SIM_EXP_NAME)
+AWS_DIR = s3://cytof-repfam/$(SIM_EXP_NAME)
 
 sendoutput:
-	aws s3 sync $(tsne_dir) $(aws_dir) \
+	aws s3 sync $(RESULTS_DIR) $(AWS_DIR) \
 		--exclude '*.nfs*' --exclude '*.zip*'
 
+getalloutput:
+	aws s3 sync $(AWS_DIR) $(RESULTS_DIR)
+
 getoutput:
-	aws s3 sync $(aws_dir) $(tsne_dir)
+	aws s3 sync $(AWS_DIR) $(RESULTS_DIR) -- \
+		--exclude "*/output.bson" --exclude "*/simdat.bson" \
 
