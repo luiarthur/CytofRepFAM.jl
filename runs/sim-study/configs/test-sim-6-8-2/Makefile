@@ -11,6 +11,6 @@ getalloutput:
 	aws s3 sync $(AWS_DIR) $(RESULTS_DIR)
 
 getoutput:
-	aws s3 sync $(AWS_DIR) $(RESULTS_DIR) -- \
-		--exclude "*/output.bson" --exclude "*/simdat.bson" \
+	aws s3 sync $(AWS_DIR) $(RESULTS_DIR) \
+		--exclude "*/output.bson" --exclude "*/simdat.bson"
 
