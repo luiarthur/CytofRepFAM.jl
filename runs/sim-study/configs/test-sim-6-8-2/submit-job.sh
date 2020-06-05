@@ -1,28 +1,30 @@
 #!/bin/bash
 
-# Run this script with: sbatch submit-job.sh
-
 #SBATCH -p 128x24   # Partition name
 #SBATCH -J sim-cytof  # Job name
 #SBATCH --mail-user=alui2@ucsc.edu
 #SBATCH --mail-type=ALL
 #SBATCH -o out/slurm-job.out  # Name of stdout output file
-#SBATCH --ntasks=24
+#SBATCH --ntasks=72
+#SBATCH --mem-per-cpu=2GB
 #SBATCH -t 240:00:00  # Run Time (hh:mm:ss) - 240 hours (optional)
-#SBATCH --mem-per-cpu=2G  # Memory to be allocated per cpu
+
+# Run this script with: sbatch submit-job.sh
+
 
 echo "SCRATCH_DIR: $SCRATCH_DIR"
 
 simname="test-sim-6-8-2"
 results_dir="${SCRATCH_DIR}/cytof/results/repfam/${simname}"
 aws_bucket="s3://cytof-repfam/${simname}"
-phis="0 1 10 25"
+phis="0.0 1.0 10.0 25.0"
 zinds="1 2 3"
 pmisses="0.0 0.6"
-istest=1
+istest=0
 
 # Load these modules
 module load R/R-3.6.1
+module load parallel
 
 # Make sure Mclust is installed
 # You can install mclust if needed by first loading the module 
@@ -31,18 +33,19 @@ module load R/R-3.6.1
 # julia -e 'import Pkg; Pkg.activate(joinpath(@__DIR__, "../../../../")); Pkg.build("RCall")'
 
 echo "Doing test run"
-for phi in $phi
+for pmiss in $pmisses
 do
-  for zind in $zinds
+  for phi in $phis
   do
-    for pmiss in $pmisses
+    for zind in $zinds
     do
       rdir=${results_dir}/pmiss$pmiss-phi$phi-zind$zind
       mkdir -p ${rdir}
       sleep 3
       # NOTE: The `-n` option specifies the total number of mpi tasks requested per node.
-      srun -N 1 -n 5 --exclusive \
-        julia run.jl $results_dir $aws_bucket $pmiss $phi $zin $istest &> $rdir/log.txt &
+      echo "Current job: $rdir"
+      cmd="julia run.jl $results_dir $aws_bucket $pmiss $phi $zind $istest"
+      srun -N 1 -n 1 -c 3 --exclusive $cmd &> $rdir/log.txt &
     done
   done
 done

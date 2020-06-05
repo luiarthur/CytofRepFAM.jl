@@ -1,19 +1,13 @@
+import Dates
+println(Dates.now())
+
+include(joinpath(@__DIR__, "run_defs.jl"))
+
 using Distributed
 using Random
 using Distributions
 using BSON
 using DelimitedFiles
-import Dates
-
-println(Dates.now())
-include(joinpath(@__DIR__, "run_defs.jl"))
-
-# Set number of cores
-ncores = settings[:ntemps]
-setnumcores(ncores)
-
-# Import packages on all workers
-@everywhere include("imports.jl")  # Load on all nodes.
 
 # Simulation name.
 simname = basename("$(@__DIR__)")
@@ -74,6 +68,17 @@ settings = let
        :dataseed => 1,
        :mcmcseed => 1)
 end
+
+# Set number of cores
+ncores = settings[:ntemps]
+addprocs(ncores)
+println("nprocs: $(nprocs())")
+println("nworkers: $(nworkers())")
+println("system nproc: $(parse(Int, read(`nproc`, String)))")
+
+# Import packages on all workers
+@everywhere include("imports.jl")  # Load on all nodes.
+
 
 println("Starting job ..."); flush(stdout)
 println(Dates.now())
