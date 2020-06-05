@@ -85,7 +85,12 @@ end
 
   # Load outputs
   output = BSON.load(path_to_output)
-  samples = output[:samples][1]
+
+  if output[:save_all_states]
+    samples = [s[1] for s in output[:samples][1]]
+  else
+    samples = output[:samples][1]
+  end
 
   # Plot swap props
   println("Swap props ...")
