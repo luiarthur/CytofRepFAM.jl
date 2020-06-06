@@ -7,8 +7,8 @@ sendimg:
 getimg:
 	aws s3 sync $(awsbucket) viz
 
-# NOTES:
-# 1. julia compute_tsne.jl
-# 2. Rscript generate_competitor_clusterings.R
-# 3. julia get_rgam_best_clustering.jl
-# 4. python3 viz.py
+graphs:
+	julia compute_tsne.jl
+	Rscript generate_competitor_clusterings.R
+	julia get_rfam_best_clusterings.jl
+	python3 viz.py
