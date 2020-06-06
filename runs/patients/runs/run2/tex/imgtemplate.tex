@@ -1,0 +1,15 @@
+\newcommand{\imgtemplate}[2]{
+  \begin{tabular}{cc}
+    {\tiny (a) $\phi=0$} &
+    {\tiny (b) $\phi=1$} \\
+    %
+    \includegraphics[scale=#2]{\imgdir/phi0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/phi1/img/#1} \\
+    %
+    {\tiny (c) $\phi=10$} &
+    {\tiny (d) $\phi=25$} \\
+    %
+    \includegraphics[scale=#2]{\imgdir/phi10/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/phi25/img/#1} \\
+  \end{tabular}
+}
