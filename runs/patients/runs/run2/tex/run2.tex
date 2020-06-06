@@ -75,68 +75,57 @@
 % \section{Objective}\label{sec:objective}
 % TODO
 
-\section{Data Generation}\label{sec:data-generation}
-In this study, we generate data with two samples, each containing 2000 cells,
-and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
-respectively show the true $Z$ and $W$ used to generate the simulated data in
-this study. Note the following:
-\begin{itemize}
-  \item Three $Z$'s, shown in Figure~\ref{fig:Z-true}, were used in this study.
-  \begin{itemize}
-    \item In $Z^{1,\true}$, each column is different from the other columns exactly
-    by exactly two bits. In this sense, all columns are "close" to each
-    other.
-    \item In $Z^{2,\true}$, each column is different from the other columns exactly
-    by exactly six bits. In this sense, all columns are "far" to each
-    other.
-    \item In $Z^{3,\true}$, the first three columns are similar. Columns 4 and 5 are 
-    close to each other. And columns 6 and 7 are distinct from other columns. 
-  \end{itemize}
-  \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
-    contains feature abundances that are small in both samples, large in both
-    samples, and large in only one sample. For example, feature $k=7$, 
-    has an abundance of $3\%$ in sample 1, and is absent in feature 2. 
-    Moreover, it has the smallest aggregate abundance across both samples. 
-    Hence, we can expect it will be least likely recovered in the analysis. 
-    Feature $k=3$, on the other hand is abundant in both samples, so we expect
-    it to be easily recovered.
-\end{itemize}
+\section{Data}\label{sec:data}
+The data for this study consists of transformed marker expression levels
+obtained from the blood samples of three subjects. Each of the three samples
+belongs to a different subject. The number of cells in the samples are (4677,
+1367, 12843). Thirty-two markers were studied in all samples and are listed
+in Table~\ref{tab:markers}. To remove overly-extreme values in the analysis,
+the data were further processed so that cells where at least one transformed
+marker expression level was greater than 4 or less than -7 were excluded. The
+final cell-counts in each sample was (4556, 1308, 12256).
 
-\subsection{More on data generation / MCMC setup}
+% THE 32 MARKERS:
+% 2B4 2DL1 2DL3 2DS4 3DL1 CCR7 CD158B CD16 CD25 CD27 CD57 CD62L CD8 CD94 CKIT
+% DNAM1 EOMES GRA GRB KLRG1 LFA1 NKG2A NKG2C NKG2D NKP30 PERFORIN SIGLEC7 SYK
+% TBET TIGIT TRAIL ZAP70
+
+\begin{table}[H]
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      1: 2B4    &  9: CD25   &  17: EOMES & 25: NKP30    \\
+      2: 2DL1   &  10: CD27  &  18: GRA   & 26: PERFORIN \\
+      3: 2DL3   &  11: CD57  &  19: GRB   & 27: SIGLEC7  \\
+      4: 2DS4   &  12: CD62L &  20: KLRG1 & 28: SYK      \\   
+      5: 3DL1   &  13: CD8   &  21: LFA1  & 29: TBET     \\
+      6: CCR7   &  14: CD94  &  22: NKG2A & 30: TIGIT    \\ 
+      7: CD158B &  15: CKIT  &  23: NKG2C & 31: TRAIL    \\ 
+      8: CD16   &  16: DNAM1 &  24: NKG2D & 32: ZAP70    \\ 
+      \hline
+    \end{tabular} 
+  \end{center}
+  \caption{Index for markers referenced in this study.}
+  \label{tab:markers}
+\end{table}
+
+\subsection{MCMC setup}
 \begin{itemize}
-  \item We generated $y_{inj}$ from skew Normal distributions. Specifically,
-  \begin{itemize}
-    \item Location parameter: $(\mu_{0,i,j}^\star)^\true=-0.8 + \epsilon_{0,i,j}$, $\epsilon_{0,i,j} \sim \Uniform(-0.3, 0.3)$
-    \item Location parameter: $(\mu_{1,i,j}^\star)^\true=1.3 + \epsilon_{1,i,j}$, $\epsilon_{1,i,j} \sim \Uniform(-0.3, 0.3)$
-    \item Scale parameter: ($\sigma^2_i)^\true=0.5$, $N=(2000, 2000)$
-    \item The skewness parameter $\zeta$ was set to -0.9. Note that $\zeta$
-          corresponds to $\delta \in \p{-1, 1}$ in \cite{fruhwirth2010bayesian}.
-  \end{itemize}
-  \item 6000 burn-in, followed by 3000 iterations (no thinning).
+  \item 10000 burn-in. 5000 samples were collected (no thinning).
   \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
         $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
         proposed at each MCMC iteration.
-  \item Computation time for each chain was was approximately 25 hours, but this can
-        be reduced to 12.5 hours with an improved (more tedious) implementation.
-        Particularly, currently if only one WPPT run is done at a time (as opposed
-        to 6 WPPT runs at a time), the computation time would be 12.5 hours, which
-        is approximately the time it takes to do a single non-WPPT run.
+  \item We fit 4 models, each with a different value for $\phi$. The values
+        for $\phi$ were (0, 1, 10, 25).
+  \item The average computation time for each model was was approximately 126 hours.
   \item 5\% of data in each sample are used to sample from trained prior, and
     $M=5$ was used.
-  \item We did each analysis with $\phi \in \bc{0, 1, 10}$
-  \item The simulation study was done for each of the true $Z$'s in 
-        Figure~\ref{fig:Z-true}.
-  \item For each true $Z$, we generated a full data set with no missing values,
-        and a data set with missing values (which is a subset of the former). Cells
-        that truly express a marker were never marked as missing.
-  \item In total, there were 24 runs, each run doing parallel tempering on 4
-        temperatures.
   \item \textbf{Some Priors:}
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
     \item $p_c \sim \text{Beta}(1, 9)$
-    \item $L_0=L_1=3$
-    \item $\alpha \sim \Gam(0.1, 0.1)$
+    \item $L_0=6$, $L_1=3$
+    \item $\alpha \sim \Gam(1, 1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
     \item $\delta_1 \sim \TN^+(1, 0.1)$
     \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
@@ -150,14 +139,8 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{\imscale}
   \end{center}
-  \caption{Log-likelihood for 3000 iterations after burn-in of 6000 for each
-  simulation setup. The first three columns are the runs with no missing
-  data. The last three columns are the runs with missing data. The first and
-  fourth, second and third, and third and fifth columns are run with $Z^1$,
-  $Z^2$, and $Z^3$, respectively. Each row is run with a different $\phi$.
-  This arrangement is used in subsequent figures. The mixing appears decent
-  from these figures. We see that in some cases (b, e), swaps between chains
-  resulted in very different states in the main chain.}
+  \caption{Log-likelihood for 5000 iterations after burn-in of 1000 for each
+  simulation setup.}
   \label{fig:ll}
 \end{figure}
 
@@ -168,9 +151,8 @@ this study. Note the following:
     \imgtemplate{swapprops.pdf}{\imscale}
   \end{center}
   \caption{These figures summarize proportion of instances that swaps were
-  made when proposed between the various chains for each setup. It seems that
-  swapping is more difficult when $\phi=0$, though I'm uncertain why that
-  might be the case.}
+  made when proposed between the various chains for each setup. Swapping rarely
+  happened between any two chains.}
   \label{fig:swapproprs}
 \end{figure}
 
@@ -182,28 +164,7 @@ this study. Note the following:
     \imgtemplate{Zmean.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{Posterior means of $Z$ for each run. When $\phi=0$, the number of
-  recovered features is 0 to 1, for $Z^{1,\true}$. In contrast, number of
-  recovered features when $\phi > 0$ is between 6 and 7, with the missing
-  feature being feature 7. This is perhaps due to the added left-skew in the observed
-  data, making it more feasible for features to be explained by mixture components
-  with negative means. The $\sigma_2^i$ learned when $\phi=0$ tended to be
-  much larger as well. Again, mixing may also be better when $\phi>0$ because 
-  the exploration of different configurations of $Z$ is encourage. There is a
-  tendency for $Z$ to be extremely sparse when $\phi=0$, due to the IBP prior.
-  %
-  For $Z^{2,\true}$, between 2 and 6 features were recovered when $\phi=0$.
-  When $\phi > 0$, all features were recovered. But in $(n)$, 
-  eight features were recovered, the extra feature being similar to one of the
-  features. However, it's estimated abundance was less than 1\%.
-  %
-  For Data 3, when $\phi=0$, the only features that were recovered are
-  features 3, 5, 6, and 7, which are the most representative features. i.e.
-  Features 1 and 2, which are rare, are merged with feature 3, which is
-  abundant and similar to the former features. When $\phi>0$, 6 to 7 features were
-  recovered. The missing features were either feature 1 or 2, which is similar to 
-  and merged with feature 3. Feature 7, though rare, was recovered, likely because
-  it is distinct.}
+  \caption{Posterior means of $Z$ for each run. Z  }
   \label{fig:zmean}
 \end{figure}
  
@@ -213,9 +174,7 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_1$. Features were duplicated in all runs 
-  where $\phi=0$. Zero to one features were not recovered. It appears except for
-  (x), all features were recovered when $\phi > 0$.}
+  \caption{Posterior estimate of $Z_1$.}
   \label{fig:z1est}
 \end{figure}
 
@@ -225,10 +184,7 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_2$. Features were duplicated in most runs
-  where $\phi=0$, and all features were recovered. For $\phi>0$, all runs
-  recovered all features. In (h) and (k), trace amounts ($<$ 1\%) of a feature
-  resembling one of the identified features was also learned.}
+  \caption{Posterior estimate of $Z_2$.}
   \label{fig:z2est}
 \end{figure}
 
@@ -238,10 +194,7 @@ this study. Note the following:
   \begin{center}  % 2 x 2
     \imgtemplate{Z3.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_3$. Features were duplicated in most runs
-  where $\phi=0$, and all features were recovered. For $\phi>0$, all runs
-  recovered all features. In (h) and (k), trace amounts ($<$ 1\%) of a feature
-  resembling one of the identified features was also learned.}
+  \caption{Posterior estimate of $Z_3$.}
   \label{fig:z3est}
 \end{figure}
 
@@ -333,11 +286,7 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{mus_trace.pdf}{\imscale}
   \end{center}
-  \caption{Trace plots for $\mu^\star_z$. The trends are very similar within
-  columns (i.e. for the same data, but different $\phi$). In (e), there is a
-  jump in $\mu^\star_0$ which results from a swap proposed between the main
-  chain and the next chain. In this run, helper chains usually did not swap
-  with the main chain.}
+  \caption{Trace plots for $\mu^\star_z$.}
   \label{fig:mus-trace}
 \end{figure}
  
@@ -359,11 +308,7 @@ this study. Note the following:
     \imgtemplate{sig2_trace.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{Trace plots for $\sigma^2$. The trends are very similar within
-  columns (i.e. for the same data, but different $\phi$) when $\phi>0$.
-  Again, In (e), there is a jump in $\sigma^2$ which results from a swap
-  proposed between the main chain and the next chain. In this run, helper
-  chains usually did not swap with the main chain.}
+  \caption{Trace plots for $\sigma^2$.}
   \label{fig:sig2-trace}
 \end{figure}
 
@@ -454,6 +399,7 @@ this study. Note the following:
       \includegraphics[scale=0.35]{\imgdir/phi0/img/missmech_3.pdf} \\
     \end{tabular}
   \end{center}
+  \caption{}
 \label{fig:missmech}
 \end{figure}
 
