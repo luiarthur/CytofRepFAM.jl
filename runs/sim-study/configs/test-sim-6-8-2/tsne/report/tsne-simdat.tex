@@ -48,30 +48,46 @@
 
 \def\imgdir{../viz/img}
 \newcommand{\imgtemplate}[2]{
-  \begin{tabular}{ccc}
-    (a) FlowSOM, Sample 1, Complete &
-    (b) Mclust, Sample 1, Complete &
-    (c) Truth, Sample 1, Complete \\
+  \begin{tabular}{ccccc}
+    {\tiny (a) FlowSOM, Sample 1, Complete} &
+    {\tiny (b) FlowSOM, Sample 2, Complete} &
+    {\tiny (c) FlowSOM, Sample 1, Missing} &
+    {\tiny (d) FlowSOM, Sample 2, Missing} \\
     \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.0-phi0.0-zind#2.pdf} \\
-    (d) FlowSOM, Sample 2, Complete &
-    (e) Mclust, Sample 2, Complete &
-    (f) Truth, Sample 2, Complete \\
     \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.0-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-true_labels2-pmiss0.0-phi0.0-zind#2.pdf} \\
-    (g) FlowSOM, Sample 1, Missing &
-    (h) Mclust, Sample 1, Missing &
-    (i) Truth, Sample 1, Missing \\
     \includegraphics[scale=#1]{\imgdir/tsne-flowsom1-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.6-phi0.0-zind#2.pdf} \\
+    {\tiny (e) Mclust, Sample 1, Complete} &
+    {\tiny (f) Mclust, Sample 2, Complete} &
+    {\tiny (g) Mclust, Sample 1, Missing} &
+    {\tiny (h) Mclust, Sample 2, Missing} \\
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.0-phi0.0-zind#2.pdf} &
     \includegraphics[scale=#1]{\imgdir/tsne-mclust1-pmiss0.6-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.6-phi0.0-zind#2.pdf} \\
-    (j) FlowSOM, Sample 2, Missing &
-    (k) Mclust, Sample 2, Missing &
-    (l) Truth, Sample 2, Missing \\
-    \includegraphics[scale=#1]{\imgdir/tsne-flowsom2-pmiss0.6-phi0.0-zind#2.pdf} &
-    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-mclust2-pmiss0.6-phi0.0-zind#2.pdf} \\
+    {\tiny (i) FAM, Sample 1, Complete} &
+    {\tiny (j) FAM, Sample 2, Complete} &
+    {\tiny (k) FAM, Sample 1, Missing} &
+    {\tiny (l) FAM, Sample 2, Missing} \\
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam1-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam2-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam1-pmiss0.6-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam2-pmiss0.6-phi0.0-zind#2.pdf} \\
+    {\tiny (m) rFAM, Sample 1, Complete} &
+    {\tiny (n) rFAM, Sample 2, Complete} &
+    {\tiny (o) rFAM, Sample 1, Missing} &
+    {\tiny (p) rFAM, Sample 2, Missing} \\
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam1-pmiss0.0-phi1.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam2-pmiss0.0-phi1.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam1-pmiss0.6-phi1.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-rfam2-pmiss0.6-phi1.0-zind#2.pdf} \\
+    {\tiny (q) Truth, Sample 1, Complete} &
+    {\tiny (r) Truth, Sample 2, Complete} &
+    {\tiny (s) Truth, Sample 1, Missing} &
+    {\tiny (t) Truth, Sample 2, Missing} \\
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels2-pmiss0.0-phi0.0-zind#2.pdf} &
+    \includegraphics[scale=#1]{\imgdir/tsne-true_labels1-pmiss0.6-phi0.0-zind#2.pdf} &
     \includegraphics[scale=#1]{\imgdir/tsne-true_labels2-pmiss0.6-phi0.0-zind#2.pdf} \\
   \end{tabular}
 }
@@ -97,11 +113,13 @@ seeds were tried, and the most representative (and best) results were used.
 The TSNE embeddings were colored by clusterings from the two clustering
 methods. \\
 
-In each page of the document, there are 12 graphs. The left, middle, and
-right columns are the TSNEs marked by the clusterings from FlowSOM, Mclust,
-and the true labels respectively. Rows 1 and 3 are for sample 1; whereas
-rows 2 and 4 are for sample 2. The first two rows are with complete data;
-while the next rows are with imputed missing data. \\
+In each page of the document, there are 20 graphs.  The rows vary by model
+(FlowSOM, Mclust-VII, FAM, rFAP-$\phi=1$, truth).  The first two columns are
+for the complete data; whereas the next two columns are for the data with
+imputed missing values. In the case of the FAM and rFAM, the imputation was
+done during the MCMC in order to obtain the clusters. But for more consistency,
+the TSNEs are based on the same data, where the missing values were imputed
+using the initialization technique for the FAM and rFAM. \\
 
 Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true} show, respectively, the
 matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
@@ -148,7 +166,7 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
 \section{TSNE for Mclust and FlowSOM for $Z_1$}  % 8 figs
 \begin{figure}[H]
   \begin{center}
-    \imgtemplate{0.3}{1}
+    \imgtemplate{0.2}{1}
   \end{center}
   \caption{The clusterings are very reasonable. But in the complete data
   setting, FlowSOM learns only 5 clusters (when there are 7). Mclust learns
@@ -162,7 +180,7 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
 \section{TSNE for Mclust and FlowSOM for $Z_2$}  % 8 figs
 \begin{figure}[H]
   \begin{center}
-    \imgtemplate{0.3}{2}
+    \imgtemplate{0.2}{2}
   \end{center}
   \caption{FlowSOM learns the right number of clusters here. Probably because
   the clusters are distinct enough. Mclust struggles to find the correct
@@ -174,7 +192,7 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
 \section{TSNE for Mclust and FlowSOM for $Z_3$}  % 8 figs
 \begin{figure}[H]
   \begin{center}
-    \imgtemplate{0.3}{3}
+    \imgtemplate{0.2}{3}
   \end{center}
   \caption{In this scenario, FlowSOM learns fewer than 7 clusters and Mclust
   learns more than 7 clusters. FlowSOM tends to recover high-level features,
