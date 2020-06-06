@@ -4,11 +4,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 
-# df = pd.DataFrame(np.random.randn(500, 2).cumsum(axis=0), columns=["x", "y"])
-# sns.relplot(x="x", y="y", sort=False, kind="line", data=df);
-# plt.show()
-
-def graph_tsne(tsne_df, clust, i, method, outpath):
+def graph_tsne(tsne_df, clust, i, method, outpath, method_suffix=''):
     if clust is None:
         tsne_df[method] = tsne_df[method].astype(int)
     else:
@@ -47,3 +43,21 @@ if __name__ == "__main__":
                 for i in range(2):
                     outpath = 'viz/img/tsne-{}{}-{}.pdf'.format(method, i + 1, simname)
                     graph_tsne(tsne_df, clust, i + 1, method, outpath)
+            # rfam
+            method = "rfam"
+            for phi in [0.0, 1.0]:
+                clust_simname = 'pmiss{}-phi{}-zind{}'.format(pmiss, phi, zind)
+                clust_path = '{}/{}-{}.csv'.format(path_to_csv, method,
+                                                   clust_simname)
+                print(clust_path)
+                clust = np.loadtxt(clust_path)
+
+                tsne_path = '{}/tsne-{}.csv'.format(path_to_csv, simname)
+                tsne_df = pd.read_csv(tsne_path)
+                for i in range(2):
+                    outpath = 'viz/img/tsne-{}{}-{}.pdf'.format(method,
+                                                                i + 1,
+                                                                clust_simname)
+                    graph_tsne(tsne_df, clust, i + 1, method, outpath,
+                               method_suffix='phi={}'.format(phi))
+
