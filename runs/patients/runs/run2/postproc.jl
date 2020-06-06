@@ -148,8 +148,9 @@ end
   PlotUtils.plot_dden(ddens=output[:dden],
                       etas=etas, Ws=Ws, Zs=Zs, sig2s=sig2s, deltas=deltas,
                       ygrid=output[:c].constants.y_grid,
-                      imgdir=imgdir, 
-                      dden_xlim=(-6, 6),  # NOTE: Change this!
+                      imgdir=imgdir,
+                      dfs=output[:d],
+                      dden_xlim=(-7, 4),  # NOTE: Change this!
                       plot_true=false)  # NOTE: Change this!
 end
 

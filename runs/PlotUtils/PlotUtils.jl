@@ -390,6 +390,7 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
                    ygrid, imgdir, printmean=true, 
                    plot_true=true,
                    simdat=nothing, xlabel="expression level", ylabel="density",
+                   dfs=nothing,
                    dden_xlim=(-6, 6))
   # Make directories if needed
   mkpath("$(imgdir)/dden")
@@ -484,7 +485,10 @@ function plot_dden(; ddens, etas, Ws, Zs, sig2s, deltas,
           p_truth_complete, = plt.plot(ygrid, dgrid, color="grey", ls="--")
         end
       else
-        # TODO: Plot histogram of data
+        # Plot histogram of observed data
+        p_yobs = sns.kdeplot(skipnan(dfs.data.y[i][:, j]),
+                             color="red", bw=.1, label="tmp")
+        p_yobs = p_yobs.get_legend_handles_labels()[1][1]
       end
 
       # Number of MCMC samples
