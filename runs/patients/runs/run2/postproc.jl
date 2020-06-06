@@ -133,7 +133,7 @@ end
   # Plot missing mechanism
   println("Plotting missmechs ...")
   for i in 1:I
-    PlotUtils.plot_missmech(output[:c].constants.beta, i, xlim=[-5, 0])
+    PlotUtils.plot_missmech(output[:c].constants.beta, i, xlim=[-10, 0])
     plt.savefig("$(imgdir)/missmech_$(i).pdf", bbox_inches="tight")
     plt.close()
   end
