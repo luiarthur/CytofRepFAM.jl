@@ -242,16 +242,26 @@ function plot_sig2(sig2s, imgdir; sig2_true=nothing, printmean=true)
   plt.plot(sig2s)
   plt.savefig("$(imgdir)/sig2_trace.pdf", bbox_inches="tight")
   plt.close()
+end
 
+function plot_W(Ws, imgdir; W_true=nothing, xlabel="cell subpopulations")
+  plot_W(Ws, imgdir=imgdir, W_true=W_true, xlabel=xlabel)
 end
 
 function plot_W(Ws; imgdir, W_true=nothing, xlabel="cell subpopulations")
   I, K = size(Ws[1])
-  Ws_mat = cat(Ws..., dims=3)
+  # NOTE: Julia bug. Splat (...) throws errors if number of elems is too large.
+  # Workaround: use list comprehensions instead.
+  # See: https://github.com/JuliaLang/julia/issues/30796
+  # Ws_mat = cat(Ws..., dims=3)
+  S = length(Ws)
+
   plt.figure()
   for i in 1:I
     plt.subplot(I, 1, i)
-    boxplot(Ws_mat[i, :, :]')
+    # boxplot(Ws_mat[i, :, :]')
+    Wis = [Ws[s][i, k] for s in 1:S, k in 1:K]
+    boxplot(Wis)
     plt.ylabel("W$(i)")
     if W_true != nothing
       K_true = size(W_true, 2)
