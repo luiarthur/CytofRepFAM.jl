@@ -35,7 +35,7 @@ function get_best_lam(samples)
   I = length(lams[1])
 
   idx_best = [estimate_ZWi_index(Zs, Ws, i) for i in 1:I]
-  return [Int64.(lams[idx_best[i]][i]) for i in 1:I]
+  return [lams[idx_best[i]][i] for i in 1:I]
 end
 
 function compute_tsne(path_to_simdat; use_complete_data=true, seed=0, verbose=2)
