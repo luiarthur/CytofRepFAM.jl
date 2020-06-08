@@ -61,7 +61,7 @@
 \def\imscale{.5}
 
 % Title Settings
-\title{Patients Data Analysis with r-FAM and $K=15$}
+\title{Patients Data Analysis with r-FAM and $K=20$}
 \author{Arthur Lui}
 \date{\today} % \date{} to set date to empty
 
@@ -117,7 +117,7 @@ final cell-counts in each sample was (4556, 1308, 12256).
         proposed at each MCMC iteration.
   \item We fit 4 models, each with a different value for $\phi$. The values
         for $\phi$ were (0, 1, 10, 25).
-  \item The average computation time for each model was was approximately 126 hours.
+  \item The average computation time for each model was was approximately 169 hours.
   \item 5\% of data in each sample are used to sample from trained prior, and
     $M=5$ was used.
   \item \textbf{Some Priors:}
@@ -288,7 +288,7 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \caption{Posterior distribution for $W$.}
   \label{fig:W-post}
 \end{figure}
-
+ 
 \newpage
 \section{Trace plots for $\mu^\star$}
 \begin{figure}[H]
