@@ -28,10 +28,19 @@ for phi in (0, 1, 10, 25)
   samples =  [s[1] for s in output[:samples][1]]
 
   # Get best lam (for each sample)
-  best_lam = vcat(get_best_lam(samples)...)
+  best_lam, N = let
+    _best_lam = get_best_lam(samples)
+    vcat(_best_lam...), length.(_best_lam)
+  end
+
+  # number of samples
+  I = length(N)
+
+  # Sample index
+  sample_ind = vcat([fill(i, N[i]) for i in 1:I]...)
 
   # Write output to file.
   open("$(csvdir)/fam-$(simname)-clusterings.csv", "w") do io
-    writedlm(io, best_lam)
+    writedlm(io, [best_lam sample_ind])
   end
 end
