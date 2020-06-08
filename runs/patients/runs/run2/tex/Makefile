@@ -19,4 +19,5 @@ watch:
 getresults:
 	cd ../ && make getresults -s
 	ln -s $(SCRATCHDIR)/patients-data/$(simname) results
+	Rscript R_plots.R
 		
