@@ -31,7 +31,8 @@ module load R/R-3.6.1
 #`install.packages('mclust')`.
 julia -e 'import Pkg; Pkg.activate(joinpath(@__DIR__, "../../../../")); Pkg.build("RCall")'
 
-echo "Doing test run"
+echo "This is a healthy sign of life ..."
+
 for phi in ${phi}
 do
   rdir=${results_dir}/phi${phi}
