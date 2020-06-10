@@ -30,16 +30,39 @@ mutable struct StateFS{F <: AbstractFloat}
 end
 
 
-function StateFS{F}(theta::State{F}, dfs::DataFS) where {F <: AbstractFloat}
+function StateFS{F}(theta::State{F}, dfs::DataFS;
+                    omega_prior=nothing,
+                    eps_r::Float64=0.0, verbose=0) where {F <: AbstractFloat}
   sfs = StateFS{F}()
   I, K = size(theta.W)
 
+  # Set theta
   sfs.theta = theta
-  # sfs.r = rand(Bool, I, K)
-  sfs.r = ones(Bool, I, K)
-  # sfs.W_star = ones(I, K)
+
+  # Set W*
   sfs.W_star = theta.W * 5
-  sfs.omega = zeros(dfs.P)
+
+  # Set R
+  if eps_r > 0.0
+    sfs.r = sfs.W_star .> eps_R
+  else
+    sfs.r = ones(Bool, I, K)
+  end
+
+  if verbose > 0
+    println("Initial sfs.r: $(sfs.R)")
+  end
+
+  # Set omega
+  if omega_prior == nothing
+    sfs.omega = zeros(dfs.P)
+  else
+    sfs.omega = rand(omega_prior, dfs.P)
+  end
+
+  if verbose > 0
+    println("Inital sfs.omega: $(sfs.omega)")
+  end
 
   return sfs
 end

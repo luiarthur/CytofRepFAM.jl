@@ -93,17 +93,22 @@ end
     states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s)
               for s in 1:ntemps]
 
+    # Create tunenrs
     t = rfam.Tuners(d.y, c.K)
+
+    # Create covriates matrix
     X = rfam.eye(Float64, d.I)
 
+    # Create model constants
     cfs = rfam.ConstantsFS(c)
 
-    # NOTE: These priors are important
+    # NOTE: Use informative priors for W* and omega, to control feature
+    # selection.
+    cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
     # similar to p ~ Beta(1, 99), weakly informative
     cfs.omega_prior = Normal(-5, 1)
-    cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
 
-    dfs = rfam.DataFS(d, X)
+    dfs = rfam.DataFS(d, X, omega_prior=cfs.omega_prior, eps_r=0.05)
     sfss = [rfam.StateFS{Float64}(s, dfs) for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
