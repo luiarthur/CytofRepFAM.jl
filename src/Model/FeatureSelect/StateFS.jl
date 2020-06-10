@@ -32,7 +32,7 @@ end
 
 function StateFS{F}(theta::State{F}, dfs::DataFS;
                     omega_prior=nothing,
-                    eps_r::Float64=0.0, verbose=0) where {F <: AbstractFloat}
+                    eps_r::Float64=0.0, verbose=1) where {F <: AbstractFloat}
   sfs = StateFS{F}()
   I, K = size(theta.W)
 
