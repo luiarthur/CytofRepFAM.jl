@@ -108,8 +108,9 @@ end
     # similar to p ~ Beta(1, 99), weakly informative
     cfs.omega_prior = Normal(-5, 1)
 
-    dfs = rfam.DataFS(d, X, omega_prior=cfs.omega_prior, eps_r=0.05)
-    sfss = [rfam.StateFS{Float64}(s, dfs) for s in states]
+    dfs = rfam.DataFS(d, X)
+    sfss = [rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior, eps_r=0.05)
+            for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
     return Dict(:dfs => dfs, :cfs => cfs, :sfss => sfss, :tfs => tfs, :y => y)
