@@ -44,13 +44,9 @@ function StateFS{F}(theta::State{F}, dfs::DataFS;
 
   # Set R
   if eps_r > 0.0
-    sfs.r = sfs.W_star .> eps_R
+    sfs.r = sfs.theta.W .> eps_r
   else
     sfs.r = ones(Bool, I, K)
-  end
-
-  if verbose > 0
-    println("Initial sfs.r: $(sfs.R)")
   end
 
   # Set omega
@@ -61,6 +57,10 @@ function StateFS{F}(theta::State{F}, dfs::DataFS;
   end
 
   if verbose > 0
+    println("Initial sfs.r: $(sfs.r)")
+    println("Initial sfs:W_star $(sfs.W_star)")
+    println("Initial sfs.theta.W: $(sfs.theta.W)")
+    println("Initial sfs.theta.Z: $(sfs.theta.Z)")
     println("Inital sfs.omega: $(sfs.omega)")
   end
 
