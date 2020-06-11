@@ -41,11 +41,16 @@ function StateFS{F}(theta::State{F}, dfs::DataFS;
   sfs.theta = theta
 
   # Set W*
-  sfs.W_star = theta.W
   if W_star_prior == nothing
-    sfs.W_star .* 5
+    sfs.W_star = theta.W * K * 5
   else
-    sfs.W_star .* mean(W_star_prior)
+    # Want empirical mean of W_star  to start at prior mean of W_star.
+    # (wstar_1 + ... + wstar_K) / K = m , where m is some mean.
+    # => (wstar_1 + ... + wstar_K) = K * m
+    #
+    # So, setting wstar_k = w_k * K * m will lead to a
+    # wstar that when normalized is w, but has a mean of m.
+    sfs.W_star = theta.W * K * mean(W_star_prior)
   end
 
   # Set R
