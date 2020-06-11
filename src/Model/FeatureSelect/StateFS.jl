@@ -32,6 +32,7 @@ end
 
 function StateFS{F}(theta::State{F}, dfs::DataFS;
                     omega_prior=nothing,
+                    W_star_prior=nothing,
                     eps_r::Float64=0.0, verbose=1) where {F <: AbstractFloat}
   sfs = StateFS{F}()
   I, K = size(theta.W)
@@ -40,7 +41,12 @@ function StateFS{F}(theta::State{F}, dfs::DataFS;
   sfs.theta = theta
 
   # Set W*
-  sfs.W_star = theta.W * 5
+  sfs.W_star = theta.W
+  if W_star_prior == nothing
+    sfs.W_star .* 5
+  else
+    sfs.W_star .* mean(W_star_prior)
+  end
 
   # Set R
   if eps_r > 0.0

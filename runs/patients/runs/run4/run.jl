@@ -104,12 +104,13 @@ end
 
     # NOTE: Use informative priors for W* and omega, to control feature
     # selection.
-    cfs.W_star_prior = Gamma(100, 0.1) # shape, scale
+    cfs.W_star_prior = Gamma(1000, 0.1) # shape, scale
     # similar to p ~ Beta(1, 99)
     cfs.omega_prior = Normal(-5, 1)
 
     dfs = rfam.DataFS(d, X)
-    sfss = [rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior, eps_r=0.05)
+    sfss = [rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior,
+                                  W_star_prior=cfs.W_star_prior, eps_r=0.05)
             for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
