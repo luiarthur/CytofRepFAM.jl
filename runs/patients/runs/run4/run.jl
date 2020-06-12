@@ -104,11 +104,11 @@ end
 
     # NOTE: Use informative priors for W* and omega, to control feature
     # selection.
-    # cfs.W_star_prior = Gamma(1000, 0.1) # shape, scale. Works, but extreme?
+    cfs.W_star_prior = Gamma(1000, 0.1) # shape, scale. Works, but extreme?
     # cfs.W_star_prior = Gamma(100, 0.1) # shape, scale. Not working.
     # cfs.W_star_prior = Gamma(1/c.K, 1) # shape, scale. Not working.
     # cfs.W_star_prior = Gamma(1/c.K, c.K * 10) # shape, scale. Not working.
-    cfs.W_star_prior = Gamma(1, 100) # shape, scale. Trying.
+    # cfs.W_star_prior = Gamma(1, 100) # shape, scale. Not super helpful.
     # similar to p ~ Beta(1, 99)
     cfs.omega_prior = Normal(-5, 1)
 
