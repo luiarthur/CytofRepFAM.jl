@@ -17,9 +17,20 @@ R_plots = function(countspath, savepath=NULL) {
 }
 
 make_R_plots = function(path) {
+  # Counts
   countspath = paste0(path, '/img/txt/Rcounts.txt')
   savepath = paste0(path, '/img/Rcounts.pdf')
   R_plots(countspath, savepath)
+
+  # zmean
+  # TODO: z-estimate instead
+  zmean_path = paste0(path, '/img/txt/Zmean.txt')
+  dz_path = paste0(path, '/img/z-dist.pdf')
+  zmean = read.table(zmean_path)
+  dz = dist(t(zmean), method='manhattan')
+  pdf(dz_path)
+  plot(table(dz))
+  dev.off()
 }
 
 for (phi in c(0, 1, 10, 25)) {
