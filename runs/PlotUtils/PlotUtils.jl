@@ -75,6 +75,10 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
   # Make img dir if needed
   mkpath(imgdir)
 
+  # Make img/txt dir
+  txtdir = "$(imgdir)/txt" 
+  mkpath(txtdir)
+
   I = length(y)
   for i in 1:I
     idx_best = estimate_ZWi_index(Zs, Ws, i)
@@ -82,6 +86,18 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     Zi = Int.(Zs[idx_best])
     Wi = Float64.(Ws[idx_best][i, :])
     lami = Int64.(lams[idx_best][i])
+
+    open("$(txtdir)/Z$(i)_best.txt", "w") do io
+      writedlm(io, Zi)
+    end
+
+    open("$(txtdir)/W$(i)_best.txt", "w") do io
+      writedlm(io, Wi)
+    end
+
+    open("$(txtdir)/lam$(i)_best.txt", "w") do io
+      writedlm(io, lami)
+    end
 
     yi = Float64.(y[i])
 
