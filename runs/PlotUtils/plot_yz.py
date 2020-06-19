@@ -33,15 +33,20 @@ def add_gridlines_Z(Z):
 
 def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
            cm=blue2red.cm(6), vlim=(-3, 3), fs_xlab=10, fs_ylab=10,
-           markernames=[]):
+           markernames=[], interpolation=None):
     J = yi.shape[1]
     vmin, vmax = vlim
+
+    if type(wi_mean) == int:
+        K = wi_mean
+        wi_mean = np.array([(lami_est == k + 1).mean() for k in range(K)])
 
     lami_new, counts = relabel_lam(lami_est, wi_mean)
     counts_cumsum = np.cumsum(counts)
     yi_sorted = yi[np.argsort(lami_new), :]
 
-    im = plt.imshow(yi_sorted, aspect='auto', vmin=vmin, vmax=vmax, cmap=cm)
+    im = plt.imshow(yi_sorted, aspect='auto', vmin=vmin, vmax=vmax,
+                    cmap=cm, interpolation=interpolation)
     for c in counts_cumsum[:-1]:
         plt.axhline(c, color='yellow', linewidth=lw)
     plt.xticks(rotation=90)
