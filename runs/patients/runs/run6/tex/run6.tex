@@ -116,14 +116,14 @@ final cell-counts in each sample was (4556, 1308, 12256).
         $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
         proposed at each MCMC iteration.
   \item We fit 4 models, each with a different value for $\phi$. The values
-        for $\phi$ were (0, 1, 10, 25).
+        for $\phi$ were (0, 1, 10, 100).
   \item The average computation time for each model was was approximately 169 hours.
   \item 5\% of data in each sample are used to sample from trained prior, and
     $M=5$ was used.
   \item \textbf{Some Priors:}
   \begin{itemize}
-    \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
-    \item $p_c \sim \text{Beta}(1, 9)$
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=10, \text{rate}=1)$
+    \item $p_c \sim \text{Beta}(1, 99)$
     \item $L_0=6$, $L_1=3$
     \item $\alpha \sim \Gam(1, 1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
