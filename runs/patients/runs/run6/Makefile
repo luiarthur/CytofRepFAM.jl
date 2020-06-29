@@ -31,7 +31,8 @@ getallresults:
 
 getresults:
 		aws s3 sync $(AWS_BUCKET) $(results_dir) \
-			--exclude "*/output.bson"
+			--exclude "*/output.bson" \
+			--exclude "*/log.txt"
 
 sendresults:
 		aws s3 sync $(results_dir) $(AWS_BUCKET) \
