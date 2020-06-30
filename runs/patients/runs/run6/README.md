@@ -21,3 +21,5 @@
     - Not in paper
         - [ ] Flowsom
         - [ ] Mclust
+
+- **This run is potentially good enough for the paper**
