@@ -117,7 +117,7 @@ final cell-counts in each sample was (4556, 1308, 12256).
         proposed at each MCMC iteration.
   \item We fit 4 models, each with a different value for $\phi$. The values
         for $\phi$ were (0, 1, 10, 100).
-  \item The average computation time for each model was was approximately 169 hours.
+  \item The computation time averaged across the 4 models was 159 hours.
   \item 5\% of data in each sample are used to sample from trained prior, and
     $M=5$ was used.
   \item \textbf{Some Priors:}
@@ -139,7 +139,7 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 6 x 5
     \imgtemplate{loglike_postburn.pdf}{\imscale}
   \end{center}
-  \caption{Log-likelihood for 5000 iterations after burn-in of 1000 for each
+  \caption{Log-likelihood for 5000 iterations after burn-in of 10000 for each
   simulation setup.}
   \label{fig:ll}
 \end{figure}
@@ -151,8 +151,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
     \imgtemplate{swapprops.pdf}{\imscale}
   \end{center}
   \caption{These figures summarize proportion of instances that swaps were
-  made when proposed between the various chains for each setup. Swapping rarely
-  happened between any two chains.}
+  made when proposed between the various chains for each setup. A noticeable amount of Swapping occurred between the chains. The colorbars on the right of each
+  heatmap show that the highest proportion of swaps between any two chains is 
+  between 40\% and 60\%.}
   \label{fig:swapproprs}
 \end{figure}
 
@@ -164,7 +165,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
     \imgtemplate{Zmean.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{Posterior means of $Z$ for each run. Z  }
+  \caption{Posterior means of $Z$ for each run. This figure is included only
+  to show that it should not be used, due to label switching which happens as
+  a result of states-swapping between chains.}
   \label{fig:zmean}
 \end{figure}
  
@@ -174,7 +177,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_1$.}
+  \caption{Posterior estimate of $Z_1$.
+  Note that the labels are likely different for the different samples due
+  to label switching.}
   \label{fig:z1est}
 \end{figure}
 
@@ -184,7 +189,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_2$.}
+  \caption{Posterior estimate of $Z_2$.
+  Note that the labels are likely different for the different samples due
+  to label switching.}
   \label{fig:z2est}
 \end{figure}
 
@@ -194,7 +201,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 2 x 2
     \imgtemplate{Z3.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_3$.}
+  \caption{Posterior estimate of $Z_3$.
+  Note that the labels are likely different for the different samples due
+  to label switching.}
   \label{fig:z3est}
 \end{figure}
 
@@ -284,7 +293,9 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 6 x 5
     \imgtemplate{Rcounts.pdf}{.4}
   \end{center}
-  \caption{Posterior distribution for $R_i$.}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears
+  to be the smallest. This could be due to the MCMC being stuck in a certain
+  mode more easily. For $\phi > 0$, $R_i$ seems to decrease as $\phi$ increases.}
   \label{fig:W-post}
 \end{figure}
  
@@ -294,7 +305,8 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \begin{center}  % 6 x 5
     \imgtemplate{W.pdf}{\imscale}
   \end{center}
-  \caption{Posterior distribution for $W$.}
+  \caption{Posterior distribution for $W$. This figure is not very useful
+  to look at, due to label-switching.}
   \label{fig:W-post}
 \end{figure}
  
