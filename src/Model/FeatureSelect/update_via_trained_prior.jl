@@ -141,6 +141,7 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
     println("\nomega: $(sfs.omega)")
     println("W:")
     Base.show(stdout, "text/plain", sfs.theta.W)
-    println("R: $(sum(sfs.r, 2))")
+    println()
+    println("R: $(sum(sfs.r, dims=2))")
   end
 end

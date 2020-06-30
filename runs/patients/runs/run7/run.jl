@@ -59,7 +59,8 @@ end
                                 1:num_markers)
   println("Good markers: $(String.(markers[marker_index_to_keep]))")
   println("Bad markers: $(String.(markers[marker_index_to_remove]))")
-  data = [d[:, marker_index_to_keep] for d in data]
+  y = [yi[:, marker_index_to_keep] for yi in y]
+  println("Reduced data sizes: ", size.(y))
 
   # Results dir
   mkpath(results_dir)
