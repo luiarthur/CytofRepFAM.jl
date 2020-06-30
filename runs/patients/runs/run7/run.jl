@@ -22,7 +22,7 @@ end
                          nburn=10000, nsamps=5000, thin=1,
                          K=20, L=Dict(0=>6, 1=>3),
                          tempers=[1, 1.0003, 1.0006, 1.001],
-                         batchsizes=[200, 200, 200], pthin=5,
+                         batchsizes=[200, 200], pthin=5,
                          y_lower=-7, y_upper=4)
 
   @assert length(path_to_data) == length(batchsizes)
