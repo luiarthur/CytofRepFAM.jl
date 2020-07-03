@@ -77,31 +77,45 @@
 
 \section{Data}\label{sec:data}
 The data for this study consists of transformed marker expression levels
-obtained from the blood samples of three subjects. Each of the three samples
+obtained from the blood samples of two subjects. Each of the two samples
 belongs to a different subject. The number of cells in the samples are (4677,
-1367, 12843). Thirty-two markers were studied in all samples and are listed
+1367). Thirty-two markers were studied in all samples and are listed
 in Table~\ref{tab:markers}. To remove overly-extreme values in the analysis,
 the data were further processed so that cells where at least one transformed
 marker expression level was greater than 4 or less than -7 were excluded. The
-final cell-counts in each sample was (4556, 1308, 12256).
+final cell-counts in each sample was (4556, 1308).
 
 % THE 32 MARKERS:
 % 2B4 2DL1 2DL3 2DS4 3DL1 CCR7 CD158B CD16 CD25 CD27 CD57 CD62L CD8 CD94 CKIT
 % DNAM1 EOMES GRA GRB KLRG1 LFA1 NKG2A NKG2C NKG2D NKP30 PERFORIN SIGLEC7 SYK
 % TBET TIGIT TRAIL ZAP70
 
+% markers: ["2B4", "2DL1", "2DL3", "2DS4", "3DL1", "CCR7", "CD158B", "CD16",
+% "CD25", "CD2 7", "CD57", "CD62L", "CD8", "CD94", "CKIT", "DNAM1", "EOMES",
+% "GRA", "GRB", "KLRG1", "LFA1", "NKG2A", "NKG2C", "NKG2D", "NKP30", "PERFORIN",
+% "SIGLEC7", "SYK", "TBET", "TIGIT" , "TRAIL", "ZAP70"]
+% Good markers: ["2B4", "2DL3", "3DL1", "CD158B", "CD16", "CD57", "CD62L", "CD8",
+% "CD94", "CKIT", "DNAM1", "EOMES", "GRA", "GRB", "NKG2A", "NKG2D", "NKP30",
+% "PERFORIN", "SIGLEC7", "SYK", "TBET", "TIGIT", "ZAP70"]
+% Bad markers: ["2DL1", "2DS4", "CCR7", "CD25", "CD27", "KLRG1", "LFA1", "NKG2C", "TRAIL"]
 \begin{table}[H]
   \begin{center}
     \begin{tabular}{|l|l|l|l|}
       \hline
-      1: 2B4    &  9: CD25   &  17: EOMES & 25: NKP30    \\
-      2: 2DL1   &  10: CD27  &  18: GRA   & 26: PERFORIN \\
-      3: 2DL3   &  11: CD57  &  19: GRB   & 27: SIGLEC7  \\
-      4: 2DS4   &  12: CD62L &  20: KLRG1 & 28: SYK      \\   
-      5: 3DL1   &  13: CD8   &  21: LFA1  & 29: TBET     \\
-      6: CCR7   &  14: CD94  &  22: NKG2A & 30: TIGIT    \\ 
-      7: CD158B &  15: CKIT  &  23: NKG2C & 31: TRAIL    \\ 
-      8: CD16   &  16: DNAM1 &  24: NKG2D & 32: ZAP70    \\ 
+      % 1: 2B4    &  9: CD25   &  17: EOMES & 25: NKP30    \\
+      % 2: 2DL1   &  10: CD27  &  18: GRA   & 26: PERFORIN \\
+      % 3: 2DL3   &  11: CD57  &  19: GRB   & 27: SIGLEC7  \\
+      % 4: 2DS4   &  12: CD62L &  20: KLRG1 & 28: SYK      \\   
+      % 5: 3DL1   &  13: CD8   &  21: LFA1  & 29: TBET     \\
+      % 6: CCR7   &  14: CD94  &  22: NKG2A & 30: TIGIT    \\ 
+      % 7: CD158B &  15: CKIT  &  23: NKG2C & 31: TRAIL    \\ 
+      % 8: CD16   &  16: DNAM1 &  24: NKG2D & 32: ZAP70    \\ 
+      1: 2B4    & 7: CD62L  & 13: GRA       & 19: SIGLEC7 \\
+      2: 2DL3   & 8: CD8    & 14: GRB       & 20: SYK     \\
+      3: 3DL1   & 9: CD94   & 15: NKG2A     & 21: TBET    \\
+      4: CD158B & 10: CKIT  & 16: NKG2D     & 22: TIGIT   \\
+      5: CD16   & 11: DNAM1 & 17: NKP30     & 23: ZAP7    \\
+      6: CD57   & 12: EOMES & 18: PERFORIN  &             \\
       \hline
     \end{tabular} 
   \end{center}
@@ -117,7 +131,8 @@ final cell-counts in each sample was (4556, 1308, 12256).
         proposed at each MCMC iteration.
   \item We fit 4 models, each with a different value for $\phi$. The values
         for $\phi$ were (0, 1, 10, 100).
-  \item The computation time averaged across the 4 models was 159 hours.
+  % \item The computation time averaged across the 4 models was 159 hours.
+  \item The computation time averaged across the 4 models was 65 hours.
   \item 5\% of data in each sample are used to sample from trained prior, and
     $M=5$ was used.
   \item \textbf{Some Priors:}
@@ -195,17 +210,17 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \label{fig:z2est}
 \end{figure}
 
-\newpage
-\section{Posterior estimate of $Z_3$}
-\begin{figure}[H]
-  \begin{center}  % 2 x 2
-    \imgtemplate{Z3.pdf}{\imscale}
-  \end{center}
-  \caption{Posterior estimate of $Z_3$.
-  Note that the labels are likely different for the different samples due
-  to label switching.}
-  \label{fig:z3est}
-\end{figure}
+% \newpage
+% \section{Posterior estimate of $Z_3$}
+% \begin{figure}[H]
+%   \begin{center}  % 2 x 2
+%     \imgtemplate{Z3.pdf}{\imscale}
+%   \end{center}
+%   \caption{Posterior estimate of $Z_3$.
+%   Note that the labels are likely different for the different samples due
+%   to label switching.}
+%   \label{fig:z3est}
+% \end{figure}
 
 
 \newpage
@@ -230,16 +245,16 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \label{fig:y2est}
 \end{figure}
 
-\newpage
-\section{Posterior estimate of $y_3$}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \imgtemplate{y3.pdf}{\imscale}
-  \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:y3est}
-\end{figure}
+% \newpage
+% \section{Posterior estimate of $y_3$}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{y3.pdf}{\imscale}
+%   \end{center}
+%   % TODO: Write more?
+%   \caption{}
+%   \label{fig:y3est}
+% \end{figure}
 
 
 
@@ -276,16 +291,16 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \label{fig:p2trace}
 \end{figure}
 
-\newpage
-\section{Trace plots for $p_3$}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \imgtemplate{p3_trace.pdf}{\imscale}
-  \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:p3trace}
-\end{figure}
+% \newpage
+% \section{Trace plots for $p_3$}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{p3_trace.pdf}{\imscale}
+%   \end{center}
+%   % TODO: Write more?
+%   \caption{}
+%   \label{fig:p3trace}
+% \end{figure}
 
 \newpage
 \section{Posterior distribution for $R_i$}
@@ -397,27 +412,27 @@ final cell-counts in each sample was (4556, 1308, 12256).
   \label{fig:ddi2j2}
 \end{figure}
 
-\newpage
-\section{Posterior distributions for sample 3 marker 2}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \imgtemplate{dden/dden_i3_j1.pdf}{\imscale}
-  \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:ddi1j6}
-\end{figure}
-
-\newpage
-\section{Posterior distributions for sample 3 marker 2}
-\begin{figure}[H]
-  \begin{center}  % 6 x 5
-    \imgtemplate{dden/dden_i3_j2.pdf}{\imscale}
-  \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:ddi2j6}
-\end{figure}
+% \newpage
+% \section{Posterior distributions for sample 3 marker 1}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{dden/dden_i3_j1.pdf}{\imscale}
+%   \end{center}
+%   % TODO: Write more?
+%   \caption{}
+%   \label{fig:ddi1j6}
+% \end{figure}
+% 
+% \newpage
+% \section{Posterior distributions for sample 3 marker 2}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{dden/dden_i3_j2.pdf}{\imscale}
+%   \end{center}
+%   % TODO: Write more?
+%   \caption{}
+%   \label{fig:ddi2j6}
+% \end{figure}
 
 \newpage
 \section{Missing Mechanisms}
@@ -426,7 +441,7 @@ final cell-counts in each sample was (4556, 1308, 12256).
     \begin{tabular}{ccc}
       \includegraphics[scale=0.35]{\imgdir/phi0/img/missmech_1.pdf} &
       \includegraphics[scale=0.35]{\imgdir/phi0/img/missmech_2.pdf} &
-      \includegraphics[scale=0.35]{\imgdir/phi0/img/missmech_3.pdf} \\
+      % \includegraphics[scale=0.35]{\imgdir/phi0/img/missmech_3.pdf} \\
     \end{tabular}
   \end{center}
   \caption{}
