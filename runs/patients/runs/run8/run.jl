@@ -54,8 +54,8 @@ end
   
   # Remove markers
   num_markers = length(markers)
-  marker_index_to_remove = [2, 3, 4, 6, 8, 9, 10, 11, 18, 19, 20, 21, 23, 26,
-                            30, 31]
+  marker_index_to_remove = [2, 3, 4, 6, 8, 9, 10, 11, 12, 18, 19, 20, 21, 23,
+                            26, 30, 31]
   marker_index_to_keep = filter(j -> !(j in marker_index_to_remove),
                                 1:num_markers)
   println("Good markers: $(String.(markers[marker_index_to_keep]))")
