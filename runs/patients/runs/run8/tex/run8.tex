@@ -79,7 +79,7 @@
 The data for this study consists of transformed marker expression levels
 obtained from the blood samples of two subjects. Each of the two samples
 belongs to a different subject. The number of cells in the samples are (4677,
-1367). Thirty-two markers were studied in all samples and are listed
+1367). Fifteen markers were studied in all samples and are listed
 in Table~\ref{tab:markers}. To remove overly-extreme values in the analysis,
 the data were further processed so that cells where at least one transformed
 marker expression level was greater than 4 or less than -7 were excluded. The
@@ -91,13 +91,16 @@ final cell-counts in each sample was (4556, 1308).
 % TBET TIGIT TRAIL ZAP70
 
 % markers: ["2B4", "2DL1", "2DL3", "2DS4", "3DL1", "CCR7", "CD158B", "CD16",
-% "CD25", "CD2 7", "CD57", "CD62L", "CD8", "CD94", "CKIT", "DNAM1", "EOMES",
-% "GRA", "GRB", "KLRG1", "LFA1", "NKG2A", "NKG2C", "NKG2D", "NKP30", "PERFORIN",
-% "SIGLEC7", "SYK", "TBET", "TIGIT" , "TRAIL", "ZAP70"]
-% Good markers: ["2B4", "2DL3", "3DL1", "CD158B", "CD16", "CD57", "CD62L", "CD8",
-% "CD94", "CKIT", "DNAM1", "EOMES", "GRA", "GRB", "NKG2A", "NKG2D", "NKP30",
-% "PERFORIN", "SIGLEC7", "SYK", "TBET", "TIGIT", "ZAP70"]
-% Bad markers: ["2DL1", "2DS4", "CCR7", "CD25", "CD27", "KLRG1", "LFA1", "NKG2C", "TRAIL"]
+%           "CD25", "CD27", "CD57", "CD62L", "CD 8", "CD94", "CKIT", "DNAM1",
+%           "EOMES", "GRA", "GRB", "KLRG1", "LFA1", "NKG2A", "NKG2C", "NKG2D",
+%           "NKP30", "PERFO RIN", "SIGLEC7", "SYK", "TBET", "TIGIT", "TRAIL",
+%           "ZAP70"]
+% Good markers: ["2B4", "3DL1", "CD158B", "CD8", "CD94", "CKIT", "DNAM1",
+%                "EOMES", "NKG2A", "NKG2D", "NKP30", "SIGLEC7", "SYK", "TBET",
+%                "ZAP70"]
+% Bad markers: ["2DL1", "2DL3", "2DS4", "CCR7", "CD16", "CD25", "CD27", "CD57",
+%               "CD62L", "GRA", "GRB", "KLRG1", " LFA1", "NKG2C", "PERFORIN",
+%               "TIGIT", "TRAIL"]
 \begin{table}[H]
   \begin{center}
     \begin{tabular}{|l|l|l|l|}
@@ -110,12 +113,10 @@ final cell-counts in each sample was (4556, 1308).
       % 6: CCR7   &  14: CD94  &  22: NKG2A & 30: TIGIT    \\ 
       % 7: CD158B &  15: CKIT  &  23: NKG2C & 31: TRAIL    \\ 
       % 8: CD16   &  16: DNAM1 &  24: NKG2D & 32: ZAP70    \\ 
-      1: 2B4    & 7: CD62L  & 13: GRA       & 19: SIGLEC7 \\
-      2: 2DL3   & 8: CD8    & 14: GRB       & 20: SYK     \\
-      3: 3DL1   & 9: CD94   & 15: NKG2A     & 21: TBET    \\
-      4: CD158B & 10: CKIT  & 16: NKG2D     & 22: TIGIT   \\
-      5: CD16   & 11: DNAM1 & 17: NKP30     & 23: ZAP7    \\
-      6: CD57   & 12: EOMES & 18: PERFORIN  &             \\
+      1: 2B4   & 2:  3DL1  & 3:  CD158B & 4:  CD8 \\
+      5: CD94  & 6:  CKIT  & 7:  DNAM1  & 8:  EOMES \\
+      9: NKG2A & 10: NKG2D & 11: NKP30  & 12: SIGLEC7 \\
+      13: SYK  & 14: TBET  & 15: ZAP70  & \\
       \hline
     \end{tabular} 
   \end{center}
@@ -138,7 +139,7 @@ final cell-counts in each sample was (4556, 1308).
     $M=5$ was used.
   \item \textbf{Some Priors:}
   \begin{itemize}
-    \item $w^\star_{i,k} \sim \Gam(\text{shape}=10, \text{rate}=1)$
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=5, \text{rate}=1)$
     \item $p_c \sim \text{Beta}(1, 99)$
     \item $L_0=6$, $L_1=3$
     \item $\alpha \sim \Gam(1, 1)$
