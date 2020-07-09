@@ -173,6 +173,7 @@ end
     Z_marg_lamgam_min=1.0,
     printFreq=1,
     seed=1,
+    sb_ibp=true,  # NOTE: USING SB-IBP!!!
     computedden=true,
     computeDIC=true,
     computeLPML=true,
