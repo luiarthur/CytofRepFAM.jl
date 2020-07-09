@@ -20,7 +20,7 @@ end
 @everywhere function run(phi, path_to_data::Vector{String},
                          results_dir, aws_bucket;
                          nburn=10000, nsamps=5000, thin=1,
-                         K=20, L=Dict(0=>6, 1=>3),
+                         K=20, L=Dict(0=>3, 1=>3),
                          tempers=[1, 1.0003, 1.0006, 1.001],
                          batchsizes=[200, 200], pthin=5,
                          y_lower=-7, y_upper=4)
@@ -123,10 +123,10 @@ end
     cfs.W_star_prior = Gamma(5, 1) # shape, scale. Try?
 
     # similar to p ~ Beta(1, 99)
-    # cfs.omega_prior = Normal(-5, 1)
+    cfs.omega_prior = Normal(-5, 1)
 
     # similar to p ~ Beta(1, 499)
-    cfs.omega_prior = Normal(-7, 0.8)
+    # cfs.omega_prior = Normal(-7, 0.8)
 
     dfs = rfam.DataFS(d, X)
     sfss = [rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior,
