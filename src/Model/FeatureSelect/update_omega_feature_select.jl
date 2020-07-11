@@ -29,3 +29,29 @@ function update_omega!(q::Integer, s::StateFS, c::ConstantsFS, d::DataFS,
 
   s.omega[q] = MCMC.metropolisAdaptive(s.omega[q], log_prob, t.omega[q])
 end
+
+# Omega = p when using Cell means model for X.
+function update_omega_cellmeans!(s::StateFS, c::ConstantsFS, d::DataFS,
+                                 t::TunersFS)
+  Q = length(s.omega)
+  for q in 1:Q
+    update_omega_cellmeans!(q, s, c, d, t)
+  end
+end
+
+function update_omega_cellmeans!(q::Integer, s::StateFS, c::ConstantsFS,
+                                 d::DataFS, t::TunersFS)
+  a_new, b_new = params(c.p_prior) 
+
+  xi = findfirst(z -> z == 1, d.X[i, :])
+  K = c.constants.K
+  for i in 1:d.data.I
+    if xi == q
+      ri_sum = sum(s.r[i, :])
+      a_new += ri_sum
+      b_new += (K - ri_sum)
+    end
+  end
+
+  s.omega[q] = rand(Beta(a_new, b_new))
+end
