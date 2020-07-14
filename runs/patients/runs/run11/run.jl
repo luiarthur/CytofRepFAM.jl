@@ -175,6 +175,7 @@ end
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,
+    use_repulsive=use_repulsive,
     printFreq=1,
     seed=1,
     sb_ibp=false,
