@@ -88,8 +88,8 @@ function sim_and_run(settings::Dict{Symbol, Any})
 
   # Parameters to monitor
   monitor1 = [:theta__Z, :theta__v, :theta__alpha,
-              :omega, :r, :theta__lam, :W_star, :theta__eta,
-              :theta__W, :theta__delta, :theta__sig2]
+              :r, :theta__lam, :W_star, :theta__eta,
+              :theta__W, :theta__delta, :theta__sig2]  # removed omega
   monitor2 = [:theta__y_imputed, :theta__gam]
 
   # MCMC Specs
