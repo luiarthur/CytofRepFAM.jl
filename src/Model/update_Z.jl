@@ -42,6 +42,7 @@ function update_Z!(s::State, c::Constants, d::Data, sb_ibp::Bool;
         Z1[j, k] = true
 
         # Add penalty terms
+        # NOTE: log_penalty_repFAM = log repulsive term
         lfc0 += log_penalty_repFAM(k, Z0, c.log_repulsive_fn)
         lfc1 += log_penalty_repFAM(k, Z1, c.log_repulsive_fn)
       end

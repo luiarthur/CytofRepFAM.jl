@@ -33,6 +33,7 @@ end
 
 """
 log penalty term as related to column k only.
+aka: log repulsive term.
 """
 function log_penalty_repFAM(k::Integer, Z::Matrix{Bool},
                             log_repulsive_fn::Function)
@@ -52,6 +53,7 @@ end
 
 """
 log penalty term in repFAM.
+aka: log repulsive term.
 """
 function log_penalty_repFAM(Z::Matrix{Bool}, log_repulsive_fn::Function)::Float64
   K = size(Z, 2)
