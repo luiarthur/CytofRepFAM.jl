@@ -16,7 +16,8 @@
         - [2, 3, 4, 6, 8, 9, 10, 11, 12, 18, 19, 20, 21, 23, 26, 30, 31]
         - These markers are either mostly non-expressed or mostly expressed
     - Run with samples 1 and 2 only.
-    - Z ~ SB-IBP
+    - ~~Z: SB-IBP~~
+    - Repulsive function = `pow(d, phi)`
 
 - Visualizations
     - [ ] TSNE

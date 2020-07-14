@@ -70,7 +70,11 @@ end
   ntemps = length(tempers)
 
   # Repulsive FAM penalty scale
-  sim_z = rfam.sim_fn_exp_decay_generator(phi)
+  # sim_z = rfam.sim_fn_exp_decay_generator(phi)
+  # NOTE: Repulsive function. This is a test.
+  repfn = (z1::Vector{Bool}, z2::Vector{Bool}) -> sum(abs.(z1 - z2))^phi
+  sim_z = (z1::Vector{Bool}, z2::Vector{Bool}) -> 1 - repfn(z1, z2)
+
   use_repulsive = phi > 0
 
   function init_state_const_data(y; K, L)
