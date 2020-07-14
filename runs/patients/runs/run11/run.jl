@@ -137,6 +137,7 @@ end
               K0 = 5
               sfs.omega .= CytofRepFAM.MCMC.logit(K0/K)
               println("Initial omega: $(sfs.omega)")
+              sfs
             end for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 

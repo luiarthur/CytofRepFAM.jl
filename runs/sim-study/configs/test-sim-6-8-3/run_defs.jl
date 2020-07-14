@@ -62,11 +62,12 @@ function sim_and_run(settings::Dict{Symbol, Any})
 
     dfs = rfam.DataFS(d, X)
     sfss = [let
-              rfam.StateFS{Float64}(s, dfs)
+              sfs = rfam.StateFS{Float64}(s, dfs)
               # FIX omega
               K0 = 5
               sfs.omega .= CytofRepFAM.MCMC.logit(K0/K)
               println("Initial omega: $(sfs.omega)")
+              sfs
             end for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
