@@ -19,7 +19,8 @@ function sim_and_run(settings::Dict{Symbol, Any})
 
   # Repulsive FAM penalty scale
   phi = settings[:phi]
-  sim_z = rfam.sim_fn_exp_decay_generator(phi)
+  # sim_z = rfam.sim_fn_exp_decay_generator(phi)
+  log_repulsive_fn = rfam.log_repulsive_fn_generator(phi)
   use_repulsive = phi > 0
 
   function init_state_const_data(simdat; K, L)
@@ -37,7 +38,7 @@ function sim_and_run(settings::Dict{Symbol, Any})
                                                    stop=4,
                                                    length=100)),
                               probFlip_Z=1.0,
-                              similarity_Z=sim_z)
+                              log_repulsive_fn=log_repulsive_fn)
 
     # NOTE: To spread weights evenly.
     c.eta_prior = Dict(z => Dirichlet(L[z], 1) for z in 0:1)

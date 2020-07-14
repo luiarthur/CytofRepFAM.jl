@@ -70,11 +70,8 @@ end
   ntemps = length(tempers)
 
   # Repulsive FAM penalty scale
-  # sim_z = rfam.sim_fn_exp_decay_generator(phi)
-  # NOTE: Repulsive function. This is a test.
-  repfn = (z1::Vector{Bool}, z2::Vector{Bool}) -> sum(abs.(z1 - z2))^phi
-  sim_z = (z1::Vector{Bool}, z2::Vector{Bool}) -> 1 - repfn(z1, z2)
-
+  # NOTE: Repulsive function.
+  log_repulsive_fn = rfam.log_repulsive_fn_generator(phi)
   use_repulsive = phi > 0
 
   function init_state_const_data(y; K, L)
@@ -92,7 +89,7 @@ end
                                                    stop=4,
                                                    length=100)),
                               probFlip_Z=1.0,
-                              similarity_Z=sim_z)
+                              log_repulsive_fn=log_repulsive_fn)
 
     # NOTE: To spread weights evenly.
     c.eta_prior = Dict(z => Dirichlet(L[z], 1) for z in 0:1)
