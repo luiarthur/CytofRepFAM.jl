@@ -17,7 +17,7 @@ echo "SCRATCH_DIR: $SCRATCH_DIR"
 simname="test-sim-6-8-3"
 results_dir="${SCRATCH_DIR}/cytof/results/repfam/${simname}"
 aws_bucket="s3://cytof-repfam/${simname}"
-phis="0.0 1.0 10.0 100.0"
+phis="0.0 1.0 100.0 10000.0"
 zinds="1 2 3"
 pmisses="0.0 0.6"
 istest=0

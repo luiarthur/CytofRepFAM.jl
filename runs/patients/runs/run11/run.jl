@@ -129,9 +129,15 @@ end
     cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
 
     dfs = rfam.DataFS(d, X)
-    sfss = [rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior,
-                                  W_star_prior=cfs.W_star_prior, eps_r=0.05)
-            for s in states]
+    sfss = [let
+              sfs = rfam.StateFS{Float64}(s, dfs, omega_prior=cfs.omega_prior,
+                                          W_star_prior=cfs.W_star_prior,
+                                          eps_r=0.05)
+              # Fix omega
+              K0 = 5
+              sfs.omega .= CytofRepFAM.MCMC.logit(K0/K)
+              println("Initial omega: $(sfs.omega)")
+            end for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
     return Dict(:dfs => dfs, :cfs => cfs, :sfss => sfss, :tfs => tfs, :y => y)
@@ -165,6 +171,7 @@ end
     config[:cfs], config[:dfs],
     inits=config[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
+    fix=[:omega],
     batchsizes=batchsizes,
     prior_thin=pthin,
     tempers=tempers,

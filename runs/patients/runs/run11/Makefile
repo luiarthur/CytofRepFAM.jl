@@ -11,7 +11,7 @@ data_paths = "$(data_dir)/001_d31_clean.csv,$(data_dir)/007_d35_clean.csv"
 
 results_dir = /scratchdata/$(USER)/cytof/results/repfam/patients-data/$(simname)
 AWS_BUCKET = s3://cytof-repfam/patients-data-results/$(simname)
-phi = 0 1 10 100
+phi = 0 1 100 10000
 
 run:
 	for phi in $(phi); do \

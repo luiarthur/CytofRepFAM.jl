@@ -61,7 +61,13 @@ function sim_and_run(settings::Dict{Symbol, Any})
     cfs.W_star_prior = Gamma(1.0, 2) # shape, scale
 
     dfs = rfam.DataFS(d, X)
-    sfss = [rfam.StateFS{Float64}(s, dfs) for s in states]
+    sfss = [let
+              rfam.StateFS{Float64}(s, dfs)
+              # FIX omega
+              K0 = 5
+              sfs.omega .= CytofRepFAM.MCMC.logit(K0/K)
+              println("Initial omega: $(sfs.omega)")
+            end for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
 
     return Dict(:dfs => dfs, :cfs => cfs, :sfss => sfss, :tfs => tfs,
@@ -115,11 +121,12 @@ function sim_and_run(settings::Dict{Symbol, Any})
     batchprop=settings[:batchprop],
     prior_thin=settings[:pthin],
     tempers=settings[:temperatures],
+    fix=[:omega],
     randpair=1.0, swap_freq=1.0,
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,
-    use_repulsive=use_repulsive, # TODO: rerun after 13 July 2020.
+    use_repulsive=use_repulsive,
     printFreq=1,
     seed=settings[:mcmcseed],
     computedden=true,

@@ -139,6 +139,7 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
 
   if verbose > 1
     println("\nomega: $(sfs.omega)")
+    println("\np: $(compute_p(cfs.X, sfs.omega))")
     println("W:")
     Base.show(stdout, "text/plain", sfs.theta.W)
     println()

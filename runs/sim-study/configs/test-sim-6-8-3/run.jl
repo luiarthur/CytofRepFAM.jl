@@ -50,7 +50,7 @@ settings = let
        :N => [1, 1] * Nfac,
        :thin_samps => 1,
        :Lmcmc => Dict(0 => 3, 1 => 3),
-       :Kmcmc => 10,
+       :Kmcmc => 15,
        :pthin => 5,
        :dataseed => 1,
        :mcmcseed => 1,
