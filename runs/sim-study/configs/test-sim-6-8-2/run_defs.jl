@@ -118,6 +118,7 @@ function sim_and_run(settings::Dict{Symbol, Any})
     Z_marg_lamgam=1.0,
     Z_marg_lamgam_decay_rate=100.0,
     Z_marg_lamgam_min=1.0,
+    use_repulsive=use_repulsive, # TODO: rerun after 13 July 2020.
     printFreq=1,
     seed=settings[:mcmcseed],
     computedden=true,
