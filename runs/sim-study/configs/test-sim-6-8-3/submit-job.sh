@@ -7,7 +7,7 @@
 #SBATCH -o out/slurm-job.out  # Name of stdout output file
 #SBATCH --ntasks=72
 #SBATCH --mem-per-cpu=2GB
-#SBATCH -t 240:00:00  # Run Time (hh:mm:ss) - 240 hours (optional)
+#SBATCH -t 24:00:00  # Run Time (hh:mm:ss) - 24 hours (optional)
 
 # Run this script with: sbatch submit-job.sh
 
@@ -17,7 +17,7 @@ echo "SCRATCH_DIR: $SCRATCH_DIR"
 simname="test-sim-6-8-3"
 results_dir="${SCRATCH_DIR}/cytof/results/repfam/${simname}"
 aws_bucket="s3://cytof-repfam/${simname}"
-phis="0.0 1.0 10.0 25.0"
+phis="0.0 1.0 10.0 100.0"
 zinds="1 2 3"
 pmisses="0.0 0.6"
 istest=0
