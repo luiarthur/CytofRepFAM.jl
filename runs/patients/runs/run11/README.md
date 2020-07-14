@@ -5,7 +5,7 @@
     - MCMC samples: 5000
     - Thinning: None
     - K = 25
-    - L = 5
+    - L = [6, 3]
     - `W*` ~ Gamma(1, rate=1/2)
     - `p_i` ~ Beta(1, 9) => `omega_q` ~ Normal(-3, 1.3)
     - phi = (0, 1, 10, 100) (command line arg)
