@@ -20,7 +20,7 @@ end
 
   # For repulsive Z
   probFlip_Z::Float64
-  similarity_Z::Function
+  log_repulsive_fn::Function
   noisyDist::ContinuousDistribution
   y_grid::Vector{Float64}
 
@@ -58,7 +58,7 @@ function defaultConstants(data::Data, K::Int, L::Dict{Int, Int};
                           noisyDist::ContinuousDistribution=Cauchy(),
                           y_grid::Vector{Float64}=collect(range(-10, stop=4,
                                                                 length=100)),
-                          similarity_Z::Function=sim_fn_abs(0),
+                          log_repulsive_fn=log_repulsive_fn_generator(1.0),
                           temper=1.0)
   # Assert range of sig2 is positive
   @assert 0 <= sig2_range[1] < sig2_range[2]
@@ -86,7 +86,7 @@ function defaultConstants(data::Data, K::Int, L::Dict{Int, Int};
                    sig2_prior=sig2_prior, sig2_range=sig2_range,
                    beta=beta, K=K, L=L,
                    temper=temper,
-                   probFlip_Z=probFlip_Z, similarity_Z=similarity_Z,
+                   probFlip_Z=probFlip_Z, log_repulsive_fn=log_repulsive_fn,
                    noisyDist=noisyDist, eps_prior=eps_prior, y_grid=y_grid)
 end
 

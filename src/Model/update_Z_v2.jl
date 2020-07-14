@@ -24,8 +24,8 @@ function update_Z_marg_lamgam!(j::Int, k::Int,
   lp1 = log(v[k]) + log_dmix_nolamgam(Z1, A, B0, B1, s, c, d)
 
   if use_repulsive
-    lp0 += log_penalty_repFAM(k, Z0, c.similarity_Z)
-    lp1 += log_penalty_repFAM(k, Z1, c.similarity_Z)
+    lp0 += log_penalty_repFAM(k, Z0, c.log_repulsive_fn)
+    lp1 += log_penalty_repFAM(k, Z1, c.log_repulsive_fn)
   end
 
   p1_post = 1 / (1 + exp(lp0 - lp1))

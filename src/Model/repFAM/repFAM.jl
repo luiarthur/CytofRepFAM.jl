@@ -101,6 +101,13 @@ function sim_fn_exp_decay_generator(phi::Float64)::Function
 end
 
 
+function log_repulsive_fn_generator(phi::Float64)
+  return (z1::Vector{Bool}, z2::Vector{Bool}) -> let
+    d = sum(abs.(z1 - z2))
+    phi * MCMC.log1m(exp(-d))
+  end
+end
+
 #= Test
 using RCall, Distributions
 include("repFAM.jl")

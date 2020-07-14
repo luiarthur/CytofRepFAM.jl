@@ -34,14 +34,15 @@ end
 """
 log penalty term as related to column k only.
 """
-function log_penalty_repFAM(k::Integer, Z::Matrix{Bool}, similarity::Function)
+function log_penalty_repFAM(k::Integer, Z::Matrix{Bool},
+                            log_repulsive_fn::Function)
   K = size(Z, 2)
 
   log_penalty = 0.0
 
   for q in 1:K
     if q != k
-      log_penalty += MCMC.log1m(similarity(Z[:, k], Z[:, q]))
+      log_penalty += log_repulsive_fn(Z[:, k], Z[:, q])
     end
   end
 
@@ -52,14 +53,14 @@ end
 """
 log penalty term in repFAM.
 """
-function log_penalty_repFAM(Z::Matrix{Bool}, similarity::Function)::Float64
+function log_penalty_repFAM(Z::Matrix{Bool}, log_repulsive_fn::Function)::Float64
   K = size(Z, 2)
 
   log_penalty = 0.0
 
   for k1 in 1:(K - 1)
     for k2 in (k1 + 1):K
-      log_penalty += MCMC.log1m(similarity(Z[:, k1], Z[:, k2]))
+      log_penalty += log_repulsive_fn(Z[:, k1], Z[:, k2])
     end
   end
 
@@ -70,20 +71,20 @@ end
 """
 log probability of Z ~ repFam_K(v, C), WITHOUT NORMALIZING CONSTANT
 where v ~ Beta(a/K, 1),
-and similarity(z_{k1}, z_{k2}) computes the similarity of binary vectors z_{k1}
-and z_{k2}.
+and log_repulsive_fn(z_{k1}, z_{k2}) computes the log repulsive term
+of binary vectors z_{k1} and z_{k2}.
 
-We require similarity(⋅, ⋅) ∈ (0, 1). And when z_{k1} == z_{k2} exactly,
-similarity = 1. Similarly, when distance between z_{k1} and z_{k2} approaches
-∞, similarity = 0.
+We require repulsive_fn(⋅, ⋅) ∈ (0, 1). And when z_{k1} == z_{k2} exactly,
+rep_fn = 0. Similarly, when distance between z_{k1} and z_{k2} approaches
+∞, rep_fn= 1.
 """
 function logprob_Z_repFAM(Z::Matrix{Bool}, v::Vector{Float64},
-                          similarity::Function)::Float64
+                          log_repulsive_fn::Function)::Float64
   # IBP component
   lp = sum(Z * log.(v) + (1 .- Z) * MCMC.log1m.(v))
 
   # Repulsive component
-  log_penalty = log_penalty_repFAM(Z, similarity)
+  log_penalty = log_penalty_repFAM(Z, log_repulsive_fn)
 
   return lp + log_penalty
 end
@@ -94,7 +95,7 @@ function logfullcond_Z_repfam(Z::Matrix{Bool}, s::State, c::Constants,
   v = sb_ibp ? cumprod(s.v) : s.v
 
   # Log prior
-  lp = logprob_Z_repFAM(Z, v, c.similarity_Z)
+  lp = logprob_Z_repFAM(Z, v, c.log_repulsive_fn)
 
   # log likelihood
   ll = 0.0
