@@ -22,7 +22,8 @@ make_R_plots = function(path) {
   R_plots(countspath, savepath)
 }
 
-for (phi in c(0, 1, 10, 100)) {
+# for (phi in c(0, 1, 10, 100)) {
+for (phi in c(0, 1, 100, 10000)) {
   path = paste0('results/phi', phi)
   make_R_plots(path)
 }

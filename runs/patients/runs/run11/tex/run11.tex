@@ -61,7 +61,7 @@
 \def\imscale{.5}
 
 % Title Settings
-\title{Patients Data Analysis with r-FAM and $K=20$}
+\title{Patients Data Analysis with r-FAM and $K=25$}
 \author{Arthur Lui}
 \date{\today} % \date{} to set date to empty
 
@@ -131,7 +131,7 @@ final cell-counts in each sample was (4556, 1308).
         $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
         proposed at each MCMC iteration.
   \item We fit 4 models, each with a different value for $\phi$. The values
-        for $\phi$ were (0, 1, 10, 100).
+        for $\phi$ were (0, 1, 100, 10000).
   % \item The computation time averaged across the 4 models was 159 hours.
   % \item The computation time averaged across the 4 models was 65 hours.
   \item The computation time averaged across the 4 models was 35 hours.
@@ -139,8 +139,10 @@ final cell-counts in each sample was (4556, 1308).
     $M=5$ was used.
   \item \textbf{Some Priors:}
   \begin{itemize}
-    \item $w^\star_{i,k} \sim \Gam(\text{shape}=5, \text{rate}=1)$
-    \item $p_c \sim \text{Beta}(1, 99)$
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{scale}=2)$
+    % \item $p_c \sim \text{Beta}(1, 9)$
+    \item Fixed $p_c=0.2$ 
+    \item $K=25$
     \item $L_0=6$, $L_1=3$
     \item $\alpha \sim \Gam(1, 1)$
     \item $\delta_0 \sim \TN^-(1, 0.1)$
@@ -167,9 +169,10 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{swapprops.pdf}{\imscale}
   \end{center}
-  \caption{These figures summarize proportion of instances that swaps were
-  made when proposed between the various chains for each setup. A noticeable amount of Swapping occurred between the chains. The colorbars on the right of each
-  heatmap show that the highest proportion of swaps between any two chains is 
+  \caption{These figures summarize proportion of instances that swaps were made
+  when proposed between the various chains for each setup. A noticeable amount
+  of Swapping occurred between the chains. The colorbars on the right of each
+  heatmap show that the highest proportion of swaps between any two chains is
   between 40\% and 60\%.}
   \label{fig:swapproprs}
 \end{figure}
