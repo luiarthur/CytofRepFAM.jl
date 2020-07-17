@@ -22,7 +22,7 @@ end
 
 for zind in 1:3
   for pmiss in (0.0, 0.6)
-    for phi in (0.0, 1.0)
+    for phi in (0.0, 100.0)
       # Get simulation name
       simname = "pmiss$(pmiss)-phi$(phi)-zind$(zind)"
       println("Processing: ", simname)
