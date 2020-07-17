@@ -45,7 +45,7 @@ if __name__ == "__main__":
                     graph_tsne(tsne_df, clust, i + 1, method, outpath)
             # rfam
             method = "rfam"
-            for phi in [0.0, 1.0]:
+            for phi in [0.0, 100.0]:
                 clust_simname = 'pmiss{}-phi{}-zind{}'.format(pmiss, phi, zind)
                 clust_path = '{}/{}-{}.csv'.format(path_to_csv, method,
                                                    clust_simname)
