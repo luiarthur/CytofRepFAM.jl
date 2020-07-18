@@ -47,13 +47,14 @@ end
 
 
 # https://rdrr.io/cran/mclust/man/mclustModelNames.html
-function smartInit(c::Constants, d::Data;
-                   iterMax::Int=10, modelNames::String="VVI",
-                   warn::Bool=true, seed=0) where {T <: Number}
+function smartInit(c::Constants, d::Data; iterMax::Int=10,
+                   modelNames::String="VVI", warn::Bool=true, seed=0,
+                   allowZDupCols=true)
   if seed > 0
     Random.seed!(seed)
   end
 
+  R"set.seed($(seed))"
   if modelNames != "kmeans"
     load_or_install_mclust()
     Mclust = R"mclust::Mclust"
@@ -178,5 +179,11 @@ function smartInit(c::Constants, d::Data;
   state.y_imputed = y_imputed
   state.eps = eps
 
-  return state
+  if length(unique(Z, dims=2)) < K && !allowZDupCols
+    println("Reinitializing due to repeated columns in Z")
+    return smartInit(c, d, iterMax=iterMax, modelNames=modelNames, warn=true,
+                     seed=seed+1)
+  else
+    return state
+  end
 end
