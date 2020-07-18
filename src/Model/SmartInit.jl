@@ -49,7 +49,7 @@ end
 # https://rdrr.io/cran/mclust/man/mclustModelNames.html
 function smartInit(c::Constants, d::Data; iterMax::Int=10,
                    modelNames::String="VVI", warn::Bool=true, seed=0,
-                   allowZDupCols=true)
+                   allowZDupCols=false)
   if seed > 0
     Random.seed!(seed)
   end
