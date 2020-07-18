@@ -101,8 +101,8 @@ end
     #           for s in 1:ntemps]
     # NOTE: Mclust init
     # VII: spherical, unequal volume
-    states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s,
-                             allowZDupCols=false) for s in 1:ntemps]
+    states = [rfam.smartInit(c, d, modelNames="VII", seed=1 + s)
+              for s in 1:ntemps]
 
     # Create tunenrs
     t = rfam.Tuners(d.y, c.K)
