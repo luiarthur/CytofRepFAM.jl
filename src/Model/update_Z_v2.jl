@@ -29,6 +29,10 @@ function update_Z_marg_lamgam!(j::Int, k::Int,
     lp1 += log_penalty_repFAM(k, Z1, c.log_repulsive_fn)
   end
 
+  if lp0 == lp1  # especially if lp0 == lp1 == (Inf or -Inf)
+    lp0 = 0.0
+    lp1 = 0.0
+  end
   p1_post = 1 / (1 + exp(lp0 - lp1))
   new_Zjk_is_one = p1_post > rand()
   s.Z[j, k] = new_Zjk_is_one
