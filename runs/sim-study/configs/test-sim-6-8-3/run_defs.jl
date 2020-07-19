@@ -138,7 +138,7 @@ function sim_and_run(settings::Dict{Symbol, Any})
     ndden_samps=200,
     time_updates=false,
     save_all_states=true,
-    verbose=3)
+    verbose=4)
 
   # Dump output
   BSON.bson("$(results_dir)/output.bson", out)

@@ -147,10 +147,10 @@ function update_via_trained_prior!(sfs, dfs, cfs, tfs,
   end
 
 
-  if length(unique(sfs.theta.Z, dims=2)) < cfs.constants.K && use_repulsive
-    println("This Z has repeated columns after update_Z_v2!")
+  if size(unique(sfs.theta.Z, dims=2), 2) < cfs.constants.K && use_repulsive
+    println("This Z has repeated columns after updating!")
     Base.show(stdout, "text/plain", sfs.theta.Z)
-    println("Flipping $K bits")
+    println("\nFlipping $(cfs.constants.K) bits")
     sfs.theta.Z .= flip_bits(sfs.theta.Z, cfs.constants.K)
   end
 end
