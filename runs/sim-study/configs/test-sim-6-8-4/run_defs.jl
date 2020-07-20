@@ -47,6 +47,7 @@ function sim_and_run(settings::Dict{Symbol, Any})
     # s = rfam.smartInit(c, d)  # mclust init
     states = [rfam.smartInit(c, d, modelNames="kmeans",
                              seed=settings[:mcmcseed] + s,
+                             allowZDupCols=false,
                              iterMax=100)  # kmeans init
               for s in 1:settings[:ntemps]]
 
