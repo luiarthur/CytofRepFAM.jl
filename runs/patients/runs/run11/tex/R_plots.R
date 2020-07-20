@@ -22,9 +22,44 @@ make_R_plots = function(path) {
   R_plots(countspath, savepath)
 }
 
-# for (phi in c(0, 1, 10, 100)) {
+# NOTE: edit this.
+Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
+  Z1 = read.table(z1_path)
+  Z2 = read.table(z2_path)
+  W1 = read.table(w1_path)
+  W2 = read.table(w2_path)
+
+  z1_pairwise_dist = c(dist(t(Z1[, W1>0]), method='manhattan'))
+  z2_pairwise_dist = c(dist(t(Z2[, W2>0]), method='manhattan'))
+  npairs = length(z1_pairwise_dist)
+  J = dim(Z1)[1]
+
+  pdf(savepath)
+  par(mfrow=c(2, 1))
+  plot(table(z1_pairwise_dist)/npairs, xlim=c(0, J), 
+       ylab='proportion of column pairs', xlab='Manhattan distance',
+       main='Z estimate for Sample 1')
+  abline(v=mean(z1_pairwise_dist), lwd=3, col='red')
+  plot(table(z2_pairwise_dist)/npairs, xlim=c(0, J), 
+       ylab='proportion of column pairs', xlab='Manhattan distance',
+       main='Z estimate for Sample 2')
+  abline(v=mean(z2_pairwise_dist), lwd=3, col='red')
+  par(mfrow=c(1, 1))
+  dev.off()
+}
+
+# NOTE: edit this.
+make_Z_dist_plots = function(path) {
+  z1_path = paste0(path, '/img/txt/Z1_best.txt')
+  z2_path = paste0(path, '/img/txt/Z2_best.txt')
+  w1_path = paste0(path, '/img/txt/W1_best.txt')
+  w2_path = paste0(path, '/img/txt/W2_best.txt')
+  savepath = paste0(path, '/img/Z_dist.pdf')
+  Z_dist_plots(z1_path, z2_path, w1_path, w2_path, savepath)
+}
+
 for (phi in c(0, 1, 100, 10000)) {
   path = paste0('results/phi', phi)
   make_R_plots(path)
+  make_Z_dist_plots(path)
 }
-
