@@ -16,8 +16,11 @@ cleanall: clean
 watch:
 	latexmk -pvc -pdf $(simname).tex
 
-getresults:
+getresults: 
 	cd ../ && make getresults -s
 	ln -s $(SCRATCHDIR)/patients-data/$(simname) results
+	make plots -s
+
+plots:
 	Rscript R_plots.R
-		
+	cd scripts && python3 more_plots.py	

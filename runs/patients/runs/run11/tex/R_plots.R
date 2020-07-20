@@ -58,8 +58,11 @@ make_Z_dist_plots = function(path) {
   Z_dist_plots(z1_path, z2_path, w1_path, w2_path, savepath)
 }
 
+
+### MAIN ###
 for (phi in c(0, 1, 100, 10000)) {
   path = paste0('results/phi', phi)
   make_R_plots(path)
   make_Z_dist_plots(path)
 }
+

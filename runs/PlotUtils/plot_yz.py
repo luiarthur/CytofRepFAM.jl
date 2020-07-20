@@ -22,14 +22,16 @@ def relabel_lam(lami_est, wi_mean):
     return (lami_new, counts)
 
 
-def add_gridlines_Z(Z):
+def add_gridlines_Z(Z, color='grey', lw=.5):
     J, K = Z.shape
     for j in range(J):
-        plt.axhline(y=j+.5, color='grey', linewidth=.5)
+        plt.axhline(y=j+.5, color=color, linewidth=lw)
 
     for k in range(K):
-        plt.axvline(x=k+.5, color='grey', linewidth=.5)
+        plt.axvline(x=k+.5, color=color, linewidth=lw)
 
+
+gridlines = add_gridlines_Z
 
 def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
            cm=blue2red.cm(6), vlim=(-3, 3), fs_xlab=10, fs_ylab=10,
@@ -199,4 +201,42 @@ def plot_yz(yi, Z_mean, wi_mean, lami_est, w_thresh=.01,
 
     fig = plt.gcf()
     fig.subplots_adjust(hspace=0.2)
+
+def colorbar_horizontal(im):
+    ax = plt.gca()
+    ax_divider = make_axes_locatable(ax)
+    cax = ax_divider.append_axes("top", size="7%", pad="2%")
+    cax.xaxis.set_ticks_position("top")
+    cbar = colorbar(im, cax=cax, orientation="horizontal")
+
+def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
+                     gridlines_color='black', gridlines_lw=1,
+                     cm=blue2red.cm(9)):
+    J = yi.shape[1]
+    K = wi.shape[0]
+
+    selected_features = np.argwhere(wi > 0)[:, 0]
+    K_sel = selected_features.shape[0]
+    wi_sel = wi[selected_features]
+    selected_features = selected_features[np.argsort(wi_sel)]
+    wi_sel_sorted= wi_sel[np.argsort(wi_sel)]
+
+    y_centers = np.zeros((J, K_sel))
+    yticks = [0] * K_sel
+
+    for j in range(J):
+        for k in range(K_sel):
+            k_ = selected_features[k] + 1
+            y_centers[j, k] = yi[lami == k_, j].mean()
+            yticks[k] = '{} ({}%)'.format(k_, (wi_sel_sorted[k]*100).round(1))
+
+    im = plt.imshow(y_centers.T, aspect='auto', cmap=cm,
+                    vmin=vlim[0], vmax=vlim[1])
+    plt.xticks(range(J), np.arange(J) + 1, rotation=90)
+    plt.yticks(range(K_sel), yticks)
+    plt.xlabel('markers', fontsize=fs_xlabel)
+    plt.ylabel('subpopulations', fontsize=fs_ylabel)
+    gridlines(y_centers.T, color=gridlines_color, lw=gridlines_lw)
+    colorbar_horizontal(im)
+
 
