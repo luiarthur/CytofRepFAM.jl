@@ -1,4 +1,4 @@
-R_plots = function(countspath, savepath=NULL) {
+R_plots = function(countspath, savepath=NULL, xlim=NULL) {
   R = read.table(countspath)
   I = NROW(R)
   rownames(R) = paste0('S', 1:I, ' counts')
@@ -9,17 +9,17 @@ R_plots = function(countspath, savepath=NULL) {
 
   plot.ts(t(R), xlab='number of cell subpopulations', cex=2,
           type='b', pch=20, main='', cex.lab=1.5, cex.axis=1.3,
-           mar.multi=c(2, 5.1, 0, 2.1))
+          mar.multi=c(2, 5.1, 0, 2.1))
 
   if (!is.null(savepath)) {
     dev.off()
   }
 }
 
-make_R_plots = function(path) {
+make_R_plots = function(path, xlim=NULL) {
   countspath = paste0(path, '/img/txt/Rcounts.txt')
   savepath = paste0(path, '/img/Rcounts.pdf')
-  R_plots(countspath, savepath)
+  R_plots(countspath, savepath, xlim=xlim)
 }
 
 # NOTE: edit this.
@@ -39,11 +39,11 @@ Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
   plot(table(z1_pairwise_dist)/npairs, xlim=c(0, J), 
        ylab='proportion of column pairs', xlab='Manhattan distance',
        main='Z estimate for Sample 1')
-  abline(v=mean(z1_pairwise_dist), lwd=3, col='red')
+  # abline(v=mean(z1_pairwise_dist), lwd=3, col='red')
   plot(table(z2_pairwise_dist)/npairs, xlim=c(0, J), 
        ylab='proportion of column pairs', xlab='Manhattan distance',
        main='Z estimate for Sample 2')
-  abline(v=mean(z2_pairwise_dist), lwd=3, col='red')
+  # abline(v=mean(z2_pairwise_dist), lwd=3, col='red')
   par(mfrow=c(1, 1))
   dev.off()
 }
@@ -62,7 +62,7 @@ make_Z_dist_plots = function(path) {
 ### MAIN ###
 for (phi in c(0, 1, 100, 10000)) {
   path = paste0('results/phi', phi)
-  make_R_plots(path)
+  make_R_plots(path, xlim=c(10, 25))  # NOTE: mind xlim!
   make_Z_dist_plots(path)
 }
 
