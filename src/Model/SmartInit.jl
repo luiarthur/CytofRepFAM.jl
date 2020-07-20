@@ -104,6 +104,12 @@ function smartInit(c::Constants, d::Data; iterMax::Int=10,
   clus_means = [sum(clus_sums[k, :]) / group_sizes[k] for k in 1:K]
   Z = Matrix{Bool}(vcat(clus_means...)' .> 0)
 
+  while length(unique(Z, dims=2)) < K && !allowZDupCols
+    println("Z columns are not unique! Flipping a bit in the Z matrix.")
+    # TODO: Can i do something more sophisticated?
+    Z .= filp_bits(Z, 1)
+  end
+
   # Get W
   W = [(sum(lam[i] .== k) + 1/K) / N[i] for i in 1:I, k in 1:K]
 
@@ -179,11 +185,5 @@ function smartInit(c::Constants, d::Data; iterMax::Int=10,
   state.y_imputed = y_imputed
   state.eps = eps
 
-  if length(unique(Z, dims=2)) < K && !allowZDupCols
-    println("Reinitializing due to repeated columns in Z")
-    return smartInit(c, d, iterMax=iterMax, modelNames=modelNames, warn=true,
-                     seed=seed+1)
-  else
-    return state
-  end
+  return state
 end

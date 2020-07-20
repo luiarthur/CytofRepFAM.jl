@@ -78,9 +78,10 @@ function sim_and_run(settings::Dict{Symbol, Any})
   @time simdat = simulatedata(Z=settings[:Z],
                               N=settings[:N],
                               W=settings[:W],  # Categorical.
-                              sig2=[.7, .7],
-                              # mus=Dict(0=>[-0.8], 1=>[1.3]),
-                              mus=Dict(0=>[-0.6], 1=>[1.0]),
+                              # sig2=[.5, .5],  # NOTE: orig
+                              sig2=[.7, .7],  # NOTE: trying
+                              # mus=Dict(0=>[-0.8], 1=>[1.3]),  # NOTE: orig
+                              mus=Dict(0=>[-0.8], 1=>[1.0]),  # NOTE: trying
                               skew=-0.9,
                               seed=settings[:dataseed],
                               propmissingscale=settings[:propmissingscale],

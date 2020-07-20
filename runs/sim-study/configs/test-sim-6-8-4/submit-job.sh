@@ -7,7 +7,7 @@
 #SBATCH -o out/slurm-job.out  # Name of stdout output file
 #SBATCH --ntasks=72
 #SBATCH --mem-per-cpu=2GB
-#SBATCH -t 72:00:00  # Run Time (hh:mm:ss) - 72 hours (optional)
+#SBATCH -t 120:00:00  # Run Time (hh:mm:ss) - 120 hours (optional)
 
 # Run this script with: sbatch submit-job.sh
 
