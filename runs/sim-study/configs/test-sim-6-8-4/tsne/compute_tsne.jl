@@ -6,7 +6,7 @@ results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-8-3"
 for zind in 1:3
   for pmiss in (0.0, 0.6)
     # Get simulation name
-    simname = "pmiss$(pmiss)-phi0.0-zind$(zind)"
+    simname = "pmiss$(pmiss)-phi0-zind$(zind)"
 
     println("Processing: ", simname)
 
@@ -36,6 +36,3 @@ for zind in 1:3
     CSV.write("$(csvdir)/tsne-$(simname).csv", df)
   end
 end
-
-
-
