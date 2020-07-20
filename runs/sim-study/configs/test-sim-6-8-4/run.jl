@@ -35,7 +35,7 @@ settings = let
     readdlm(path_to_Z, Int, comments=true)
   end
   W = readdlm(joinpath(@__DIR__, "W.txt"), comments=true)
-  _outdir_suffix = outdir_suffix(PROPMISSINGSCALE, PHI, ZIND)
+  _outdir_suffix = outdir_suffix(PROPMISSINGSCALE, Int(PHI), ZIND)
   results_dir = "$(RESULTS_DIR_PREFIX)/$(_outdir_suffix)"
   aws_bucket = "$(AWS_BUCKET_PREFIX)/$(_outdir_suffix)"
   if ISTEST
