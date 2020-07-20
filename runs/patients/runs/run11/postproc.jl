@@ -88,6 +88,14 @@ end
     samples = output[:samples][1]
   end
 
+  # Save mean of y 
+  ymean = mean([s[1][:theta__y_imputed] for s in output[:samples][2]])
+  for i in 1:length(ymean)
+    open("$(imgdir)/txt/y$(i)_mean.csv", "w") do io
+      writedlm(io, round.(ymean[i], digits=3), ',')
+    end
+  end
+
   # Plot swap props
   println("Swap props ...")
   if :paircounts in keys(output) && :swapcounts in keys(output)
