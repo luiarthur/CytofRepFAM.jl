@@ -58,6 +58,14 @@ end
     writedlm(io, Rcounts)
   end
 
+  # Save mean of y 
+  ymean = mean([s[1][:theta__y_imputed] for s in output[:samples][2]])
+  for i in 1:length(ymean)
+    open("$(imgdir)/txt/y$(i)_mean.csv", "w") do io
+      writedlm(io, round.(ymean[i], digits=3), ',')
+    end
+  end
+
   # Plot parameters
   PlotUtils.plot_W(Ws, imgdir=imgdir, W_true=simdat[:W])
   PlotUtils.plot_v(vs, imgdir)
