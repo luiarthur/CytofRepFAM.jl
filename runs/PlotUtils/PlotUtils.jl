@@ -2,13 +2,13 @@ module PlotUtils
 
 include(joinpath(@__DIR__, "imports.jl"))
 include(joinpath(@__DIR__, "dden_complete.jl"))
-include(joinpath(@__DIR__, "Population.jl"))
 
 # Load python defs
 path_to_plot_defs = @__DIR__
 pushfirst!(PyCall.PyVector(PyCall.pyimport("sys")."path"), "$path_to_plot_defs")
 plot_yz = PyCall.pyimport("plot_yz")
 blue2red = PyCall.pyimport("blue2red")
+Population = PyCall.pyimport("Population").Population
 pyrange(n) = collect(range(0, stop=n-1))
 
 function quantiles(X, q; dims, drop=false)
@@ -81,6 +81,7 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
   mkpath(txtdir)
 
   I = length(y)
+  population = Population()
   for i in 1:I
     idx_best = estimate_ZWi_index(Zs, Ws, i)
 
@@ -114,7 +115,8 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     plt.figure(figsize=(6, 6))
     plot_yz.plot_Z(Zi, Wi, lami, w_thresh=w_thresh, add_colorbar=false,
                    fs_lab=fs_z, fs_celltypes=fs_z, fs_markers=fs_z,
-                   fs_cbar=fs_zcbar, markernames=markernames)
+                   fs_cbar=fs_zcbar, markernames=markernames,
+                   population=population)
     plt.savefig("$(imgdir)/Z$(i).pdf", bbox_inches="tight")
     plt.close()
 

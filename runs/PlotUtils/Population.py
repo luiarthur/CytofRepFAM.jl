@@ -1,6 +1,6 @@
 import numpy as np
 
-class Popultion:
+class Population:
     def __init__(self):
         self.all = dict()
         self.size = 0
@@ -22,7 +22,7 @@ class Popultion:
         return ''.join(subpop_char_list)
 
 # Example usage:
-# pop = Popultion()
+# pop = Population()
 # pop.label([1,0,1])  # 1
 # pop.label([1,0,1])  # 1
 # pop.label([1,1,1])  # 2

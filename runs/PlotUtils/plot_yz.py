@@ -5,7 +5,7 @@ from mpl_toolkits.axes_grid1.colorbar import colorbar
 
 import numpy as np
 import blue2red
-import Population
+from Population import Population
 
 def relabel_lam(lami_est, wi_mean):
     K = wi_mean.shape[0]
@@ -88,6 +88,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
            cm_greys=plt.cm.get_cmap('Greys', 5), fs_lab=10,
            add_colorbar=True, fs_cbar=10, fs_w=10, fs_celltypes=10,
            xlab="markers", ylab="cell subpopulations (abundance)",
+           population=0,  # type: Population
            markernames=[], fs_markers=10, w_digits=1):
 
     J = Z_mean.shape[0]
@@ -111,7 +112,13 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
 
     ax = plt.gca()
     # plt.xticks([])
-    labels = ['{} ({})'.format(zc + 1, wp) for (zc, wp) in zip(z_cols, w_perc)]
+    if population != 0:
+        labels = ['{} ({})'.format(zc + 1, wp) for (zc, wp) in zip(z_cols, w_perc)]
+    else:
+        feature_names = [population.label(Z_mean[:, k]) for k in z_cols]
+        labels = ['{} ({})'.format(fname, wp)
+                  for (fname, wp) in zip(feature_names, w_perc)]
+
     plt.yticks(np.arange(len(z_cols)), labels, fontsize=fs_celltypes)
     add_gridlines_Z(Z_hat)
     plt.xticks(rotation=90, fontsize=fs_markers)
@@ -211,7 +218,7 @@ def colorbar_horizontal(im):
 
 def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
                      gridlines_color='black', gridlines_lw=1,
-                     cm=blue2red.cm(9)):
+                     cm=blue2red.cm(9), population=None, Zi=None):
     J = yi.shape[1]
     K = wi.shape[0]
 
@@ -228,7 +235,12 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
         for k in range(K_sel):
             k_ = selected_features[k] + 1
             y_centers[j, k] = yi[lami == k_, j].mean()
-            yticks[k] = '{} ({}%)'.format(k_, (wi_sel_sorted[k]*100).round(1))
+            w_ik_perc = (wi_sel_sorted[k]*100).round(1)
+            if population is None and Zi is None:
+                yticks[k] = '{} ({}%)'.format(k_, w_ik_perc)
+            else:
+                label = population.label(Zi[:, k_ - 1])
+                yticks[k] = '{} ({}%)'.format(label, w_ik_perc)
 
     im = plt.imshow(y_centers.T, aspect='auto', cmap=cm,
                     vmin=vlim[0], vmax=vlim[1])
