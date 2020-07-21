@@ -14,7 +14,7 @@ R_plots = function(countspath, savepath=NULL, ...) {
     plot(prop[,i], xlab=xlab, cex=2,
          type='b', pch=20, main='', cex.lab=1.5, cex.axis=1.3,
          ylab=paste0('Proportion in Sample ', i), xaxt='n', ...)
-    axis(1, 1:K, 1:K, cex.axis=1.3)
+    axis(1, 1:K, 1:K, cex.axis=1.3, las=2)
   }
   par(mfrow=c(1, 1), mar=c(5.1, 4.1, 4.1, 2.1))
 
@@ -68,10 +68,10 @@ make_Z_dist_plots = function(path) {
 
 ### MAIN ###
 for (phi in c(0, 1, 25, 100)) {  # NOTE: mind phi
-  for (pmiss in c(0.0, 0.6)[1]) {
+  for (pmiss in c(0.0, 0.6)) {
     for (z in 1:3) {
       path = paste0('../results/pmiss', format(pmiss, nsmall=1), '-phi', phi, '-zind', z)
-      make_R_plots(path, xlim=c(3, 9), ylim=c(0, 1))  # NOTE: mind xlim!
+      make_R_plots(path, xlim=c(3, 15), ylim=c(0, 1))  # NOTE: mind xlim!
       make_Z_dist_plots(path)
     }
   }

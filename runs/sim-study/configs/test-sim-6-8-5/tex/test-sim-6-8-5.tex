@@ -216,7 +216,7 @@ this study. Note the following:
   \end{center}
   % TODO: Write more?
   \caption{}
-  \label{fig:y1est}
+  \label{fig:y1centroid}
 \end{figure}
 
 \newpage
@@ -227,7 +227,7 @@ this study. Note the following:
   \end{center}
   % TODO: Write more?
   \caption{}
-  \label{fig:y2est}
+  \label{fig:y2centroid}
 \end{figure}
 
 % NOTE: sanitycheck
@@ -251,6 +251,30 @@ this study. Note the following:
   % TODO: Write more?
   \caption{}
   \label{fig:y2est}
+\end{figure}
+
+% \newpage
+\section{Posterior distribution for $R_i$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Rcounts.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears
+  to be the smallest. This could be due to the MCMC being stuck in a certain
+  mode more easily. For $\phi > 0$, $R_i$ seems to decrease as $\phi$ increases.}
+  \label{fig:W-post}
+\end{figure}
+
+\newpage
+\section{Pairwise Distances of $\hat Z_i$ Columns}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z_dist.pdf}{\imscale}
+  \end{center}
+  \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
+  The red lines are the mean pairwise distances of the selected columns.
+  Note that pairwise distances increase as $\phi$ increases.}
+  \label{fig:W-post}
 \end{figure}
 
 \newpage

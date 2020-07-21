@@ -18,12 +18,14 @@ import sys
 sys.path.append('../../../../../PlotUtils')
 import blue2red
 import plot_yz
+from Population import Population
 
 if __name__ == '__main__':
     results_path = '../results'
 
     # for phi in (0, 1, 10, 25, 100, 10000):
     for phi in (0, 1, 100, 10000):
+        population = Population()
         for i in (1, 2):
             # Read data
             yi_path = '{}/phi{}/img/txt/y{}_mean.csv'.format(results_path, phi, i)
@@ -32,10 +34,15 @@ if __name__ == '__main__':
             lami = np.loadtxt(lami_path, dtype=int)
             wi_path = '{}/phi{}/img/txt/W{}_best.txt'.format(results_path, phi, i)
             wi = np.loadtxt(wi_path)
+            zi_path = '{}/phi{}/img/txt/Z{}_best.txt'.format(results_path, phi, i)
+            Zi = np.loadtxt(zi_path)
 
             # Plot
             plt.figure(figsize=(6,6))
-            plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6))
+            plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
+                                     population=population, Zi=Zi, 
+                                     fs_xlabel=16, fs_ylabel=16,
+                                     fs_xticks=14, fs_yticks=16)
             outpath = '{}/phi{}/img/y{}_centroid.pdf'.format(results_path, phi, i)
             plt.savefig(outpath, bbox_inches="tight")
             plt.close()
