@@ -18,7 +18,7 @@ watch:
 	latexmk -pvc -pdf $(fname).tex
 
 getresults:
-	rm results
+	rm -f results
 	ln -s $(SCRATCHDIR)/$(simname) results
 	make plots -s 
 

@@ -1,25 +1,32 @@
-R_plots = function(countspath, savepath=NULL, xlim=NULL) {
+R_plots = function(countspath, savepath=NULL, ...) {
   R = read.table(countspath)
   I = NROW(R)
-  rownames(R) = paste0('S', 1:I, ' counts')
+  K = NCOL(R)
 
   if (!is.null(savepath)) {
     pdf(savepath)
   }
 
-  plot.ts(t(R), xlab='number of cell subpopulations', cex=2,
-          type='b', pch=20, main='', cex.lab=1.5, cex.axis=1.3,
-          mar.multi=c(2, 5.1, 0, 2.1))
+  prop = apply(R, 1, function(r) r/sum(r))
+  par(mfrow=c(I, 1), mar=c(4.1, 5.1, .2, 2.1))
+  for (i in 1:I) {
+    xlab = ifelse(i == I, 'number of selected subpopulations', '')
+    plot(prop[,i], xlab=xlab, cex=2,
+         type='b', pch=20, main='', cex.lab=1.5, cex.axis=1.3,
+         ylab=paste0('Proportion in Sample ', i), xaxt='n', ...)
+    axis(1, 1:K, 1:K, cex.axis=1.3)
+  }
+  par(mfrow=c(1, 1), mar=c(5.1, 4.1, 4.1, 2.1))
 
   if (!is.null(savepath)) {
     dev.off()
   }
 }
 
-make_R_plots = function(path, xlim=NULL) {
+make_R_plots = function(path, ...) {
   countspath = paste0(path, '/img/txt/Rcounts.txt')
   savepath = paste0(path, '/img/Rcounts.pdf')
-  R_plots(countspath, savepath, xlim=xlim)
+  R_plots(countspath, savepath, ...)
 }
 
 # NOTE: edit this.
@@ -61,7 +68,11 @@ make_Z_dist_plots = function(path) {
 
 ### MAIN ###
 for (phi in c(0, 1, 25, 100)) {  # NOTE: mind phi
-  path = paste0('../results/phi', phi)
-  make_R_plots(path, xlim=c(10, 25))  # NOTE: mind xlim!
-  make_Z_dist_plots(path)
+  for (pmiss in c(0.0, 0.6)[1]) {
+    for (z in 1:3) {
+      path = paste0('../results/pmiss', format(pmiss, nsmall=1), '-phi', phi, '-zind', z)
+      make_R_plots(path, xlim=c(3, 9), ylim=c(0, 1))  # NOTE: mind xlim!
+      make_Z_dist_plots(path)
+    }
+  }
 }
