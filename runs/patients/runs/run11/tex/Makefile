@@ -22,5 +22,5 @@ getresults:
 	make plots -s
 
 plots:
-	Rscript R_plots.R
+	cd scripts && Rscript R_plots.R
 	cd scripts && python3 more_plots.py	
