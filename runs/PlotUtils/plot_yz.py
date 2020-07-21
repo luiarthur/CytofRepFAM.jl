@@ -218,6 +218,7 @@ def colorbar_horizontal(im):
     cbar = colorbar(im, cax=cax, orientation="horizontal")
 
 def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
+                     fs_xticks=12, fs_yticks=12,
                      gridlines_color='black', gridlines_lw=1,
                      cm=blue2red.cm(9), population=None, Zi=None):
     J = yi.shape[1]
@@ -245,8 +246,8 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
 
     im = plt.imshow(y_centers.T, aspect='auto', cmap=cm,
                     vmin=vlim[0], vmax=vlim[1])
-    plt.xticks(range(J), np.arange(J) + 1, rotation=90)
-    plt.yticks(range(K_sel), yticks)
+    plt.xticks(range(J), np.arange(J) + 1, rotation=90, fontsize=fs_xticks)
+    plt.yticks(range(K_sel), yticks, fontsize=fs_yticks)
     plt.xlabel('markers', fontsize=fs_xlabel)
     plt.ylabel('subpopulations', fontsize=fs_ylabel)
     gridlines(y_centers.T, color=gridlines_color, lw=gridlines_lw)

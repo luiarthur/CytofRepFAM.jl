@@ -47,7 +47,9 @@ if __name__ == '__main__':
                     # Plot
                     plt.figure(figsize=(6,6))
                     plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
-                                             population=population, Zi=zi)
+                                             population=population, Zi=zi,
+                                             fs_xlabel=16, fs_ylabel=16,
+                                             fs_xticks=16, fs_yticks=16)
                     outpath = ('{}/pmiss{}-phi{}-zind{}/img/y{}_centroid.pdf'
                                .format(results_path, pmiss, phi, zind, i))
                     plt.savefig(outpath, bbox_inches="tight")
