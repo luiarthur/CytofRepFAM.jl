@@ -115,7 +115,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
     if population == 0:
         labels = ['{} ({})'.format(zc + 1, wp) for (zc, wp) in zip(z_cols, w_perc)]
     else:
-        feature_names = [population.label(Z_mean[:, k]) for k in z_cols]
+        feature_names = [population.label(Z_mean[:, k]) for k in z_cols[::-1]]
         labels = ['{} ({})'.format(fname, wp)
                   for (fname, wp) in zip(feature_names, w_perc)]
 
@@ -232,7 +232,7 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
     yticks = [0] * K_sel
 
     for j in range(J):
-        for k in range(K_sel):
+      for k in range(K_sel)[::-1]:
             k_ = selected_features[k] + 1
             y_centers[j, k] = yi[lami == k_, j].mean()
             w_ik_perc = (wi_sel_sorted[k]*100).round(1)
