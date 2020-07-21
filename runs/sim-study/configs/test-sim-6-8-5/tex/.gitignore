@@ -5,3 +5,4 @@
 *.bbl
 *.blg
 results
+__pycache__

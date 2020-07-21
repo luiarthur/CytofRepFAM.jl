@@ -18,4 +18,9 @@ watch:
 	latexmk -pvc -pdf $(fname).tex
 
 getresults:
+	rm results
 	ln -s $(SCRATCHDIR)/$(simname) results
+	make plots -s 
+
+plots:
+	cd scripts && Rscript make_plots.R && Rscript make_plots.py
