@@ -5,7 +5,7 @@ from mpl_toolkits.axes_grid1.colorbar import colorbar
 
 import numpy as np
 import blue2red
-
+import Population
 
 def relabel_lam(lami_est, wi_mean):
     K = wi_mean.shape[0]
