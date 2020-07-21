@@ -2,6 +2,7 @@ module PlotUtils
 
 include(joinpath(@__DIR__, "imports.jl"))
 include(joinpath(@__DIR__, "dden_complete.jl"))
+include(joinpath(@__DIR__, "Population.jl"))
 
 # Load python defs
 path_to_plot_defs = @__DIR__
