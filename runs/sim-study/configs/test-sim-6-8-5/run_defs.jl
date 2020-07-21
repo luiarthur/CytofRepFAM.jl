@@ -66,6 +66,7 @@ function sim_and_run(settings::Dict{Symbol, Any})
               sfs = rfam.StateFS{Float64}(s, dfs)
               # FIX omega
               K0 = vec(sum(s.W .> 0.05, dims=2))
+              K0 = [min(k, div(K, 2)) for k in K0]
               sfs.omega .= CytofRepFAM.MCMC.logit.(K0/K)
               println("Initial omega: $(sfs.omega)")
               sfs
