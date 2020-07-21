@@ -42,10 +42,10 @@ settings = let
     nsamps = 10
     nburn = 10
   else
-    # nsamps = 1000
-    # nburn = 3000
-    nsamps = 3000
-    nburn = 6000
+    nsamps = 1000
+    nburn = 4000
+    # nsamps = 3000
+    # nburn = 6000
   end
 
   Dict(:Nfac => Nfac,
