@@ -22,14 +22,13 @@ from Population import Population
 
 if __name__ == '__main__':
     results_path = '../results'
-    # pmisses = (0.0, 0.6)
-    pmisses = (0.0, )
+    pmisses = (0.0, 0.6)
     phis = (0, 1, 25, 100)
 
     for pmiss in pmisses:
         for phi in phis:
-            population = Population()
             for zind in (1, 2, 3):
+                population = Population()
                 for i in (1, 2):
                     # Read data
                     yi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/y{}_mean.csv'
@@ -41,15 +40,15 @@ if __name__ == '__main__':
                     wi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/W{}_best.txt'
                                .format(results_path, pmiss, phi, zind, i))
                     wi = np.loadtxt(wi_path)
-                    zi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/Z{}.txt'
+                    zi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/Z{}_best.txt'
                                .format(results_path, pmiss, phi, zind, i))
                     zi = np.loadtxt(zi_path)
 
                     # Plot
                     plt.figure(figsize=(6,6))
                     plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
-                                             population=population)
-                    outpath = ('{}/pmiss{}-phi{}-zind{/img/y{}_centroid.pdf'
+                                             population=population, Zi=zi)
+                    outpath = ('{}/pmiss{}-phi{}-zind{}/img/y{}_centroid.pdf'
                                .format(results_path, pmiss, phi, zind, i))
                     plt.savefig(outpath, bbox_inches="tight")
                     plt.close()

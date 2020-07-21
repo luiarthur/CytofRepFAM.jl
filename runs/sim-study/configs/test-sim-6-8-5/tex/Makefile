@@ -23,4 +23,5 @@ getresults:
 	make plots -s 
 
 plots:
-	cd scripts && Rscript make_plots.R && Rscript make_plots.py
+	cd scripts && Rscript make_plots.R
+	cd scripts && python3 make_plots.py
