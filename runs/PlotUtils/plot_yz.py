@@ -112,7 +112,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
 
     ax = plt.gca()
     # plt.xticks([])
-    if population != 0:
+    if population == 0:
         labels = ['{} ({})'.format(zc + 1, wp) for (zc, wp) in zip(z_cols, w_perc)]
     else:
         feature_names = [population.label(Z_mean[:, k]) for k in z_cols]
