@@ -168,12 +168,12 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
   \begin{center}
     \imgtemplate{0.2}{1}
   \end{center}
-  \caption{The clusterings are very reasonable. But in the complete data
-  setting, FlowSOM learns only 5 clusters (when there are 7). Mclust learns
-  8 clusters for the complete data. FlowSOM and Mclust learn 9 and 10 clusters
-  respectively for the missing-values dataset. Different random seeds were
-  tried. For FlowSOM, 5 clusters was the maximum number of clusters learned
-  in the complete-data scenario.}
+  \caption{In this dataset, the subpopulations are similar; every column pair
+  distance is 1. The data is also noisy, making inference difficult. In the
+  complete data setting, FlowSOM learns only 4 clusters (when there are 7).
+  Mclust learns 7 clusters for the complete data. FlowSOM and Mclust learn 3
+  and 10 clusters respectively for the missing-values dataset. Different
+  random seeds were tried.}
 \end{figure}
 \newpage
 
@@ -182,10 +182,12 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
   \begin{center}
     \imgtemplate{0.2}{2}
   \end{center}
-  \caption{FlowSOM learns the right number of clusters here. Probably because
-  the clusters are distinct enough. Mclust struggles to find the correct
-  number of clusters. It learns 8 and 10 clusters respectively in the complete
-  and imputed datasets. It appears the largest group is being broken down.}
+  \caption{In this dataset, subpopulations are distinct; every column pair
+  distance is 6. FlowSOM learns the 5 (of 6) clusters here, likely because
+  the clusters are distinct enough. Mclust overestimates the number of
+  clusters. It learns 8 and 10 clusters respectively in the complete and
+  imputed datasets. FAM interprets noise as new subpopulations; whereas
+  rFAM with $\phi=100$ learns the correct subpopulations.}
 \end{figure}
 \newpage
 
@@ -194,10 +196,15 @@ matrices $Z^\true$ and $W^\true$ used in the simulation study. \\
   \begin{center}
     \imgtemplate{0.2}{3}
   \end{center}
-  \caption{In this scenario, FlowSOM learns fewer than 7 clusters and Mclust
-  learns more than 7 clusters. FlowSOM tends to recover high-level features,
-  whereas Mclust can find smaller discrepancies between the cells, as shown by
-  its breaking down larger groups into smaller clusters.}
+  \caption{In this dataset, distinct and similar subpopulations are present.
+  FlowSOM learns fewer than 7 clusters and Mclust learns more than 7
+  clusters. FlowSOM tends to recover high-level features, whereas Mclust can
+  find smaller discrepancies between the cells, as shown by its breaking down
+  larger groups into smaller clusters. FAM learns the correct number of
+  subpopulations; while rFAM learns fewer than the true number of
+  subpopulations. rFAM discourages similar subpopulations to be learned, and
+  hence subpopulations that are similar to abundant subpopulations are
+  merged.}
 \end{figure}
 \newpage
 
