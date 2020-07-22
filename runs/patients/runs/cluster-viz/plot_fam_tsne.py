@@ -6,7 +6,7 @@ import os
 
 os.makedirs('img', exist_ok=True)
 
-for phi in (0, 1, 10, 25):
+for phi in (0, 1, 100, 10000):  # (0, 1, 25, 50, 100, 1000)
     path_to_fam = 'img/fam-phi{}-clusterings.csv'.format(phi)
     fam_orig = np.loadtxt(path_to_fam).astype(int)
     fam = fam_orig[:, 0]

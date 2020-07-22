@@ -7,13 +7,13 @@ end
 ### Main ###
 
 # Results directory
-results_dir = "$(ENV["SCRATCH_DIR"])/cytof/results/repfam/patients-data/run1"
+results_dir = "$(ENV["SCRATCH_DIR"])/cytof/results/repfam/patients-data/run11"
 
 # Where to put results
 csvdir = "img"
 
 # Loop through different settings
-for phi in (0, 1, 10, 25)
+for phi in (0, 1, 100, 10000)  # NOTE: mind this! (0, 1, 25, 50, 100, 10000)
   # Get simulation name
   simname = "phi$(phi)"
   println("Processing: ", simname)
