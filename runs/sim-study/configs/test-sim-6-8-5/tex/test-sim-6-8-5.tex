@@ -190,9 +190,17 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_1$. Features were duplicated in all runs 
-  where $\phi=0$. Zero to one features were not recovered. It appears except for
-  (x), all features were recovered when $\phi > 0$.}
+  \caption{Posterior estimate of $Z_1$. Features were duplicated in all runs
+  where $\phi=0$. In the complete data setting (first three columns) for
+  dataset 1 (column 1), the estimate is the same for FAM and rFAM with
+  $\phi=1$. As $\phi$ increases, the estimates produce subpopulations that
+  are more distinct, and this case only the most predominant subpopulations
+  are selected. When the subpopulations are distinct in truth (dataset 2,
+  column 2), the FAM and rFAM models with low $\phi$ detect noisy
+  subpopulations. These gradually are removed as $\phi$ increases. For dataset 3,
+  a mix of distinct and similar subpopulations are present, and increasing $\phi$
+  had no noticeable effect. But in the missing data scenario, the smaller subpopulations
+  are merged into the larger ones.}
   \label{fig:z1est}
 \end{figure}
 
@@ -202,10 +210,7 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_2$. Features were duplicated in most runs
-  where $\phi=0$, and all features were recovered. For $\phi>0$, all runs
-  recovered all features. In (h) and (k), trace amounts ($<$ 1\%) of a feature
-  resembling one of the identified features was also learned.}
+  \caption{Posterior estimate of $Z_2$.}
   \label{fig:z2est}
 \end{figure}
 
@@ -214,8 +219,11 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{y1_centroid.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Mean expression level for cell type and marker in Sample 1.
+  For example, subpopulation 1 (row 1), marker 1 is blue, indicating that the 
+  average expression level is between -1 and 0 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
   \label{fig:y1centroid}
 \end{figure}
 
@@ -225,8 +233,11 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{y2_centroid.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Mean expression level for cell type and marker in Sample 2.
+  For example, subpopulation 2 (row 1), marker 3 has a pinkish color, indicating that the 
+  average expression level is between 0 and 1 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
   \label{fig:y2centroid}
 \end{figure}
 
@@ -238,7 +249,8 @@ this study. Note the following:
     \imgtemplate{y1.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Heatmaps of expression levels in sample 1, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
   \label{fig:y1est}
 \end{figure}
  
@@ -249,7 +261,8 @@ this study. Note the following:
     \imgtemplate{y2.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Heatmaps of expression levels in sample 2, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
   \label{fig:y2est}
 \end{figure}
 
@@ -259,10 +272,10 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{Rcounts.pdf}{\imscale}
   \end{center}
-  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears
-  to be the smallest. This could be due to the MCMC being stuck in a certain
-  mode more easily. For $\phi > 0$, $R_i$ seems to decrease as $\phi$ increases.}
-  \label{fig:W-post}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears to
+  be the largest, indicating a higher number of selected subpopulations in each sample.
+  $R_i$ seems to decrease as $\phi$ increases.}
+  \label{fig:R-post}
 \end{figure}
 
 \newpage
@@ -272,8 +285,9 @@ this study. Note the following:
     \imgtemplate{Z_dist.pdf}{\imscale}
   \end{center}
   \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
-  The red lines are the mean pairwise distances of the selected columns.
-  Note that pairwise distances increase as $\phi$ increases.}
+  Note that pairwise distances increase as $\phi$ increases; that is, subpopulations
+  become more distinct as the $\phi$ increases. $\phi$ is the parameter in the rFAM
+  which encourages subpopulations to be distinct.}
   \label{fig:W-post}
 \end{figure}
 
@@ -283,7 +297,8 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{mus.pdf}{\imscale}
   \end{center}
-  \caption{Box plots of $\mu^\star$.}
+  \caption{Box plots of $\mu^\star$, the locations in the mixture model
+  components.}
   \label{fig:mus}
 \end{figure}
 
@@ -294,8 +309,8 @@ this study. Note the following:
   \begin{center}  % 6 x 5
     \imgtemplate{sig2.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Box plots of $\sigma^2$, the scales in the mixture model
+  components.}
   \label{fig:sig2}
 \end{figure}
 
