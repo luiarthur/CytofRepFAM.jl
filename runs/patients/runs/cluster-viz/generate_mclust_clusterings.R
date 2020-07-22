@@ -4,7 +4,7 @@ library(mclust)
 y = {
   prefix = "img/y"
   suffix = "-prepped.csv"
-  lapply(as.list(paste0(prefix, 1:3, suffix)), read.csv)
+  lapply(as.list(paste0(prefix, 1:2, suffix)), read.csv)
 }
 
 # Mclust-selected number of clusters (according to BIC for VVV)

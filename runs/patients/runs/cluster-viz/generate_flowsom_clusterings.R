@@ -10,7 +10,7 @@ flowsanitize = function(Y) {
 y = {
   prefix = "img/y"
   suffix = "-prepped.csv"
-  lapply(as.list(paste0(prefix, 1:3, suffix)), read.csv)
+  lapply(as.list(paste0(prefix, 1:2, suffix)), read.csv)
 }
 
 # Number of cells in each sample

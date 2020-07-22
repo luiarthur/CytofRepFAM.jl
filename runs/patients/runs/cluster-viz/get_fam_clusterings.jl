@@ -1,4 +1,4 @@
-include("../../../sim-study/configs/test-sim-6-8-2/tsne/tsne_imports.jl")
+include("../../../sim-study/configs/test-sim-6-8-5/tsne/tsne_imports.jl")
 
 function get_output_dir(path_to_output)
   joinpath(splitdir(path_to_output)[1], "output.bson")
