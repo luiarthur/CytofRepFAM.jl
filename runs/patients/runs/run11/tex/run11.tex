@@ -79,11 +79,12 @@
 The data for this study consists of transformed marker expression levels
 obtained from the blood samples of two subjects. Each of the two samples
 belongs to a different subject. The number of cells in the samples are (4677,
-1367). Fifteen markers were studied in all samples and are listed
-in Table~\ref{tab:markers}. To remove overly-extreme values in the analysis,
-the data were further processed so that cells where at least one transformed
-marker expression level was greater than 4 or less than -7 were excluded. The
-final cell-counts in each sample was (4556, 1308).
+1367). We removed markers where (transformed) expression levels were mostly
+above 0 or mostly below 0. Fifteen markers were studied in all samples and
+are listed in Table~\ref{tab:markers}. To remove overly-extreme values in the
+analysis, the data were further processed so that cells where at least one
+transformed marker expression level was greater than 4 or less than -7 were
+excluded. The final cell-counts in each sample was (4556, 1308).
 
 % THE 32 MARKERS:
 % 2B4 2DL1 2DL3 2DS4 3DL1 CCR7 CD158B CD16 CD25 CD27 CD57 CD62L CD8 CD94 CKIT
@@ -141,7 +142,7 @@ final cell-counts in each sample was (4556, 1308).
   \begin{itemize}
     \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{scale}=2)$
     % \item $p_c \sim \text{Beta}(1, 9)$
-    \item Fixed $p_c=0.2$ 
+    \item Fixed $p_c=0.2$ (Sensitivity analysis to follow with $p_c = 0.1$ and $0.3$.)
     \item $K=25$
     \item $L_0=6$, $L_1=3$
     \item $\alpha \sim \Gam(1, 1)$
@@ -159,9 +160,10 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{Z1.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_1$.
-  Note that the labels are likely different for the different samples due
-  to label switching.}
+  \caption{Posterior estimate of $Z_1$. Subpopulations that have greater
+  presence in Sample 1 are listed at the bottom. Artificial subpopulation
+  labels are shown, and their abundances within the sample are shown in
+  parenthesis.}
   \label{fig:z1est}
 \end{figure}
 
@@ -171,9 +173,11 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{Z2.pdf}{\imscale}
   \end{center}
-  \caption{Posterior estimate of $Z_2$.
-  Note that the labels are likely different for the different samples due
-  to label switching.}
+  \caption{Posterior estimate of $Z_2$. Subpopulations that have greater
+  presence in Sample 2 are listed at the bottom. Artificial subpopulation
+  labels are shown, and their abundances within the sample are shown in
+  parenthesis. The labels in each sub-figure are consistent with those in
+  Figure~\eqref{fig:z1est}.}
   \label{fig:z2est}
 \end{figure}
 
@@ -195,9 +199,12 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{y1_centroid.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:y1est}
+  \caption{Mean expression level for cell type and marker in Sample 1.
+  For example, subpopulaion 1 (row 1), marker 1 has a pinkish color, indicating that the 
+  average expression level is between 0 and 1 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
+  \label{fig:y1centroid}
 \end{figure}
 
 \newpage
@@ -206,9 +213,14 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{y2_centroid.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
-  \label{fig:y2est}
+  \caption{Mean expression level for cell type and marker in Sample 2. For
+  example, subpopulaion 12 (row 2), marker 1 has a bluish color, indicating
+  that the average expression level is between -1 and 0 for subpopulation 12,
+  marker 1. Red cells indicate positive (higher) expression levels; blue
+  cells indicate lower (negative) expression levels. The subpopulation labels
+  in each sub-figure are consistent with those in
+  Figure~\eqref{fig:y1centroid}.}
+  \label{fig:y2centroid}
 \end{figure}
 
 
@@ -218,8 +230,8 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{y1.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Heatmaps of expression levels in sample 1, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
   \label{fig:y1est}
 \end{figure}
 
@@ -230,7 +242,9 @@ final cell-counts in each sample was (4556, 1308).
     \imgtemplate{y2.pdf}{\imscale}
   \end{center}
   % TODO: Write more?
-  \caption{}
+  \caption{Heatmaps of expression levels in sample 2, ordered by
+  subpopulations. Subpopulations that are most abundant appear at the
+  bottom.}
   \label{fig:y2est}
 \end{figure}
 
@@ -252,9 +266,9 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{Rcounts.pdf}{.4}
   \end{center}
-  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears
-  to be the smallest. This could be due to the MCMC being stuck in a certain
-  mode more easily. For $\phi > 0$, $R_i$ seems to decrease as $\phi$ increases.}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears to
+  be the largest, indicating a higher number of selected subpopulations in each sample.
+  $R_i$ seems to decrease as $\phi$ increases.}
   \label{fig:W-post}
 \end{figure}
 
@@ -265,8 +279,9 @@ final cell-counts in each sample was (4556, 1308).
     \imgtemplate{Z_dist.pdf}{.4}
   \end{center}
   \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
-  The red lines are the mean pairwise distances of the selected columns.
-  Note that pairwise distances increase as $\phi$ increases.}
+  Note that pairwise distances increase as $\phi$ increases; that is, subpopulations
+  become more distinct as the $\phi$ increases. $\phi$ is the parameter in the rFAM
+  which encourages subpopulations to be distinct.}
   \label{fig:W-post}
 \end{figure}
   
@@ -278,7 +293,8 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{mus.pdf}{\imscale}
   \end{center}
-  \caption{Box plots of $\mu^\star$.}
+  \caption{Box plots of $\mu^\star$, the locations in the mixture model
+  components.}
   \label{fig:mus}
 \end{figure}
 
@@ -289,13 +305,13 @@ final cell-counts in each sample was (4556, 1308).
   \begin{center}  % 6 x 5
     \imgtemplate{sig2.pdf}{\imscale}
   \end{center}
-  % TODO: Write more?
-  \caption{}
+  \caption{Box plots of $\sigma^2$, the scales in the mixture model
+  components.}
   \label{fig:sig2}
 \end{figure}
 
 % Uncomment if using bibliography:
 % \bibliography{sim}
 
-\include{extra.tex}
+% \input{extra.tex}
 \end{document}
