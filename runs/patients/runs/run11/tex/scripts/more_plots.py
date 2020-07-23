@@ -23,8 +23,7 @@ from Population import Population
 if __name__ == '__main__':
     results_path = '../results'
 
-    # for phi in (0, 1, 10, 25, 100, 10000):
-    for phi in (0, 1, 100, 10000):
+    for phi in (0, 1, 10, 50, 100, 10000):
         population = Population()
         for i in (1, 2):
             # Read data

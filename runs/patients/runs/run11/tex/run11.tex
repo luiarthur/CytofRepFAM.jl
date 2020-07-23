@@ -58,7 +58,7 @@
 \newcommand{\ech}{\color{black}\rm}
 \def\imgdir{results}
 \input{imgtemplate.tex}
-\def\imscale{.5}
+\def\imscale{.35}
 
 % Title Settings
 \title{Patients Data Analysis with r-FAM and $K=25$}
@@ -131,8 +131,8 @@ excluded. The final cell-counts in each sample was (4556, 1308).
   \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
         $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
         proposed at each MCMC iteration.
-  \item We fit 4 models, each with a different value for $\phi$. The values
-        for $\phi$ were (0, 1, 100, 10000).
+  \item We fit 6 models, each with a different value for $\phi$. The values
+        for $\phi$ were (0, 1, 10, 50, 100, 10000).
   % \item The computation time averaged across the 4 models was 159 hours.
   % \item The computation time averaged across the 4 models was 65 hours.
   \item The computation time averaged across the 4 models was 35 hours.
@@ -264,7 +264,7 @@ excluded. The final cell-counts in each sample was (4556, 1308).
 \section{Posterior distribution for $R_i$}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \imgtemplate{Rcounts.pdf}{.4}
+    \imgtemplate{Rcounts.pdf}{.3}
   \end{center}
   \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears to
   be the largest, indicating a higher number of selected subpopulations in each sample.
@@ -276,7 +276,7 @@ excluded. The final cell-counts in each sample was (4556, 1308).
 \section{Pairwise Distances of $\hat Z_i$ Columns}
 \begin{figure}[H]
   \begin{center}  % 6 x 5
-    \imgtemplate{Z_dist.pdf}{.4}
+    \imgtemplate{Z_dist.pdf}{.3}
   \end{center}
   \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
   Note that pairwise distances increase as $\phi$ increases; that is, subpopulations
@@ -284,8 +284,6 @@ excluded. The final cell-counts in each sample was (4556, 1308).
   which encourages subpopulations to be distinct.}
   \label{fig:W-post}
 \end{figure}
-  
-
 
 \newpage
 \section{Posterior distributions for $\mu^\star$}
@@ -313,5 +311,5 @@ excluded. The final cell-counts in each sample was (4556, 1308).
 % Uncomment if using bibliography:
 % \bibliography{sim}
 
-% \input{extra.tex}
+\input{extra.tex}
 \end{document}

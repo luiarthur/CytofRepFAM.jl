@@ -77,13 +77,13 @@ make_Z_dist_plots = function(path) {
 
 ### MAIN ###
 # NOTE: Settings:
-phis = c(0, 1, 100, 10000)
+phis = c(0, 1, 10, 50, 100, 10000)
 results_dir = '../results/phi'
 xlim = c(10, 25)
 ylim = c(0, 0.8)
 
 # Run
-for (phi in c(0, 1, 100, 10000)) {
+for (phi in phis) {
   path = paste0(results_dir, phi)
   make_R_plots(path, xlim=xlim, ylim=ylim)
   make_Z_dist_plots(path)
