@@ -24,6 +24,7 @@ include("DICparam.jl")
 include("FeatureSelect/FeatureSelect.jl")
 include("genInitialState.jl")
 include("fit.jl")
+include("ImportanceSampling/ImportanceSampling.jl")
 
 #=
 precompile(cytof_fit, (State, Constants, Data, Int, Int,
