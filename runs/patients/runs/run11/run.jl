@@ -218,6 +218,7 @@ aws_bucket = ARGS[5]
 istest = Bool(parse(Int, ARGS[6]))
 
 println("phi: $phi")
+println("p_i: $p_i")
 println("data path: $path_to_data")
 println("results dir: $results_dir")
 println("AWS bucket: $aws_bucket")

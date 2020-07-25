@@ -45,9 +45,10 @@ do
   for phi in ${phi}
   do
     rdir=${results_dir}/phi${phi}-pi${pi}
+    awsbucket=$AWS_BUCKET/phi${phi}-pi${pi}
     mkdir -p ${rdir}
     sleep 3
-    julia run.jl $phi $pi $data_paths $rdir $AWS_BUCKET/phi$phi $istest &> $rdir/log.txt &
+    julia run.jl $phi $pi $data_paths $rdir $awsbucket $istest &> $rdir/log.txt &
   done
 done
 
