@@ -20,7 +20,7 @@ end
 @everywhere function run(phi, path_to_data::Vector{String},
                          results_dir, aws_bucket;
                          nburn=10000, nsamps=5000, thin=1,
-                         K=25, L=Dict(0=>6, 1=>3),
+                         p_i=0.2, K=25, L=Dict(0=>6, 1=>3),
                          tempers=[1, 1.003, 1.006, 1.01],
                          batchsizes=[200, 200], pthin=5,
                          y_lower=-7, y_upper=4)
@@ -134,9 +134,10 @@ end
                                           W_star_prior=cfs.W_star_prior,
                                           eps_r=0.05)
               # Fix omega
-              K0 = 5
-              sfs.omega .= CytofRepFAM.MCMC.logit(K0/K)
-              println("Initial omega: $(sfs.omega)")
+              if p_i > 0
+                sfs.omega .= CytofRepFAM.MCMC.logit(p_i)
+                println("Initial omega: $(sfs.omega)")
+              end
               sfs
             end for s in states]
     tfs = rfam.TunersFS(t, states[1], X)
@@ -172,7 +173,7 @@ end
     config[:cfs], config[:dfs],
     inits=config[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
-    fix=[:omega],
+    fix=(p_i > 0) ? [:omega] : [],
     batchsizes=batchsizes,
     prior_thin=pthin,
     tempers=tempers,
@@ -210,10 +211,11 @@ end  # simfn
 
 # READ COMMAND ARGS
 phi = parse(Float64, ARGS[1])
-path_to_data = String.(split(ARGS[2], ","))
-results_dir = ARGS[3]
-aws_bucket = ARGS[4]
-istest = Bool(parse(Int, ARGS[5]))
+p_i = parse(Float64, ARGS[2])
+path_to_data = String.(split(ARGS[3], ","))
+results_dir = ARGS[4]
+aws_bucket = ARGS[5]
+istest = Bool(parse(Int, ARGS[6]))
 
 println("phi: $phi")
 println("data path: $path_to_data")
@@ -231,4 +233,4 @@ else
 end
 
 @time run(phi, path_to_data, results_dir, aws_bucket,
-          nsamps=nsamps, nburn=nburn)
+          nsamps=nsamps, nburn=nburn, p_i=p_i)
