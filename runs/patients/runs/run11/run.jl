@@ -173,7 +173,7 @@ end
     config[:cfs], config[:dfs],
     inits=config[:sfss],
     nmcmc=mcmc_iter, nburn=nburn,
-    fix=(p_i > 0) ? [:omega] : [],
+    fix=(p_i > 0) ? [:omega] : Symbol[],
     batchsizes=batchsizes,
     prior_thin=pthin,
     tempers=tempers,
