@@ -1,0 +1,14 @@
+\newcommand{\imgtemplate}[2]{
+  \begin{tabular}{cc}
+    (a) Random $p_i$ &
+    (b) $p_i=0.1$ \\
+    %
+    \includegraphics[scale=#2]{\imgdir/phi25-pi0.0/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/phi25-pi0.1/img/#1} \\
+    %
+    (c) $p_i=0.2$ &
+    (d) $p_i=0.3$ \\
+    \includegraphics[scale=#2]{\imgdir/phi25-pi0.2/img/#1} &
+    \includegraphics[scale=#2]{\imgdir/phi25-pi0.3/img/#1} \\
+  \end{tabular}
+}

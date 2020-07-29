@@ -1,0 +1,322 @@
+%{{{1
+\documentclass[11pt]{article} % 12-point font
+
+\usepackage[margin=1in]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+% \pagenumbering{gobble} % suppress page numbers
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\Gam}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+\def\Dir{\text{Dirichlet}}
+\def\TN{\text{TN}}
+% Statistics
+\newcommand{\E}{\text{E}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Uncomment if using bibliography
+% Bibliography
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+%}}}1
+
+
+% Macros for this project
+\def\true{\text{TRUE}}
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bbh}{\color{blue}\textbf}  % blue bold highlight
+\newcommand{\bch}{\color{blue}\it}  % blue italics
+\newcommand{\ech}{\color{black}\rm}
+\def\imgdir{results}
+\input{imgtemplate.tex}
+\def\imscale{.4}
+
+% Title Settings
+\title{Patients Data Analysis with r-FAM and $K=25$}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+
+\maketitle
+
+% \tableofcontents \newpage % Comment to remove table of contents
+
+% \section{Objective}\label{sec:objective}
+% TODO
+
+\section{Data}\label{sec:data}
+The data for this study consists of transformed marker expression levels
+obtained from the blood samples of two subjects. Each of the two samples
+belongs to a different subject. The number of cells in the samples are (4677,
+1367). We removed markers where (transformed) expression levels were mostly
+above 0 or mostly below 0. Fifteen markers were studied in all samples and
+are listed in Table~\ref{tab:markers}. To remove overly-extreme values in the
+analysis, the data were further processed so that cells where at least one
+transformed marker expression level was greater than 4 or less than -7 were
+excluded. The final cell-counts in each sample was (4556, 1308).
+
+% THE 32 MARKERS:
+% 2B4 2DL1 2DL3 2DS4 3DL1 CCR7 CD158B CD16 CD25 CD27 CD57 CD62L CD8 CD94 CKIT
+% DNAM1 EOMES GRA GRB KLRG1 LFA1 NKG2A NKG2C NKG2D NKP30 PERFORIN SIGLEC7 SYK
+% TBET TIGIT TRAIL ZAP70
+
+% markers: ["2B4", "2DL1", "2DL3", "2DS4", "3DL1", "CCR7", "CD158B", "CD16",
+%           "CD25", "CD27", "CD57", "CD62L", "CD 8", "CD94", "CKIT", "DNAM1",
+%           "EOMES", "GRA", "GRB", "KLRG1", "LFA1", "NKG2A", "NKG2C", "NKG2D",
+%           "NKP30", "PERFO RIN", "SIGLEC7", "SYK", "TBET", "TIGIT", "TRAIL",
+%           "ZAP70"]
+% Good markers: ["2B4", "3DL1", "CD158B", "CD8", "CD94", "CKIT", "DNAM1",
+%                "EOMES", "NKG2A", "NKG2D", "NKP30", "SIGLEC7", "SYK", "TBET",
+%                "ZAP70"]
+% Bad markers: ["2DL1", "2DL3", "2DS4", "CCR7", "CD16", "CD25", "CD27", "CD57",
+%               "CD62L", "GRA", "GRB", "KLRG1", " LFA1", "NKG2C", "PERFORIN",
+%               "TIGIT", "TRAIL"]
+\begin{table}[H]
+  \begin{center}
+    \begin{tabular}{|l|l|l|l|}
+      \hline
+      % 1: 2B4    &  9: CD25   &  17: EOMES & 25: NKP30    \\
+      % 2: 2DL1   &  10: CD27  &  18: GRA   & 26: PERFORIN \\
+      % 3: 2DL3   &  11: CD57  &  19: GRB   & 27: SIGLEC7  \\
+      % 4: 2DS4   &  12: CD62L &  20: KLRG1 & 28: SYK      \\   
+      % 5: 3DL1   &  13: CD8   &  21: LFA1  & 29: TBET     \\
+      % 6: CCR7   &  14: CD94  &  22: NKG2A & 30: TIGIT    \\ 
+      % 7: CD158B &  15: CKIT  &  23: NKG2C & 31: TRAIL    \\ 
+      % 8: CD16   &  16: DNAM1 &  24: NKG2D & 32: ZAP70    \\ 
+      1: 2B4   & 2:  3DL1  & 3:  CD158B & 4:  CD8 \\
+      5: CD94  & 6:  CKIT  & 7:  DNAM1  & 8:  EOMES \\
+      9: NKG2A & 10: NKG2D & 11: NKP30  & 12: SIGLEC7 \\
+      13: SYK  & 14: TBET  & 15: ZAP70  & \\
+      \hline
+    \end{tabular} 
+  \end{center}
+  \caption{Index for markers referenced in this study.}
+  \label{tab:markers}
+\end{table}
+
+\subsection{MCMC setup}
+\begin{itemize}
+  \item 10000 burn-in. 5000 samples were collected (no thinning).
+  \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
+        $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
+        proposed at each MCMC iteration.
+  \item We fit 4 models with $p_i = 0.1, 0.2, 0.3$ and $p_i \sim \text{Beta}(1, 9)$.
+  \item $\phi$ was fixed at $\tilde\phi=25$, and was chosen via calibration
+        so that, \emph{apriori}, 
+        $$\tilde{\phi} = \min\bc{\phi : \Pr\p{D_\phi(\mathbf{Z}) \ge J \cdot 20\%} \ge 95\%},$$
+        where $D_\phi(\mathbf{Z})$ is the minimum pairwise-column distance of $\mathbf{Z}$ and
+        $$
+        \Pr(\mathbf{Z}) \propto (1/2)^{JK} \times \prod_{\bc{(h,k): h \ne k}} 
+        \bc{1 - \exp(-\norm{\mathbf{z}_h - \mathbf{z}_k}_1)}^\phi.
+        $$
+  % \item The computation time averaged across the 4 models was 159 hours.
+  % \item The computation time averaged across the 4 models was 65 hours.
+  \item The computation time averaged across the 4 models was 35 hours.
+  \item 5\% of data in each sample are used to sample from trained prior, and
+    $M=5$ was used.
+  \item \textbf{Some Priors:}
+  \begin{itemize}
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{scale}=2)$
+    % \item $p_c \sim \text{Beta}(1, 9)$
+    % \item Fixed $p_c=0.2$ (Sensitivity analysis to follow with $p_c = 0.1$ and $0.3$.)
+    \item $K=25$
+    \item $L_0=6$, $L_1=3$
+    \item $\alpha \sim \Gam(1, 1)$
+    \item $\delta_0 \sim \TN^-(1, 0.1)$
+    \item $\delta_1 \sim \TN^+(1, 0.1)$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    \item $\sigma^2_i \sim \InvGamma(3, 1)$
+  \end{itemize}
+\end{itemize}
+
+
+\newpage
+\section{Posterior estimate of $Z_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z1.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior estimate of $Z_1$. Subpopulations that have greater
+  presence in Sample 1 are listed at the bottom. Artificial subpopulation
+  labels are shown, and their abundances within the sample are shown in
+  parenthesis.}
+  \label{fig:z1est}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z2.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior estimate of $Z_2$. Subpopulations that have greater
+  presence in Sample 2 are listed at the bottom. Artificial subpopulation
+  labels are shown, and their abundances within the sample are shown in
+  parenthesis. The labels in each sub-figure are consistent with those in
+  Figure~\eqref{fig:z1est}.}
+  \label{fig:z2est}
+\end{figure}
+
+% \newpage
+% \section{Posterior estimate of $Z_3$}
+% \begin{figure}[H]
+%   \begin{center}  % 2 x 2
+%     \imgtemplate{Z3.pdf}{\imscale}
+%   \end{center}
+%   \caption{Posterior estimate of $Z_3$.
+%   Note that the labels are likely different for the different samples due
+%   to label switching.}
+%   \label{fig:z3est}
+% \end{figure}
+
+\newpage
+\section{Centroids of $y_1$ Posterior Estimates}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1_centroid.pdf}{\imscale}
+  \end{center}
+  \caption{Mean expression level for cell type and marker in Sample 1.
+  For example, subpopulation 1 (row 1), marker 1 has a pinkish color, indicating that the 
+  average expression level is between 0 and 1 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
+  \label{fig:y1centroid}
+\end{figure}
+
+\newpage
+\section{Centroids of of $y_2$ Posterior Estimates}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2_centroid.pdf}{\imscale}
+  \end{center}
+  \caption{Mean expression level for cell type and marker in Sample 2. For
+  example, subpopulation 12 (row 2), marker 1 has a bluish color, indicating
+  that the average expression level is between -1 and 0 for subpopulation 12,
+  marker 1. Red cells indicate positive (higher) expression levels; blue
+  cells indicate lower (negative) expression levels. The subpopulation labels
+  in each sub-figure are consistent with those in
+  Figure~\eqref{fig:y1centroid}.}
+  \label{fig:y2centroid}
+\end{figure}
+
+
+\newpage
+\section{Posterior estimate of $y_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1.pdf}{\imscale}
+  \end{center}
+  \caption{Heatmaps of expression levels in sample 1, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
+  \label{fig:y1est}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $y_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2.pdf}{\imscale}
+  \end{center}
+  % TODO: Write more?
+  \caption{Heatmaps of expression levels in sample 2, ordered by
+  subpopulations. Subpopulations that are most abundant appear at the
+  bottom.}
+  \label{fig:y2est}
+\end{figure}
+
+
+% \newpage
+% \section{Posterior estimate of $y_3$}
+% \begin{figure}[H]
+%   \begin{center}  % 6 x 5
+%     \imgtemplate{y3.pdf}{\imscale}
+%   \end{center}
+%   % TODO: Write more?
+%   \caption{}
+%   \label{fig:y3est}
+% \end{figure}
+
+\newpage
+\section{Posterior distribution for $R_i$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Rcounts.pdf}{.3}
+  \end{center}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears to
+  be the largest, indicating a higher number of selected subpopulations in each sample.
+  $R_i$ seems to decrease as $\phi$ increases.}
+  \label{fig:W-post}
+\end{figure}
+
+\newpage
+\section{Pairwise Distances of $\hat Z_i$ Columns}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z_dist.pdf}{.3}
+  \end{center}
+  \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
+  Note that pairwise distances increase as $\phi$ increases; that is, subpopulations
+  become more distinct as the $\phi$ increases. $\phi$ is the parameter in the rFAM
+  which encourages subpopulations to be distinct.}
+  \label{fig:W-post}
+\end{figure}
+
+\newpage
+\section{Posterior distributions for $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus.pdf}{\imscale}
+  \end{center}
+  \caption{Box plots of $\mu^\star$, the locations in the mixture model
+  components.}
+  \label{fig:mus}
+\end{figure}
+
+
+\newpage
+\section{Posterior distributions for $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2.pdf}{\imscale}
+  \end{center}
+  \caption{Box plots of $\sigma^2$, the scales in the mixture model
+  components.}
+  \label{fig:sig2}
+\end{figure}
+
+% Uncomment if using bibliography:
+% \bibliography{sim}
+
+% \input{extra.tex}
+\end{document}
