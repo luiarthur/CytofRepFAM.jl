@@ -1,0 +1,323 @@
+%{{{1
+\documentclass[10pt]{article} % 12-point font
+
+\usepackage[margin=1cm]{geometry} % set page to 1-inch margins
+\usepackage{amsmath} % for math
+\usepackage{amssymb} % like \Rightarrow
+\setlength\parindent{0pt} % Suppresses the indentation of new paragraphs.
+\pagenumbering{gobble} % suppress page numbers
+
+% Big display
+\newcommand{\ds}{ \displaystyle }
+% Parenthesis
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+% Derivatives
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+% Distributions
+\newcommand{\Normal}{ \text{Normal} }
+\newcommand{\Beta}{ \text{Beta} }
+\newcommand{\Gam}{ \text{Gamma} }
+\newcommand{\InvGamma}{ \text{Inv-Gamma} }
+\newcommand{\Uniform}{ \text{Uniform} }
+\def\Dir{\text{Dirichlet}}
+\def\TN{\text{TN}}
+% Statistics
+\newcommand{\E}{\text{E}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+
+% Graphics
+\usepackage{graphicx}  % for figures
+\usepackage{float} % Put figure exactly where I want [H]
+
+% Uncomment if using bibliography
+% Bibliography
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+% Adds settings for hyperlinks. (Mainly for table of contents.)
+\usepackage{hyperref}
+\hypersetup{
+  pdfborder={0 0 0} % removes red box from links
+}
+%}}}1
+
+
+% Macros for this project
+\def\true{\text{TRUE}}
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bbh}{\color{blue}\textbf}  % blue bold highlight
+\newcommand{\bch}{\color{blue}\it}  % blue italics
+\newcommand{\ech}{\color{black}\rm}
+\def\imgdir{results}
+\input{imgtemplate.tex}
+\def\imscale{.16}
+
+% Title Settings
+\title{Simulation Study 6.8.4}
+\author{Arthur Lui}
+\date{\today} % \date{} to set date to empty
+
+% MAIN %
+\begin{document}
+
+\maketitle
+
+% \tableofcontents \newpage % Comment to remove table of contents
+
+% \section{Objective}\label{sec:objective}
+% TODO
+
+\section{Data Generation}\label{sec:data-generation}
+In this study, we generate data with two samples, each containing 2000 cells,
+and 21 markers. Figure~\ref{fig:Z-true} and Table~\ref{tab:W-true}
+respectively show the true $Z$ and $W$ used to generate the simulated data in
+this study. Note the following:
+\begin{itemize}
+  \item Three $Z$'s, shown in Figure~\ref{fig:Z-true}, were used in this study.
+  \begin{itemize}
+    \item In $Z^{1,\true}$, each column is different from the other columns exactly
+    by exactly two bits. In this sense, all columns are "close" to each
+    other.
+    \item In $Z^{2,\true}$, each column is different from the other columns exactly
+    by exactly six bits. In this sense, all columns are "far" to each
+    other.
+    \item In $Z^{3,\true}$, the first three columns are similar. Columns 4 and 5 are 
+    close to each other. And columns 6 and 7 are distinct from other columns. 
+  \end{itemize}
+  \item Figure~\ref{tab:W-true} shows the true $W$ used for this study. It
+    contains feature abundances that are small in both samples, large in both
+    samples, and large in only one sample. For example, feature $k=7$, 
+    has an abundance of $3\%$ in sample 1, and is absent in feature 2. 
+    Moreover, it has the smallest aggregate abundance across both samples. 
+    Hence, we can expect it will be least likely recovered in the analysis. 
+    Feature $k=3$, on the other hand is abundant in both samples, so we expect
+    it to be easily recovered.
+\end{itemize}
+
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \begin{tabular}{ccc}
+      \includegraphics[scale=0.4]{\imgdir/pmiss0.0-phi0-zind1/img/Z_true.pdf} &
+      \includegraphics[scale=0.4]{\imgdir/pmiss0.0-phi0-zind2/img/Z_true.pdf} &
+      \includegraphics[scale=0.4]{\imgdir/pmiss0.0-phi0-zind3/img/Z_true.pdf} \\
+      %
+      (a) $Z^{1,\true}$ &
+      (b) $Z^{2,\true}$ &
+      (c) $Z^{3,\true}$ \\
+      %
+      column-distances of 2 bits &
+      column-distances of 6 bits &
+      mix of similar and distinct columns \\
+    \end{tabular}
+  \end{center}
+  \caption{Simulation truth of $Z$ for three scenarios.}
+  \label{fig:Z-true}
+\end{figure}
+
+% latex table generated in R 3.4.4 by xtable 1.8-3 package
+% Wed Feb 12 14:53:27 2020
+\begin{table}[ht]
+  \centering
+  \begin{tabular}{rrrrrrrr}
+    \hline
+    & $k=1$ & $k=2$ & $k=3$ & $k=4$ & $k=5$ & $k=6$ & $k=7$ \\
+    \hline
+    Sample 1 & 0.04 & 0.05 & 0.39 & 0.00 & 0.06 & 0.43 & 0.03 \\
+    Sample 2 & 0.00 & 0.05 & 0.54 & 0.20 & 0.14 & 0.07 & 0.00 \\
+    \hline
+  \end{tabular}
+  \caption{$W^\true$}
+  \label{tab:W-true}
+\end{table}
+
+\subsection{More on data generation / MCMC setup}
+\begin{itemize}
+  \item We generated $y_{inj}$ from skew Normal distributions. Specifically,
+  \begin{itemize}
+    % \item Location parameter: $(\mu_{0,i,j}^\star)^\true=-0.8 +
+    %   \epsilon_{0,i,j}$, $\epsilon_{0,i,j} \sim \Uniform(-0.3, 0.3)$
+    % \item Location parameter: $(\mu_{1,i,j}^\star)^\true=1.3 +
+    %   \epsilon_{1,i,j}$, $\epsilon_{1,i,j} \sim \Uniform(-0.3, 0.3)$
+    \item Location parameter: $(\mu_{0,i,j}^\star)^\true=-0.8 +
+      \epsilon_{0,i,j}$, $\epsilon_{0,i,j} \sim \Uniform(-0.3, 0.3)$
+    \item Location parameter: $(\mu_{1,i,j}^\star)^\true=1 +
+      \epsilon_{1,i,j}$, $\epsilon_{1,i,j} \sim \Uniform(-0.3, 0.3)$
+    \item Scale parameter: ($\sigma^2_i)^\true=0.7$, $N=(2000, 2000)$
+    \item The skewness parameter $\zeta$ was set to -0.9. Note that $\zeta$
+          corresponds to $\delta \in \p{-1, 1}$ in \cite{fruhwirth2010bayesian}.
+  \end{itemize}
+  % \item 6000 burn-in, followed by 3000 iterations (no thinning).
+  \item 3000 burn-in, followed by 1000 iterations (no thinning).
+  \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
+        $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
+        proposed at each MCMC iteration.
+  \item Computation time for each chain was was approximately 4 hours.
+  \item 5\% of data in each sample are used to sample from trained prior, and
+    $M=5$ was used.
+  \item We did each analysis with $\phi \in \bc{0, 1, 25, 100}$
+  \item The simulation study was done for each of the true $Z$'s in 
+        Figure~\ref{fig:Z-true}.
+  \item For each true $Z$, we generated a full data set with no missing values,
+        and a data set with missing values (which is a subset of the former). Cells
+        that truly express a marker were never marked as missing.
+  \item In total, there were 24 runs, each run doing parallel tempering on 4
+        temperatures.
+  \item \textbf{Some Priors:}
+  \begin{itemize}
+    \item $w^\star_{i,k} \sim \Gam(\text{shape}=1, \text{rate}=1/2)$
+    \item $p_c \sim \text{Beta}(1, 9)$
+    \item $L_0=L_1=3$
+    \item $\alpha \sim \Gam(0.1, 0.1)$
+    \item $\delta_0 \sim \TN^-(1, 0.1)$
+    \item $\delta_1 \sim \TN^+(1, 0.1)$
+    \item $\eta_{z, i,j,\ell} \sim \Dir_{L_z}(1)$
+    \item $\sigma^2_i \sim \InvGamma(3, 1)$
+  \end{itemize}
+\end{itemize}
+
+
+\newpage
+\section{Posterior estimate of $Z_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z1.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior estimate of $Z_1$. Features were duplicated in all runs
+  where $\phi=0$. In the complete data setting (first three columns) for
+  dataset 1 (column 1), the estimate is the same for FAM and rFAM with
+  $\phi=1$. As $\phi$ increases, the estimates produce subpopulations that
+  are more distinct, and this case only the most predominant subpopulations
+  are selected. When the subpopulations are distinct in truth (dataset 2,
+  column 2), the FAM and rFAM models with low $\phi$ detect noisy
+  subpopulations. These gradually are removed as $\phi$ increases. For dataset 3,
+  a mix of distinct and similar subpopulations are present, and increasing $\phi$
+  had no noticeable effect. But in the missing data scenario, the smaller subpopulations
+  are merged into the larger ones.}
+  \label{fig:z1est}
+\end{figure}
+
+\newpage
+\section{Posterior estimate of $Z_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z2.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior estimate of $Z_2$.}
+  \label{fig:z2est}
+\end{figure}
+
+\section{Centroids of Posterior estimate of $y_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1_centroid.pdf}{\imscale}
+  \end{center}
+  \caption{Mean expression level for cell type and marker in Sample 1.
+  For example, subpopulation 1 (row 1), marker 1 is blue, indicating that the 
+  average expression level is between -1 and 0 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
+  \label{fig:y1centroid}
+\end{figure}
+
+\newpage
+\section{Centroids of Posterior estimate of $y_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2_centroid.pdf}{\imscale}
+  \end{center}
+  \caption{Mean expression level for cell type and marker in Sample 2.
+  For example, subpopulation 2 (row 1), marker 3 has a pinkish color, indicating that the 
+  average expression level is between 0 and 1 for subpopulation 1, marker 1.
+  Red cells indicate positive (higher) expression levels; blue cells indicate lower
+  (negative) expression levels.}
+  \label{fig:y2centroid}
+\end{figure}
+
+% NOTE: sanitycheck
+\newpage
+\section{Posterior estimate of $y_1$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y1.pdf}{\imscale}
+  \end{center}
+  % TODO: Write more?
+  \caption{Heatmaps of expression levels in sample 1, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
+  \label{fig:y1est}
+\end{figure}
+ 
+% \newpage
+\section{Posterior estimate of $y_2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{y2.pdf}{\imscale}
+  \end{center}
+  % TODO: Write more?
+  \caption{Heatmaps of expression levels in sample 2, ordered by subpopulations.
+  Subpopulations that are most abundant appear at the bottom.}
+  \label{fig:y2est}
+\end{figure}
+
+% \newpage
+\section{Posterior distribution for $R_i$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Rcounts.pdf}{\imscale}
+  \end{center}
+  \caption{Posterior distribution for $R_i$. When $\phi=0$, $R_i$ appears to
+  be the largest, indicating a higher number of selected subpopulations in each sample.
+  $R_i$ seems to decrease as $\phi$ increases.}
+  \label{fig:R-post}
+\end{figure}
+
+\newpage
+\section{Pairwise Distances of $\hat Z_i$ Columns}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{Z_dist.pdf}{\imscale}
+  \end{center}
+  \caption{Distribution of pairwise distances of selected $\hat Z_i$ columns.
+  Note that pairwise distances increase as $\phi$ increases; that is, subpopulations
+  become more distinct as the $\phi$ increases. $\phi$ is the parameter in the rFAM
+  which encourages subpopulations to be distinct.}
+  \label{fig:W-post}
+\end{figure}
+
+\newpage
+\section{Posterior distributions for $\mu^\star$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{mus.pdf}{\imscale}
+  \end{center}
+  \caption{Box plots of $\mu^\star$, the locations in the mixture model
+  components.}
+  \label{fig:mus}
+\end{figure}
+
+
+\newpage
+\section{Posterior distributions for $\sigma^2$}
+\begin{figure}[H]
+  \begin{center}  % 6 x 5
+    \imgtemplate{sig2.pdf}{\imscale}
+  \end{center}
+  \caption{Box plots of $\sigma^2$, the scales in the mixture model
+  components.}
+  \label{fig:sig2}
+\end{figure}
+
+% \input{extra}
+
+% Uncomment if using bibliography:
+\bibliography{sim}
+
+\end{document}
+
