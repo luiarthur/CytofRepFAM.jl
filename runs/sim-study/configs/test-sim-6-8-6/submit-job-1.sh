@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH -p 128x24   # Partition name
-#SBATCH -J complete-sim-cytof  # Job name
+#SBATCH -J missing-sim-cytof  # Job name
 #SBATCH --mail-user=alui2@ucsc.edu
 #SBATCH --mail-type=ALL
 #SBATCH -o out/slurm-job.out  # Name of stdout output file
@@ -19,7 +19,7 @@ results_dir="${SCRATCH_DIR}/cytof/results/repfam/${simname}"
 aws_bucket="s3://cytof-repfam/${simname}"
 phis="0 1 10 25 100"
 zinds="1 2 3"
-pmisses="0.0"
+pmisses="0.2"
 istest=0
 
 # Load these modules
