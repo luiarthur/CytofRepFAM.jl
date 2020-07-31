@@ -74,8 +74,8 @@ make_Z_dist_plots = function(path) {
 
 
 ### MAIN ###
-for (phi in c(0, 1, 25, 100)) {  # NOTE: mind phi
-  for (pmiss in c(0.0, 0.6)) {
+for (phi in c(0, 1, 10, 25, 100)) {  # NOTE: mind phi
+  for (pmiss in c(0.0, 0.2)) {
     for (z in 1:3) {
       path = paste0('../results/pmiss', format(pmiss, nsmall=1), '-phi', phi, '-zind', z)
       make_R_plots(path, xlim=c(3, 15), ylim=c(0, 1))  # NOTE: mind xlim!
