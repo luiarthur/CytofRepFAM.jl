@@ -61,7 +61,7 @@
 \def\imscale{.16}
 
 % Title Settings
-\title{Simulation Study 6.8.4}
+\title{Simulation Study 6.8.6}
 \author{Arthur Lui}
 \date{\today} % \date{} to set date to empty
 
@@ -150,12 +150,13 @@ this study. Note the following:
       \epsilon_{0,i,j}$, $\epsilon_{0,i,j} \sim \Uniform(-0.3, 0.3)$
     \item Location parameter: $(\mu_{1,i,j}^\star)^\true=1 +
       \epsilon_{1,i,j}$, $\epsilon_{1,i,j} \sim \Uniform(-0.3, 0.3)$
-    \item Scale parameter: ($\sigma^2_i)^\true=0.7$, $N=(2000, 2000)$
+    % \item Scale parameter: ($\sigma^2_i)^\true=0.7$, $N=(2000, 2000)$
+    \item Scale parameter: ($\sigma^2_i)^\true=1$, $N=(2000, 2000)$
     \item The skewness parameter $\zeta$ was set to -0.9. Note that $\zeta$
           corresponds to $\delta \in \p{-1, 1}$ in \cite{fruhwirth2010bayesian}.
   \end{itemize}
-  % \item 6000 burn-in, followed by 3000 iterations (no thinning).
-  \item 3000 burn-in, followed by 1000 iterations (no thinning).
+  \item 6000 burn-in, followed by 3000 iterations (no thinning).
+  % \item 3000 burn-in, followed by 1000 iterations (no thinning).
   \item We also did weight-preserving parallel tempering (WPPT) with temperatures 
         $\bc{1, 1.003, 1.006, 1.01}$. Swaps between every pair of chains were
         proposed at each MCMC iteration.
