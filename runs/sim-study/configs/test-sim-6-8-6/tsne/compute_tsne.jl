@@ -4,7 +4,7 @@ get_simdat_path(path_to_output) = joinpath(splitdir(path_to_output)[1], "simdat.
 results_dir = "/scratchdata/alui2/cytof/results/repfam/test-sim-6-8-6"
 
 for zind in 1:3
-  for pmiss in (0.0, 0.6)
+  for pmiss in (0.0, 0.2)
     # Get simulation name
     simname = "pmiss$(pmiss)-phi0-zind$(zind)"
 

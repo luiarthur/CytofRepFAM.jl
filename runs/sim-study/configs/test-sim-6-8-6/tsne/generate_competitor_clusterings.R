@@ -41,7 +41,7 @@ outdir = 'viz/csv'
 max_clusters = 10
 
 # Loop through data sets.
-for (pmiss in c(0.0, 0.6)) for (zind in 1:3) {
+for (pmiss in c(0.0, 0.2)) for (zind in 1:3) {
   # Simulation name.
   simname = str_interp('pmiss$[.1f]{pmiss}-phi0-zind${zind}')
 
