@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     method = methods[0]
 
-    for pmiss in [0.0, 0.6]:
+    for pmiss in [0.0, 0.2]:
         for zind in [1, 2, 3]:
             simname = 'pmiss{}-phi0-zind{}'.format(pmiss, zind)
             for method in methods:
@@ -45,7 +45,7 @@ if __name__ == "__main__":
                     graph_tsne(tsne_df, clust, i + 1, method, outpath)
             # rfam
             method = "rfam"
-            for phi in [0, 1, 25, 100]:  # NOTE: mind this!
+            for phi in [0, 1, 10, 25, 100]:  # NOTE: mind this!
                 clust_simname = 'pmiss{}-phi{}-zind{}'.format(pmiss, phi, zind)
                 clust_path = '{}/{}-{}.csv'.format(path_to_csv, method,
                                                    clust_simname)

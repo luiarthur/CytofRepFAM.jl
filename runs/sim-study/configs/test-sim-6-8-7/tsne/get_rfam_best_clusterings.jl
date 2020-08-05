@@ -21,8 +21,8 @@ function get_best_lam(samples)
 end
 
 for zind in 1:3
-  for pmiss in (0.0, 0.6)
-    for phi in (0, 1, 25, 100)
+  for pmiss in (0.0, 0.2)
+    for phi in (0, 1, 10, 25, 100)
       # Get simulation name
       simname = "pmiss$(pmiss)-phi$(phi)-zind$(zind)"
       println("Processing: ", simname)
