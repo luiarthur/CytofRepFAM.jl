@@ -49,13 +49,24 @@ if __name__ == '__main__':
                                .format(results_path, pmiss, phi, zind, i))
                     zi = np.loadtxt(zi_path)
 
-                    # Plot
+                    # Plot y centroid.
                     plt.figure(figsize=(6,6))
                     plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
                                              population=population, Zi=zi,
                                              fs_xlabel=16, fs_ylabel=16,
                                              fs_xticks=16, fs_yticks=16)
                     outpath = ('{}/pmiss{}-phi{}-zind{}/img/y{}_centroid.pdf'
+                               .format(results_path, pmiss, phi, zind, i))
+                    plt.savefig(outpath, bbox_inches="tight")
+                    plt.close()
+
+                    # Plot Z estimate.
+                    plt.figure(figsize=(6,6))
+                    plot_yz.plot_Z(Z_mean=zi, wi_mean=wi, lami_est=lami, w_thresh=0.0,
+                                   population=population, add_colorbar=False,
+                                   fs_lab=15, fs_celltypes=15, fs_markers=15,
+                                   fs_cbar=15)
+                    outpath = ('{}/pmiss{}-phi{}-zind{}/img/Z{}.pdf'
                                .format(results_path, pmiss, phi, zind, i))
                     plt.savefig(outpath, bbox_inches="tight")
                     plt.close()
