@@ -22,6 +22,7 @@ from Population import Population
 
 if __name__ == '__main__':
     results_path = '../results'
+    true_Z_path = '../../'
     pmisses = (0.0, 0.2)
     phis = (0, 1, 10, 25, 100)
 
@@ -29,6 +30,10 @@ if __name__ == '__main__':
         for phi in phis:
             for zind in (1, 2, 3):
                 population = Population()
+                trueZ = np.loadtxt('{}/Z{}.txt'.format(true_Z_path, zind))
+                for k in range(trueZ.shape[1]):
+                    _ = population.label(trueZ[:, k])
+
                 for i in (1, 2):
                     # Read data
                     yi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/y{}_mean.csv'
