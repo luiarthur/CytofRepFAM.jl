@@ -44,7 +44,7 @@ Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
   K = dim(Z1)[2]
 
   pdf(savepath)
-  par(mfrow=c(2, 1))
+  par(mfrow=c(2, 1), mar=c(4.1, 5.1, .2, 2.1))
   plot(table(z1_pairwise_dist)/npairs1, xlim=c(0, J), 
        xlab='',
        main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
@@ -56,8 +56,7 @@ Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
        main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
        ylab='Proportion in Sample 2', xaxt='n')
   axis(1, 1:J, 1:J, las=2)
-
-  par(mfrow=c(1, 1))
+  par(mfrow=c(1, 1), mar=c(5.1, 4.1, 4.1, 2.1))
   dev.off()
 }
 
