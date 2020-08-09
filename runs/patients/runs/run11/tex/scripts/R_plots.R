@@ -46,19 +46,15 @@ Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
   pdf(savepath)
   par(mfrow=c(2, 1))
   plot(table(z1_pairwise_dist)/npairs1, xlim=c(0, J), 
-       ylab='proportion of column pairs', xlab='Manhattan distance',
-       main='Z estimate for Sample 1', lwd=3, xaxt='n')
-       # type='b', pch=20,
-       # cex.lab=1.5, cex.axis=1.3, cex=2)
-  # abline(v=mean(z1_pairwise_dist), lwd=3, col='red')
+       xlab='',
+       main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
+       ylab='Proportion in Sample 1', xaxt='n')
   axis(1, 1:J, 1:J, las=2)
 
   plot(table(z2_pairwise_dist)/npairs2, xlim=c(0, J), 
-       ylab='proportion of column pairs', xlab='Manhattan distance',
-       main='Z estimate for Sample 2', lwd=3, xaxt='n')
-       # type='b', pch=20,
-       # cex.lab=1.5, cex.axis=1.3, cex=2)
-  # abline(v=mean(z2_pairwise_dist), lwd=3, col='red')
+       xlab='Pairwise column distance',
+       main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
+       ylab='Proportion in Sample 2', xaxt='n')
   axis(1, 1:J, 1:J, las=2)
 
   par(mfrow=c(1, 1))

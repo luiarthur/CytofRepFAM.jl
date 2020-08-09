@@ -38,20 +38,21 @@ Z_dist_plots = function(z1_path, z2_path, w1_path, w2_path, savepath) {
 
   z1_pairwise_dist = c(dist(t(Z1[, W1>0]), method='manhattan'))
   z2_pairwise_dist = c(dist(t(Z2[, W2>0]), method='manhattan'))
-  npairs = length(z1_pairwise_dist)
+  npairs1 = length(z1_pairwise_dist)
+  npairs2 = length(z2_pairwise_dist)
   J = dim(Z1)[1]
   K = dim(Z1)[2]
 
   pdf(savepath)
   par(mfrow=c(2, 1), mar=c(4.1, 5.1, .2, 2.1))
-  plot(table(z1_pairwise_dist)/npairs, xlim=c(0, J), 
+  plot(table(z1_pairwise_dist)/npairs1, xlim=c(0, J), 
        xlab='',
        main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
        ylab='Proportion in Sample 1', xaxt='n')
   # abline(v=mean(z1_pairwise_dist), lwd=3, col='red')
   axis(1, 1:J, 1:J, cex.axis=1.3, las=2)
 
-  plot(table(z2_pairwise_dist)/npairs, xlim=c(0, J), 
+  plot(table(z2_pairwise_dist)/npairs2, xlim=c(0, J), 
        xlab='Pairwise column distance',
        main='', cex.lab=1.5, cex.axis=1.3, lwd=3,
        ylab='Proportion in Sample 2', xaxt='n')
