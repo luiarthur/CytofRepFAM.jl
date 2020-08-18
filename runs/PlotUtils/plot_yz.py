@@ -35,7 +35,7 @@ gridlines = add_gridlines_Z
 
 def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
            cm=blue2red.cm(6), vlim=(-3, 3), fs_xlab=10, fs_ylab=10,
-           markernames=[], interpolation=None, rotation=90):
+           markernames=[], interpolation=None, rotation=90, ha="center"):
     J = yi.shape[1]
     vmin, vmax = vlim
 
@@ -51,7 +51,7 @@ def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
                     cmap=cm, interpolation=interpolation)
     for c in counts_cumsum[:-1]:
         plt.axhline(c, color='yellow', linewidth=lw)
-    plt.xticks(rotation=rotation)
+    plt.xticks(rotation=rotation, ha=ha)
     if len(markernames) == 0:
         plt.xticks(np.arange(J), np.arange(J) + 1, fontsize=fs_xlab)
     else:
@@ -69,7 +69,7 @@ def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
 
 
 def plot_Z_only(Z, fs=10, xlab=None, ylab=None, rotate_xticks=True,
-                cm_greys=plt.cm.get_cmap('Greys', 5), rotation=90):
+                cm_greys=plt.cm.get_cmap('Greys', 5), rotation=90, ha="center"):
     plt.imshow(Z, aspect='auto', vmin=0, vmax=1, cmap=cm_greys)
     plt.xlabel(xlab, fontsize=fs)
     plt.ylabel(ylab, fontsize=fs)
@@ -78,7 +78,7 @@ def plot_Z_only(Z, fs=10, xlab=None, ylab=None, rotate_xticks=True,
     plt.yticks(np.arange(J), np.arange(J) + 1, fontsize=fs)
     add_gridlines_Z(Z)
     if rotate_xticks:
-        plt.xticks(rotation=rotation, fontsize=fs)
+        plt.xticks(rotation=rotation, fontsize=fs, ha=ha)
     else:
         plt.xticks(fontsize=fs)
     plt.xticks(np.arange(K), np.arange(K) + 1)
@@ -89,7 +89,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
            add_colorbar=True, fs_cbar=10, fs_w=10, fs_celltypes=10,
            xlab="markers", ylab="cell subpopulations (abundance)",
            population=0,  # type: Population
-           rotation=90,
+           rotation=90, ha="center",
            markernames=[], fs_markers=10, w_digits=1):
 
     J = Z_mean.shape[0]
@@ -123,7 +123,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
 
     plt.yticks(np.arange(len(z_cols)), labels, fontsize=fs_celltypes)
     add_gridlines_Z(Z_hat)
-    plt.xticks(rotation=rotation, fontsize=fs_markers)
+    plt.xticks(rotation=rotation, fontsize=fs_markers, ha=ha)
     if len(markernames) == 0:
         plt.xticks(np.arange(J), np.arange(J) + 1)
     else:
@@ -147,7 +147,7 @@ def plot_Z(Z_mean, wi_mean, lami_est, w_thresh=.01,
 
 def plot_yz(yi, Z_mean, wi_mean, lami_est, w_thresh=.01,
             cm_greys = plt.cm.get_cmap('Greys', 5), markernames=[],
-            rotation=90,
+            rotation=90, ha="center",
             cm_y=blue2red.cm(6), vlim_y=(-3, 3), fs_w=10, w_digits=1):
     J = yi.shape[1]
 
@@ -168,7 +168,7 @@ def plot_yz(yi, Z_mean, wi_mean, lami_est, w_thresh=.01,
     im = plt.imshow(yi_sorted, aspect='auto', vmin=vmin_y, vmax=vmax_y, cmap=cm_y)
     for c in counts_cumsum[:-1]:
         plt.axhline(c, color='yellow')
-    plt.xticks(rotation=rotation)
+    plt.xticks(rotation=rotation, ha=ha)
     if len(markernames) == 0:
         plt.xticks(np.arange(J), np.arange(J) + 1)
     else:
@@ -220,7 +220,7 @@ def colorbar_horizontal(im):
     cbar = colorbar(im, cax=cax, orientation="horizontal")
 
 def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
-                     fs_xticks=12, fs_yticks=12, rotation=90,
+                     fs_xticks=12, fs_yticks=12, rotation=90, ha="center",
                      gridlines_color='black', gridlines_lw=1,
                      cm=blue2red.cm(9), population=None, Zi=None):
     J = yi.shape[1]
@@ -248,7 +248,8 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
 
     im = plt.imshow(y_centers.T, aspect='auto', cmap=cm,
                     vmin=vlim[0], vmax=vlim[1])
-    plt.xticks(range(J), np.arange(J) + 1, rotation=rotation, fontsize=fs_xticks)
+    plt.xticks(range(J), np.arange(J) + 1, rotation=rotation,
+               fontsize=fs_xticks, ha=ha)
     plt.yticks(range(K_sel), yticks, fontsize=fs_yticks)
     plt.xlabel('markers', fontsize=fs_xlabel)
     plt.ylabel('subpopulations', fontsize=fs_ylabel)
