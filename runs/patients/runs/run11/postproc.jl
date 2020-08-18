@@ -67,8 +67,11 @@ end
   PlotUtils.plot_p(ps, imgdir)
 
   # Plot y / Z
+  markernames=["2B4", "3DL1", "CD158B", "CD8", "CD94",
+               "CKIT", "DNAM1", "EOMES", "NKG2A", "NKG2D" ,
+               "NKP30", "SIGLEC7", "SYK", "TBET", "ZAP70"]
   PlotUtils.make_yz(dfs.data.y, Zs, Ws, lams, imgdir, vlim=(-4,4),
-                    w_thresh=0.0)
+                    w_thresh=0.0, markernames=markernames, rotation=45)
 end
 
 @everywhere function makeplots(path_to_output)
