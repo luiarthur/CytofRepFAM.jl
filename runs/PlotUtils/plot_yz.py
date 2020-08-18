@@ -221,6 +221,7 @@ def colorbar_horizontal(im):
 
 def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
                      fs_xticks=12, fs_yticks=12, rotation=90, ha="center",
+                     markernames=[],
                      gridlines_color='black', gridlines_lw=1,
                      cm=blue2red.cm(9), population=None, Zi=None):
     J = yi.shape[1]
@@ -248,7 +249,10 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
 
     im = plt.imshow(y_centers.T, aspect='auto', cmap=cm,
                     vmin=vlim[0], vmax=vlim[1])
-    plt.xticks(range(J), np.arange(J) + 1, rotation=rotation,
+    if markernames == []:
+        markernames = np.arange(J) + 1
+
+    plt.xticks(range(J), markernames, rotation=rotation,
                fontsize=fs_xticks, ha=ha)
     plt.yticks(range(K_sel), yticks, fontsize=fs_yticks)
     plt.xlabel('markers', fontsize=fs_xlabel)
