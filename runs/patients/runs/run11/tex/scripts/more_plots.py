@@ -20,28 +20,40 @@ import blue2red
 import plot_yz
 from Population import Population
 
-if __name__ == '__main__':
-    results_path = '../results'
+import os
 
-    for phi in (0, 1, 10, 50, 100, 10000):
+def genpaths(results_dir):
+    return [f'{results_dir}/{p}' for p in os.listdir(results_dir)]
+
+
+if __name__ == '__main__':
+    results_dir = '../results'
+    paths = genpaths(results_dir)
+    markernames=["2B4", "3DL1", "CD158B", "CD8", "CD94",
+                 "CKIT", "DNAM1", "EOMES", "NKG2A", "NKG2D" ,
+                 "NKP30", "SIGLEC7", "SYK", "TBET", "ZAP70"]
+
+    for path in paths:
         population = Population()
         for i in (1, 2):
             # Read data
-            yi_path = '{}/phi{}/img/txt/y{}_mean.csv'.format(results_path, phi, i)
+            yi_path = f'{path}/img/txt/y{i}_mean.csv'
             yi = np.loadtxt(yi_path, delimiter=',')
-            lami_path = '{}/phi{}/img/txt/lam{}_best.txt'.format(results_path, phi, i)
+            lami_path = f'{path}/img/txt/lam{i}_best.txt'
             lami = np.loadtxt(lami_path, dtype=int)
-            wi_path = '{}/phi{}/img/txt/W{}_best.txt'.format(results_path, phi, i)
+            wi_path = f'{path}/img/txt/W{i}_best.txt'
             wi = np.loadtxt(wi_path)
-            zi_path = '{}/phi{}/img/txt/Z{}_best.txt'.format(results_path, phi, i)
+            zi_path = f'{path}/img/txt/Z{i}_best.txt'
             Zi = np.loadtxt(zi_path)
 
-            # Plot
+            # Plot y centroids
             plt.figure(figsize=(6,6))
             plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
                                      population=population, Zi=Zi, 
                                      fs_xlabel=16, fs_ylabel=16,
-                                     fs_xticks=14, fs_yticks=16)
-            outpath = '{}/phi{}/img/y{}_centroid.pdf'.format(results_path, phi, i)
+                                     fs_xticks=14, fs_yticks=16,
+                                     rotation=45, markernames=markernames,
+                                     ha="right")
+            outpath = f'{path}/img/y{i}_centroid.pdf'
             plt.savefig(outpath, bbox_inches="tight")
             plt.close()
