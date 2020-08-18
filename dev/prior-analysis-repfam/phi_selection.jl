@@ -18,6 +18,8 @@ function plot_results(phis, us, exp_f, savepath)
     phi, f = z
     plt.plot(us, f, label="ϕ = $phi", marker="o")
   end
+  plt.xticks(fontsize=15)
+  plt.yticks(fontsize=15)
   plt.xlabel("threshold u", fontsize=18)
   plt.ylabel("Pr(Dᵩ(Z) ≥ u)", fontsize=18)
   plt.axhline(0.95, ls=":", color="grey")
@@ -26,13 +28,14 @@ function plot_results(phis, us, exp_f, savepath)
   plt.close()
 end
 
-phis = 0:5:50
+# phis = 0:5:50
+phis = 0:5:30
 us = 0:5
 
 exp_f_data = get_exp_f(phis, us, N=10000, J=15, K=25)
 exp_f_sim = get_exp_f(phis, us, N=10000, J=21, K=15)
 
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(6, 6))
 plot_results(phis, us, exp_f_data, "img/data_prior_analysis.pdf")
-plt.figure(figsize=(10, 6))
+plt.figure(figsize=(6, 6))
 plot_results(phis, us, exp_f_sim, "img/sim_prior_analysis.pdf")
