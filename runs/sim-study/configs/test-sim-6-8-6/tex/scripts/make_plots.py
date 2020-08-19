@@ -76,6 +76,7 @@ if __name__ == '__main__':
             plt.figure(figsize=(6,6))
             plot_yz.plot_Z(Z_mean=zi, wi_mean=wi, lami_est=lami, w_thresh=0.0,
                            population=population, add_colorbar=False,
+                           ylab='features (abundance)',
                            fs_lab=15, fs_celltypes=15, fs_markers=15,
                            fs_cbar=15)
             outpath = f'{path}/img/Z{i}.pdf'
