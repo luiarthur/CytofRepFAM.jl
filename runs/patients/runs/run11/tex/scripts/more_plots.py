@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
         R_path = f'{path}/img/txt/Rcounts.txt'
         R = np.loadtxt(R_path)
-        plt.figure(figsize=(3, 3))
+        plt.figure(figsize=(4, 4))
         zinfo.plot_num_selected_features(R, ymax=0.8, 
                                          xlabel='# of selected subpopulations')
         plt.savefig(f'{path}/img/Rcounts.pdf', bbox_inches="tight")
