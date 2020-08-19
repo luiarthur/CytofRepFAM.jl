@@ -90,8 +90,3 @@ if __name__ == '__main__':
             outpath = f'{path}/img/y{i}_centroid.pdf'
             plt.savefig(outpath, bbox_inches="tight")
             plt.close()
-
-            # TODO: z tweaks
-
-
-

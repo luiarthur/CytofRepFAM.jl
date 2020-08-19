@@ -69,6 +69,10 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
                  w_thresh=.01, lw=3,
                  Z_true=nothing, 
                  markernames=[],
+                 #
+                 feature_names="cell subpopulations",
+                 heatmap_ylabel="cells",
+                 #
                  fs_y=rcParams["font.size"],
                  fs_z=rcParams["font.size"],
                  fs_ycbar=rcParams["font.size"],
@@ -108,6 +112,7 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     plt.figure(figsize=(6, 6))
     plot_yz.plot_y(yi, Wi, lami, vlim=vlim, cm=blue2red.cm(9), lw=lw,
                    fs_xlab=fs_y, fs_ylab=fs_y, fs_lab=fs_y, fs_cbar=fs_ycbar,
+                   ylab=heatmap_ylabel,
                    markernames=markernames, rotation=rotation, ha=ha)
     plt.savefig("$(imgdir)/y$(i).pdf", bbox_inches="tight")
     plt.close()
@@ -117,6 +122,7 @@ function make_yz(y, Zs, Ws, lams, imgdir; vlim,
     plot_yz.plot_Z(Zi, Wi, lami, w_thresh=w_thresh, add_colorbar=false,
                    fs_lab=fs_z, fs_celltypes=fs_z, fs_markers=fs_z,
                    fs_cbar=fs_zcbar, markernames=markernames,
+                   ylab="$(feature_names) (abundance)",
                    population=population, rotation=rotation, ha=ha)
     plt.savefig("$(imgdir)/Z$(i).pdf", bbox_inches="tight")
     plt.close()

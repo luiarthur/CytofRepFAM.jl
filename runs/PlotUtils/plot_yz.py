@@ -35,6 +35,7 @@ gridlines = add_gridlines_Z
 
 def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
            cm=blue2red.cm(6), vlim=(-3, 3), fs_xlab=10, fs_ylab=10,
+           ylab="cells",
            markernames=[], interpolation=None, rotation=90, ha="center"):
     J = yi.shape[1]
     vmin, vmax = vlim
@@ -58,7 +59,7 @@ def plot_y(yi, wi_mean, lami_est, fs_lab=10, fs_cbar=10, lw=3,
         plt.xticks(np.arange(J), markernames, fontsize=fs_xlab)
     plt.yticks(fontsize=fs_ylab)
     plt.xlabel("markers", fontsize=fs_lab)
-    plt.ylabel("cells", fontsize=fs_lab)
+    plt.ylabel(ylab, fontsize=fs_lab)
 
     ax = plt.gca()
     ax_divider = make_axes_locatable(ax)
@@ -221,7 +222,7 @@ def colorbar_horizontal(im):
 
 def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
                      fs_xticks=12, fs_yticks=12, rotation=90, ha="center",
-                     markernames=[],
+                     markernames=[], ylab="subpopulations",
                      gridlines_color='black', gridlines_lw=1,
                      cm=blue2red.cm(9), population=None, Zi=None):
     J = yi.shape[1]
@@ -256,7 +257,7 @@ def plot_y_centroids(yi, lami, wi, vlim=(-4, 4), fs_xlabel=12, fs_ylabel=12,
                fontsize=fs_xticks, ha=ha)
     plt.yticks(range(K_sel), yticks, fontsize=fs_yticks)
     plt.xlabel('markers', fontsize=fs_xlabel)
-    plt.ylabel('subpopulations', fontsize=fs_ylabel)
+    plt.ylabel(ylab, fontsize=fs_ylabel)
     gridlines(y_centers.T, color=gridlines_color, lw=gridlines_lw)
     colorbar_horizontal(im)
 

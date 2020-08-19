@@ -72,6 +72,8 @@ end
                "NKP30", "SIGLEC7", "SYK", "TBET", "ZAP70"]
   PlotUtils.make_yz(dfs.data.y, Zs, Ws, lams, imgdir, vlim=(-4,4),
                     w_thresh=0.0, markernames=markernames, rotation=45,
+                    heatmap_ylabel="cells",
+                    feature_names="cell subpopulations",
                     ha="right")
 end
 

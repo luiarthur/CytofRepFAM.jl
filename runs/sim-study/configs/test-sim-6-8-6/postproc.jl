@@ -68,6 +68,8 @@ end
 
   # Plot y / Z
   PlotUtils.make_yz(simdat[:y], Zs, Ws, lams, imgdir, vlim=(-4,4),
+                    heatmap_ylabel="",
+                    feature_names="features",
                     Z_true=simdat[:Z], w_thresh=0.0)
 end
 
