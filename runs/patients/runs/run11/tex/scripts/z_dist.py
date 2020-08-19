@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import pairwise_distances
 import matplotlib.pyplot as plt
 
-def compare_xs(x1, x2, label=[None, None]):
+def compare_xs(x1, x2, label=[None, None], legend_fontsize=12):
     xmin = np.min([x1.min(), x2.min()])
     xmax = np.max([x1.max(), x2.max()])
 
@@ -12,8 +12,8 @@ def compare_xs(x1, x2, label=[None, None]):
     x2_counts = [(x2 == x).mean() for x in np.arange(xmin, xmax + 1)]
     plt.bar(np.arange(xmin, xmax+1) - 0.2, x2_counts, width=0.3, label=label[1])
 
-    plt.xticks(np.arange(xmin, xmax+1))
-    plt.legend()
+    plt.xticks(np.arange(xmin, xmax+1), rotation=90)
+    plt.legend(fontsize=legend_fontsize)
 
 def get_pairwise_dist(Z, W):
     _Z = Z[:, W > 0]
@@ -22,8 +22,9 @@ def get_pairwise_dist(Z, W):
     z_pairwise_dist = z_pairwise_dist_mat[np.triu_indices(K, k=1)]
     return z_pairwise_dist
 
-def compute_Z_dist(Za, Zb, Wa, Wb, label=[None, None]):
+def compute_Z_dist(Za, Zb, Wa, Wb, label=[None, None], legend_fontsize=8):
     za_pairwise_dist = get_pairwise_dist(Za, Wa)
     zb_pairwise_dist = get_pairwise_dist(Zb, Wb)
 
-    compare_xs(za_pairwise_dist, zb_pairwise_dist, label=label)
+    compare_xs(za_pairwise_dist, zb_pairwise_dist, label=label,
+               legend_fontsize=legend_fontsize)

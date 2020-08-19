@@ -48,8 +48,9 @@ if __name__ == '__main__':
         zbi = np.loadtxt(f'{pathb}/Z{i}_best.txt')
         wbi = np.loadtxt(f'{pathb}/W{i}_best.txt')
 
-        plt.figure(figsize=(5, 5))
-        compute_Z_dist(zai, zbi, wai, wbi, label=['rep-FAM', 'ind-FAM'])
+        plt.figure(figsize=(3, 3))
+        compute_Z_dist(zai, zbi, wai, wbi, label=['rep-FAM', 'ind-FAM'],
+                       legend_fontsize=8)
         plt.xlabel("pairwise distance ")
         plt.ylabel("probability")
         plt.savefig(f'{results_dir}/misc/Z{i}_dist_compare.pdf',
@@ -62,7 +63,7 @@ if __name__ == '__main__':
 
         R_path = f'{path}/img/txt/Rcounts.txt'
         R = np.loadtxt(R_path)
-        plt.figure(figsize=(5,5))
+        plt.figure(figsize=(3, 3))
         zinfo.plot_num_selected_features(R, ymax=0.8, 
                                          xlabel='# of selected subpopulations')
         plt.savefig(f'{path}/img/Rcounts.pdf', bbox_inches="tight")

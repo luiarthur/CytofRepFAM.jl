@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import sys
+import re
 
 sys.path.append('../../../../../PlotUtils')
 import blue2red
@@ -26,17 +27,26 @@ import tqdm
 def genpaths(results_dir):
     return [f'{results_dir}/{p}' for p in os.listdir(results_dir)]
 
+def get_zind(path):
+    return re.findall(r'(?<=zind)\d+', path)[0]
+
 if __name__ == '__main__':
     results_dir = '../results'
+    true_Z_path = '../../'
     paths = [p for p in genpaths(results_dir) if 'pmiss' in p]
 
     for path in tqdm.tqdm(paths):
+        # Create population indices.
         population = Population()
+        zind = get_zind(path)
+        trueZ = np.loadtxt(f'{true_Z_path}/Z{zind}.txt')
+        for k in range(trueZ.shape[1]):
+            _ = population.label(trueZ[:, k])
 
         # Rcounts
         R_path = f'{path}/img/txt/Rcounts.txt'
         R = np.loadtxt(R_path)
-        plt.figure(figsize=(5,5))
+        plt.figure(figsize=(4,4))
         zinfo.plot_num_selected_features(R, refs=[6, 5], ymax=1.05)
         plt.savefig(f'{path}/img/Rcounts.pdf', bbox_inches='tight')
         plt.close()
@@ -59,5 +69,15 @@ if __name__ == '__main__':
                                      fs_xlabel=16, fs_ylabel=16,
                                      fs_xticks=16, fs_yticks=16)
             outpath = f'{path}/img/y{i}_centroid.pdf'
+            plt.savefig(outpath, bbox_inches="tight")
+            plt.close()
+
+            # Plot Z estimate.
+            plt.figure(figsize=(6,6))
+            plot_yz.plot_Z(Z_mean=zi, wi_mean=wi, lami_est=lami, w_thresh=0.0,
+                           population=population, add_colorbar=False,
+                           fs_lab=15, fs_celltypes=15, fs_markers=15,
+                           fs_cbar=15)
+            outpath = f'{path}/img/Z{i}.pdf'
             plt.savefig(outpath, bbox_inches="tight")
             plt.close()
