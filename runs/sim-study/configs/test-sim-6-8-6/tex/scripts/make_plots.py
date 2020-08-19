@@ -35,6 +35,16 @@ if __name__ == '__main__':
     true_Z_path = '../../'
     paths = [p for p in genpaths(results_dir) if 'pmiss' in p]
 
+    os.makedirs(f'{results_dir}/misc', exist_ok=True)
+    for zind in (1, 2, 3):
+        Z = np.loadtxt(f'{true_Z_path}/Z{zind}.txt')
+        plt.figure(figsize=(3.5, 3.5))
+        plot_yz.plot_Z_only(Z, xlab="features", ylab="markers",
+                            rotate_xticks=False)
+        plt.savefig(f"{results_dir}/misc/Z_true_{zind}.pdf",
+                    bbox_inches="tight")
+        plt.close()
+
     for path in tqdm.tqdm(paths):
         # Create population indices.
         population = Population()
