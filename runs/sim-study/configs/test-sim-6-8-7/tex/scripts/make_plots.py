@@ -13,44 +13,53 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import sys
 
 sys.path.append('../../../../../PlotUtils')
 import blue2red
 import plot_yz
 from Population import Population
+import zinfo
+import tqdm
+
+def genpaths(results_dir):
+    return [f'{results_dir}/{p}' for p in os.listdir(results_dir)]
 
 if __name__ == '__main__':
-    results_path = '../results'
-    pmisses = (0.0, 0.2)
-    phis = (0, 1, 10, 25, 100)
+    results_dir = '../results'
+    paths = [p for p in genpaths(results_dir) if 'pmiss' in p]
 
-    for pmiss in pmisses:
-        for phi in phis:
-            for zind in (1, 2, 3):
-                population = Population()
-                for i in (1, 2):
-                    # Read data
-                    yi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/y{}_mean.csv'
-                               .format(results_path, pmiss, phi, zind, i))
-                    yi = np.loadtxt(yi_path, delimiter=',')
-                    lami_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/lam{}_best.txt'
-                                 .format(results_path, pmiss, phi, zind, i))
-                    lami = np.loadtxt(lami_path, dtype=int)
-                    wi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/W{}_best.txt'
-                               .format(results_path, pmiss, phi, zind, i))
-                    wi = np.loadtxt(wi_path)
-                    zi_path = ('{}/pmiss{}-phi{}-zind{}/img/txt/Z{}_best.txt'
-                               .format(results_path, pmiss, phi, zind, i))
-                    zi = np.loadtxt(zi_path)
+    for path in tqdm.tqdm(paths):
+        population = Population()
 
-                    # Plot
-                    plt.figure(figsize=(6,6))
-                    plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
-                                             population=population, Zi=zi,
-                                             fs_xlabel=16, fs_ylabel=16,
-                                             fs_xticks=16, fs_yticks=16)
-                    outpath = ('{}/pmiss{}-phi{}-zind{}/img/y{}_centroid.pdf'
-                               .format(results_path, pmiss, phi, zind, i))
-                    plt.savefig(outpath, bbox_inches="tight")
-                    plt.close()
+        # Rcounts
+        R_path = f'{path}/img/txt/Rcounts.txt'
+        R = np.loadtxt(R_path)
+        plt.figure(figsize=(5,5))
+        zinfo.plot_num_selected_features(R, refs=[6, 5], ymax=1.05)
+        plt.savefig(f'{path}/img/Rcounts.pdf', bbox_inches='tight')
+        plt.close()
+
+        for i in (1, 2):
+            # Read data
+            yi_path = f'{path}/img/txt/y{i}_mean.csv'
+            yi = np.loadtxt(yi_path, delimiter=',')
+            lami_path = f'{path}/img/txt/lam{i}_best.txt'
+            lami = np.loadtxt(lami_path, dtype=int)
+            wi_path = f'{path}/img/txt/W{i}_best.txt'
+            wi = np.loadtxt(wi_path)
+            zi_path = f'{path}/img/txt/Z{i}_best.txt'
+            zi = np.loadtxt(zi_path)
+
+            # Plot
+            plt.figure(figsize=(6,6))
+            plot_yz.plot_y_centroids(yi, lami, wi, vlim=(-3, 3), cm=blue2red.cm(6),
+                                     population=population, Zi=zi,
+                                     fs_xlabel=16, fs_ylabel=16,
+                                     fs_xticks=16, fs_yticks=16)
+            outpath = f'{path}/img/y{i}_centroid.pdf'
+            plt.savefig(outpath, bbox_inches="tight")
+            plt.close()
+
+            # TODO: Z tweaks

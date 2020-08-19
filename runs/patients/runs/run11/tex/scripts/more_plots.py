@@ -11,6 +11,7 @@
 # well.  The current heatmaps of y do not show well features with low
 # abundance. 
 
+import os
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
@@ -19,8 +20,10 @@ sys.path.append('../../../../../PlotUtils')
 import blue2red
 import plot_yz
 from Population import Population
+import zinfo
+import tqdm
+from z_dist import compute_Z_dist
 
-import os
 
 def genpaths(results_dir):
     return [f'{results_dir}/{p}' for p in os.listdir(results_dir)]
@@ -29,12 +32,42 @@ def genpaths(results_dir):
 if __name__ == '__main__':
     results_dir = '../results'
     paths = genpaths(results_dir)
+    paths = [path for path in paths if 'phi' in path]
     markernames=["2B4", "3DL1", "CD158B", "CD8", "CD94",
                  "CKIT", "DNAM1", "EOMES", "NKG2A", "NKG2D" ,
                  "NKP30", "SIGLEC7", "SYK", "TBET", "ZAP70"]
 
-    for path in paths:
+    # Compute Z dist
+    os.makedirs(f'{results_dir}/misc', exist_ok=True)
+    for i in (1, 2):
+        patha = f'{results_dir}/phi25-pi0.2/img/txt'
+        zai = np.loadtxt(f'{patha}/Z{i}_best.txt')
+        wai = np.loadtxt(f'{patha}/W{i}_best.txt')
+
+        pathb = f'{results_dir}/phi0/img/txt'
+        zbi = np.loadtxt(f'{pathb}/Z{i}_best.txt')
+        wbi = np.loadtxt(f'{pathb}/W{i}_best.txt')
+
+        plt.figure(figsize=(5, 5))
+        compute_Z_dist(zai, zbi, wai, wbi, label=['rep-FAM', 'ind-FAM'])
+        plt.xlabel("pairwise distance ")
+        plt.ylabel("probability")
+        plt.savefig(f'{results_dir}/misc/Z{i}_dist_compare.pdf',
+                    bbox_inches="tight")
+        plt.close()
+
+    # Make other graphs.
+    for path in tqdm.tqdm(paths):
         population = Population()
+
+        R_path = f'{path}/img/txt/Rcounts.txt'
+        R = np.loadtxt(R_path)
+        plt.figure(figsize=(5,5))
+        zinfo.plot_num_selected_features(R, ymax=0.8, 
+                                         xlabel='# of selected subpopulations')
+        plt.savefig(f'{path}/img/Rcounts.pdf', bbox_inches="tight")
+        plt.close()
+
         for i in (1, 2):
             # Read data
             yi_path = f'{path}/img/txt/y{i}_mean.csv'
@@ -57,3 +90,8 @@ if __name__ == '__main__':
             outpath = f'{path}/img/y{i}_centroid.pdf'
             plt.savefig(outpath, bbox_inches="tight")
             plt.close()
+
+            # TODO: z tweaks
+
+
+
