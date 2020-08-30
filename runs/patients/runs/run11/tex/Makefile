@@ -22,4 +22,4 @@ getresults:
 	make plots -s
 
 plots:
-	cd scripts && python3 more_plots.py	
+	cd scripts && python3 more_plots.py	&& python3 plot_phi_sens_zdist.py
