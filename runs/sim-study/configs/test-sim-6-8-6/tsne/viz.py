@@ -11,11 +11,11 @@ def graph_tsne(tsne_df, clust, i, method, outpath, method_suffix=''):
         tsne_df[method] = clust.astype(int)
     mask_i = (tsne_df.sample_ind == i)
     df = tsne_df[mask_i]
-    markersize = 20
+    markersize = 15
     sns.pairplot(x_vars="tsne1", y_vars="tsne2", data=df,
                  hue=method,
                  plot_kws=dict(linewidth=0, s=markersize),
-                 aspect=1, height=5)
+                 aspect=1, height=3)
     plt.savefig(outpath, bbox_inches="tight")
     plt.close()
     
