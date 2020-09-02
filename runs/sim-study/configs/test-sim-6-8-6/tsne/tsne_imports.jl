@@ -3,7 +3,9 @@
 import Pkg; Pkg.activate(joinpath(@__DIR__, "../../../../../"))
 include(joinpath(@__DIR__, "../../../../PlotUtils/imports.jl"))
 include(joinpath(@__DIR__, "../../../../PlotUtils/PlotUtils.jl"))
+include(joinpath(@__DIR__, "../../../../PlotUtils/Population.jl"))
 using DataFrames
+import DelimitedFiles
 using CSV
 using PyCall
 TSNE = PyCall.pyimport("sklearn.manifold").TSNE
