@@ -38,5 +38,5 @@ fsclus = fsmeta[flowsom.result$FlowSOM$map$mapping[, 1]]
 
 # Print clusterings for all samples
 write.table(cbind(fsclus, sample_idx),
-            file=paste0("results/tsne/flowsom"),
+            file=paste0("results/tsne/flowsom.csv"),
             quote=F, row.names=F, col.names=F)
