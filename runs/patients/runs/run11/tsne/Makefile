@@ -10,6 +10,9 @@ link_results:
 sendimg:
 		aws s3 sync $(RESULTS_DIR)/tsne $(AWS_BUCKET)/tsne
 
+getimg:
+		aws s3 sync $(AWS_BUCKET)/tsne $(RESULTS_DIR)/tsne
+
 plot:
 	python3 make_tsne.py
 	Rscript get_flowsom_clust.R
