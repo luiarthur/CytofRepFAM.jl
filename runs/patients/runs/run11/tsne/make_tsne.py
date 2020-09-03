@@ -1,9 +1,5 @@
 import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-mpl.rcParams['figure.figsize'] = (3, 3)
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import scale
 import os
@@ -89,14 +85,3 @@ if __name__ == '__main__':
     # Save results.
     os.makedirs('results/tsne', exist_ok=True)
     tsne_df.round(3).to_csv('results/tsne/tsne.csv')
-
-    # Plot an example.
-    # path_to_experiment = path_to_default_experiment
-    # cluster_df = make_cluster_df(tsne_df, path_to_default_experiment)
-
-    # sns.pairplot(x_vars="tsne1", y_vars="tsne2",
-    #              data=cluster_df[cluster_df.sample_idx == 0],
-    #              hue='cluster',
-    #              plot_kws=dict(linewidth=0, s=10), aspect=1, height=3)
-    # plt.tight_layout()
-    # plt.show()
