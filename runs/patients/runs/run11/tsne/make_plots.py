@@ -58,5 +58,5 @@ if __name__ == '__main__':
 
     # Plot FlowSOM TSNE
     flowsom = np.loadtxt('results/tsne/flowsom.csv')[:, 0].astype(int)
-    cluster_df = append_col(tsne_df, mclust)
+    cluster_df = append_col(tsne_df, flowsom)
     plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_flowsom')
