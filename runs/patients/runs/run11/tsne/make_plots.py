@@ -31,7 +31,7 @@ def plot_tsne(tsne_df, cluster_df, savepath, text_size=11):
                              backgroundcolor=cp[label - 1])
             t.set_bbox(dict(facecolor=cp[label - 1], alpha=0.6, linewidth=0))
 
-        plt.savefig(f'{savepath}_sample{int(i)}.pdf')
+        plt.savefig(f'{savepath}_sample{int(i)}.pdf', bbox_inches="tight")
         plt.close()
 
 def append_col(df, cluster):
