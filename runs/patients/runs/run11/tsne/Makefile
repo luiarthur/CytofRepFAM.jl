@@ -9,5 +9,3 @@ link_results:
 
 sendimg:
 		aws s3 sync $(RESULTS_DIR)/tsne $(AWS_BUCKET)/tsne
-
-
