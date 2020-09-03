@@ -7,8 +7,8 @@ import matplotlib as mpl
 mpl.rcParams['figure.figsize'] = (5, 5)
 from make_tsne import make_cluster_df
 
-def plot_tsne(tsne_df, path_to_clustering, savepath, text_size=11):
-    cluster_df = make_cluster_df(tsne_df, path_to_clustering)
+
+def plot_tsne(tsne_df, cluster_df, savepath, text_size=11):
 
     n_clus = len(cluster_df.cluster.unique())
     cp = sns.color_palette('Paired', n_colors=n_clus)
@@ -34,17 +34,29 @@ def plot_tsne(tsne_df, path_to_clustering, savepath, text_size=11):
         plt.savefig(f'{savepath}_sample{int(i)}.pdf')
         plt.close()
 
+def append_col(df, cluster):
+    df = df.copy()
+    df['cluster'] = cluster
+    return df
+
 if __name__ == '__main__':
     tsne_df = pd.read_csv('results/tsne/tsne.csv')
     text_size = 11
 
     # Plot FAM TSNE
-    plot_tsne(tsne_df, 'results/phi0',
-              'results/tsne/tsne_rfam_phi0')
+    cluster_df = make_cluster_df(tsne_df, 'results/phi0')
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_rfam_phi0')
 
     # Plot repFAM TSNE
-    plot_tsne(tsne_df, 'results/phi25-pi0.2',
-              'results/tsne/tsne_rfam_phi25')
+    cluster_df = make_cluster_df(tsne_df, 'results/phi25-pi0.2')
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_rfam_phi25')
 
     # Plot Mclust TSNE
+    mclust = np.loadtxt('results/tsne/mclust.csv')[:, 0].astype(int)
+    cluster_df = append_col(tsne_df, mclust)
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_mclust')
+
     # Plot FlowSOM TSNE
+    flowsom = np.loadtxt('results/tsne/flowsom.csv')[:, 0].astype(int)
+    cluster_df = append_col(tsne_df, mclust)
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_flowsom')
