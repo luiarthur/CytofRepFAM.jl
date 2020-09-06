@@ -1,4 +1,5 @@
 # See: https://nikkimarinsek.com/blog/7-ways-to-label-a-cluster-plot-python
+import sys
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -7,9 +8,10 @@ import matplotlib as mpl
 mpl.rcParams['figure.figsize'] = (5, 5)
 from make_tsne import make_cluster_df
 
+sys.path.append('../../../../PlotUtils')
+import plot_yz
 
-def plot_tsne(tsne_df, cluster_df, savepath, text_size=11):
-
+def plot_tsne(tsne_df, cluster_df, savepath, text_size=11, plot_y=False, m=None):
     n_clus = len(cluster_df.cluster.unique())
     cp = sns.color_palette('Paired', n_colors=n_clus)
 
@@ -34,6 +36,28 @@ def plot_tsne(tsne_df, cluster_df, savepath, text_size=11):
         plt.savefig(f'{savepath}_sample{int(i)}.pdf', bbox_inches="tight")
         plt.close()
 
+        if plot_y:
+            K = 25  # Hardcoded.
+            colnames = [c for c in data.columns if 'marker' in c]
+            yi = data[colnames].to_numpy() + 0
+
+            if m is not None:
+                mi = m[cluster_df.sample_idx == i]
+                yi[mi == 1] = np.nan
+
+            markernames=["2B4", "3DL1", "CD158B", "CD8", "CD94",
+                         "CKIT", "DNAM1", "EOMES", "NKG2A", "NKG2D" ,
+                         "NKP30", "SIGLEC7", "SYK", "TBET", "ZAP70"]
+            lami_est = data.cluster
+
+            plot_yz.plot_y(yi, K, lami_est, vlim=(-4, 4),
+                           markernames=markernames, ha='right',
+                           rotation=45, interpolation='nearest')
+            plt.savefig(f'{savepath}_y{int(i)}.pdf', bbox_inches="tight")
+            plt.close()
+
+
+
 def append_col(df, cluster):
     df = df.copy()
     df['cluster'] = cluster
@@ -42,6 +66,7 @@ def append_col(df, cluster):
 if __name__ == '__main__':
     tsne_df = pd.read_csv('results/tsne/tsne.csv')
     text_size = 11
+    m = np.loadtxt('results/misc/m.txt', delimiter=',')
 
     # Plot FAM TSNE
     cluster_df = make_cluster_df(tsne_df, 'results/phi0')
@@ -54,9 +79,9 @@ if __name__ == '__main__':
     # Plot Mclust TSNE
     mclust = np.loadtxt('results/tsne/mclust.csv')[:, 0].astype(int)
     cluster_df = append_col(tsne_df, mclust)
-    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_mclust')
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_mclust', plot_y=True, m=m)
 
     # Plot FlowSOM TSNE
     flowsom = np.loadtxt('results/tsne/flowsom.csv')[:, 0].astype(int)
     cluster_df = append_col(tsne_df, flowsom)
-    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_flowsom')
+    plot_tsne(tsne_df, cluster_df, 'results/tsne/tsne_flowsom', plot_y=True, m=m)

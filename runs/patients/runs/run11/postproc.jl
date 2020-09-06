@@ -157,6 +157,8 @@ end
     writedlm(io, output[:c].constants.beta, ',')
   end
 
+  # TODO: print missing data indicator
+
   # Plot data density
   println("Plotting dden ...")
   PlotUtils.plot_dden(ddens=output[:dden],
