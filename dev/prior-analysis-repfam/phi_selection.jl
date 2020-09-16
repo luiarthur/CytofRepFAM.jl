@@ -20,8 +20,9 @@ function plot_results(phis, us, exp_f, savepath)
   end
   plt.xticks(fontsize=15)
   plt.yticks(fontsize=15)
-  plt.xlabel("threshold u", fontsize=18)
-  plt.ylabel("Pr(Dᵩ(Z) ≥ u)", fontsize=18)
+  plt.xlabel("threshold " * L"d̲", fontsize=18)
+  plt.ylabel(L"\Pr\left(\min_{1 ≤ k₁ < k₂ ≤ K}~d(\mathbf{z}_{k_1}, \mathbf{z}_{k_2}) ≥ d̲ \mid \phi \right)",
+             fontsize=18)
   plt.axhline(0.95, ls=":", color="grey")
   plt.legend(loc="lower left")
   plt.savefig(savepath, bbox_inches="tight")

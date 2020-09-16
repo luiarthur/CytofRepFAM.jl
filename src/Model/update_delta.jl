@@ -61,6 +61,7 @@ function update_delta!(z::Bool, l::Int, s::State, c::Constants, d::Data)
     end
   end
 
+  # FIXME: https://github.com/luiarthur/CytofRepFAM.jl/issues/9
   s2 = s.sig2 * c.temper
   denom = 1.0 + s_delta_z^2 * sum(cardinality ./ s2)
   new_m = (m_delta_z + s_delta_z^2 * sum(g_sum ./ s2)) / denom
