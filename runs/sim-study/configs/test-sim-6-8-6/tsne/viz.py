@@ -3,6 +3,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import os
+import sys
+sys.path.append('../../../../PlotUtils')
 
 def graph_tsne(tsne_df, clust, i, method, outpath, method_suffix=''):
     if clust is None:
@@ -19,7 +21,20 @@ def graph_tsne(tsne_df, clust, i, method, outpath, method_suffix=''):
     plt.savefig(outpath, bbox_inches="tight")
     plt.close()
     
-    
+def get_data_dict(tsne_df, y_header='Y', marker_header='M',
+                  sample_ind_name='sample_ind',
+                  true_labels_name='true_labels'):
+    y_columns = filter(lambda x: x.startswith(y_header), tsne_df.columns)
+    Y = tsne_df[y_columns].to_numpy()
+    m_columns = filter(lambda x: x.startswith(marker_header), tsne_df.columns)
+    M = tsne_df[m_columns].to_numpy() == 1
+    Y[M] = np.nan
+    sample_ind = tsne_df[sample_ind_name].to_numpy().astype(int)
+    true_labels = tsne_df[true_labels_name].to_numpy().astype(int)
+    return dict(Y=Y, M=M, sample_ind=sample_ind, true_labels=true_labels)
+
+# TODO:
+# make heatmaps
 if __name__ == "__main__":
     path_to_csv = 'viz/csv'
     # methods = ['mclust', 'flowsom', 'rfam']
@@ -30,34 +45,35 @@ if __name__ == "__main__":
 
     for pmiss in [0.0, 0.2]:
         for zind in [1, 2, 3]:
-            simname = 'pmiss{}-phi0-zind{}'.format(pmiss, zind)
+            simname = f'pmiss{pmiss}-phi0-zind{zind}'
+
+            tsne_path = f'{path_to_csv}/tsne-{simname}.csv'
+            tsne_df = pd.read_csv(tsne_path)
+            data_dict = get_data_dict(tsne_df)
+
             for method in methods:
                 if method == 'true_labels':
                     clust = None
                 else:
-                    clust_path = '{}/{}-{}.csv'.format(path_to_csv, method, simname)
+                    clust_path = f'{path_to_csv}/{method}-{simname}.csv'
                     print(clust_path)
                     clust = np.loadtxt(clust_path)
-                tsne_path = '{}/tsne-{}.csv'.format(path_to_csv, simname)
-                tsne_df = pd.read_csv(tsne_path)
                 for i in range(2):
-                    outpath = 'viz/img/tsne-{}{}-{}.pdf'.format(method, i + 1, simname)
+                    outpath = f'viz/img/tsne-{method}{i + 1}-{simname}.pdf'
                     graph_tsne(tsne_df, clust, i + 1, method, outpath)
+
             # rfam
             method = "rfam"
             for phi in [0, 1, 10, 25, 100]:  # NOTE: mind this!
-                clust_simname = 'pmiss{}-phi{}-zind{}'.format(pmiss, phi, zind)
-                clust_path = '{}/{}-{}.csv'.format(path_to_csv, method,
-                                                   clust_simname)
+                clust_simname = f'pmiss{pmiss}-phi{phi}-zind{zind}'
+                clust_path = f'{path_to_csv}/{method}-{clust_simname}.csv'
                 print(clust_path)
                 clust = np.loadtxt(clust_path)
 
-                tsne_path = '{}/tsne-{}.csv'.format(path_to_csv, simname)
+                tsne_path = f'{path_to_csv}/tsne-{simname}.csv'
                 tsne_df = pd.read_csv(tsne_path)
                 for i in range(2):
-                    outpath = 'viz/img/tsne-{}{}-{}.pdf'.format(method,
-                                                                i + 1,
-                                                                clust_simname)
+                    outpath = f'viz/img/tsne-{method}{i + 1}-{clust_simname}.pdf'
                     graph_tsne(tsne_df, clust, i + 1, method, outpath,
-                               method_suffix='phi={}'.format(phi))
+                               method_suffix=f'phi={phi}')
 
