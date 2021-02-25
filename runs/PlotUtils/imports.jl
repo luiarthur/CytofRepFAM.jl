@@ -10,6 +10,7 @@ using LaTeXStrings
 using DataFrames
 using CSV
 using DelimitedFiles
+import LinearAlgebra: Diagonal
 
 include(joinpath(@__DIR__, "salso.jl"))
 include(joinpath(@__DIR__, "dden_complete.jl"))

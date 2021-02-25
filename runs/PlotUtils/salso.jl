@@ -1,6 +1,15 @@
 # NOTE: Based on https://rdrr.io/cran/sdols/ by David B. Dahl.
 
 """
+Computes the pairwise allocation matrix. (Cleaner implementation of
+`pairwiseallocmat`.)
+"""
+pam(Z, W, i) = Z * Diagonal(W[i, :]) * Z'
+
+# NOTE: This can be more cleanly expressed as `Z * Diagonal(W[i, :]) * Z'`.
+# Though, this quantity is half that of the current implementation.
+# The implementation above should be used in the future.
+"""
 Create pairwise allocation matrix
 """
 function pairwiseallocmat(Z, W, i)
