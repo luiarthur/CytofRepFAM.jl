@@ -11,7 +11,7 @@ mutable struct TuningParam{T}
   targetAcc::Float64
 
   TuningParam(v::V) where V = new{V}(v, 0, 0, 50,
-                                     n::Int -> min(n^(-0.5), 0.01),
+                                     n::Int -> max(n^(-0.5), 0.01),
                                      0.44)
 end
 
